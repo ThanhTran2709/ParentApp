@@ -15,6 +15,10 @@ public class CoinList {
 
 	public CoinList(){}
 
+	public CoinList(JSONObject jsonObject){
+
+	}
+
 	public Coin get(int index){
 		return coinFlipRecords.get(index);
 	}
@@ -31,5 +35,7 @@ public class CoinList {
 		coinFlipRecords.clear();
 	}
 
-	//TODO: add serialization for saving data
+	public JSONObject toJSONObject(){
+		return null;
+	}
 }
