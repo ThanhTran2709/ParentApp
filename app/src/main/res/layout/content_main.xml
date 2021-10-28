@@ -5,4 +5,50 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+    <Button
+        android:id="@+id/timer_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/timer"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="@+id/flip_a_coin_button"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/flip_a_coin_button"
+        app:layout_constraintTop_toBottomOf="@+id/flip_a_coin_button" />
+
+    <Button
+        android:id="@+id/flip_a_coin_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/flip_a_coin"
+        app:layout_constraintEnd_toEndOf="@+id/my_children_button"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/my_children_button"
+        app:layout_constraintTop_toBottomOf="@+id/my_children_button" />
+
+    <Button
+        android:id="@+id/my_children_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/my_children"
+        app:layout_constraintEnd_toEndOf="@+id/main_menu_title"
+        app:layout_constraintStart_toStartOf="@+id/main_menu_title"
+        app:layout_constraintTop_toBottomOf="@+id/main_menu_title" />
+
+    <TextView
+        android:id="@+id/main_menu_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:text="@string/main_menu_text"
+        android:textSize="24sp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.473"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

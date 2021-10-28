@@ -10,6 +10,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ParentApp">
         <activity
+            android:name=".TimerActivity"
+            android:exported="true" />
+        <activity
+            android:name=".CoinFlipActivity"
+            android:exported="true" />
+        <activity
+            android:name=".ChildrenActivity"
+            android:exported="true" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
