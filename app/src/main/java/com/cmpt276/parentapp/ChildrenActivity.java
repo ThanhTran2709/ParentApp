@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
@@ -19,10 +20,19 @@ import android.widget.RelativeLayout;
 
 import com.cmpt276.model.Child;
 import com.cmpt276.model.Options;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 public class ChildrenActivity extends AppCompatActivity {
 
-    private Options options = Options.getInstance();
+    private Options options;
 
     public static Intent getIntent(Context context){
         return new Intent(context, ChildrenActivity.class);
@@ -33,15 +43,13 @@ public class ChildrenActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_children);
+        options = Options.getInstance(this);
 
-        refreshDisplay();
-    }
-
-    private void refreshDisplay(){
-        populateList();
         listItemClick();
         setUpAddBtn();
+        populateList();
     }
+
 
     private void setUpAddBtn() {
         Button addBtn = (Button) findViewById(R.id.addBtn);
@@ -87,7 +95,10 @@ public class ChildrenActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int choice) {
                         options.addChild(new Child(nameInput.getText().toString(), Integer.parseInt(ageInput.getText().toString())));
-                        refreshDisplay();
+
+                        Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
+                        Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
+                        populateList();
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -141,11 +152,11 @@ public class ChildrenActivity extends AppCompatActivity {
                     ageInput.setLayoutParams(params);
 
                     nameInput.setInputType(InputType.TYPE_CLASS_TEXT);
-                    nameInput.setHint("Enter name here");
+                    nameInput.setText(options.getChildList().get(index).getName());
                     builder.setView(nameInput);
 
                     ageInput.setInputType(InputType.TYPE_CLASS_NUMBER);
-                    ageInput.setHint("Enter age here");
+                    ageInput.setText(String.valueOf(options.getChildList().get(index).getAge()));
                     builder.setView(ageInput);
 
                     dialogLayout.addView(nameInput);
@@ -159,7 +170,9 @@ public class ChildrenActivity extends AppCompatActivity {
                             String newName = nameInput.getText().toString();
                             int newAge = Integer.parseInt(ageInput.getText().toString());
                             options.editChild(index, newName, newAge);
-                            refreshDisplay();
+                            Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
+                            Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
+                            populateList();
                         }
                     });
                     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -173,7 +186,9 @@ public class ChildrenActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int choice) {
                             options.removeChild(index);
-                            refreshDisplay();
+                            Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
+                            Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
+                            populateList();
                         }
                     });
 
@@ -182,4 +197,5 @@ public class ChildrenActivity extends AppCompatActivity {
             });
         }
     }
+
 }
