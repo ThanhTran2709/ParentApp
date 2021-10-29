@@ -1,8 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".TimerActivity">
+
+    <TextView
+        android:id="@+id/minutes_text"
+        android:layout_width="15dp"
+        android:layout_height="23dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/minutes"
+        app:layout_constraintBottom_toBottomOf="@+id/colon"
+        app:layout_constraintEnd_toStartOf="@+id/colon"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/timer_title"
+        app:layout_constraintTop_toTopOf="@+id/colon"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/colon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="148dp"
+        android:text="@string/colon_text"
+        app:layout_constraintEnd_toEndOf="@+id/timer_title"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="@+id/timer_title"
+        app:layout_constraintTop_toBottomOf="@+id/timer_title" />
+
+    <TextView
+        android:id="@+id/seconds_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="@string/seconds"
+        app:layout_constraintBottom_toBottomOf="@+id/colon"
+        app:layout_constraintEnd_toEndOf="@+id/timer_title"
+        app:layout_constraintHorizontal_bias="0.75"
+        app:layout_constraintStart_toEndOf="@+id/colon"
+        app:layout_constraintTop_toTopOf="@+id/colon"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/timer_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/timeout_timer_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/pause_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="84dp"
+        android:layout_marginTop="156dp"
+        android:text="@string/pause_button_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/colon" />
+
+    <Button
+        android:id="@+id/reset_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="68dp"
+        android:text="@string/reset_button_text"
+        app:layout_constraintBottom_toBottomOf="@+id/pause_play"
+        app:layout_constraintStart_toEndOf="@+id/pause_play"
+        app:layout_constraintTop_toTopOf="@+id/pause_play"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <Button
+        android:id="@+id/timer_options_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:text="@string/timer_options_button_text"
+        app:layout_constraintEnd_toEndOf="@+id/reset_button"
+        app:layout_constraintHorizontal_bias="0.489"
+        app:layout_constraintStart_toStartOf="@+id/pause_play"
+        app:layout_constraintTop_toBottomOf="@+id/pause_play" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
