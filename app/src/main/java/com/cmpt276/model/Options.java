@@ -20,11 +20,26 @@ public class Options {
 
     private void fillChildListString() {
         if (childList.size() == 0)
-            childListToString.add("No Games Yet");
+            return;
         else
             for (int i = 0; i < childList.size(); i ++)
                 childListToString.add(childList.get(i).getName() + "\t" + childList.get(i).getAge());
 
+    }
+
+    public void addChild(Child child){
+        childList.add(child);
+        childListToString.add(child.getName() + "\t" + child.getAge());
+    }
+
+    public void removeChild(int index){
+        childList.remove(index);
+        childListToString.remove(index);
+    }
+
+    public void editChild(int index, String name, int age){
+        childList.get(index).setName(name);
+        childList.get(index).setAge(age);
     }
 
     public static Options getInstance(){
