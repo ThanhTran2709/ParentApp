@@ -15,5 +15,7 @@
     <string name="change_child">Change Child</string>
     <string name="heads">Heads</string>
     <string name="tails">Tails</string>
+    <string name="no_children">No child selected</string>
+    <string name="cancel">Cancel</string>
 
 </resources>

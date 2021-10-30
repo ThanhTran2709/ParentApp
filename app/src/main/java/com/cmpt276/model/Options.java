@@ -107,7 +107,6 @@ public class Options {
         editor.apply();
     }
 
-
     //The next 4 functions implement shared preferences for ArrayLists of Child and String type
     public static void saveChildListInPrefs(Context context, ArrayList<Child> list) {
         Gson gson = new Gson();

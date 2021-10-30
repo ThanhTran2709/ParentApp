@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.cmpt276.model.Child;
@@ -16,7 +18,6 @@ import com.cmpt276.model.Options;
 
 import java.util.ArrayList;
 
-//TODO: be able to select which child is flipping
 //TODO: add a way to view and clear flip history
 public class CoinFlipActivity extends AppCompatActivity {
 
@@ -34,10 +35,34 @@ public class CoinFlipActivity extends AppCompatActivity {
 
         options = Options.getInstance(this);
 
-        TextView childSelection = findViewById(R.id.textViewChild);
+        updateUI();
 
         Button buttonFlipCoin = findViewById(R.id.buttonFlipCoin);
         buttonFlipCoin.setOnClickListener(getFlipCoinListener());
+
+        Button buttonChangeChild = findViewById(R.id.buttonChangeChild);
+        buttonChangeChild.setOnClickListener(getChangeChildListener());
+
+        RadioGroup group = findViewById(R.id.radioGroupFlipChoice);
+        group.setOnCheckedChangeListener(getGroupOnCheckChangeListener());
+    }
+
+    private void updateUI() {
+        TextView textViewChild = findViewById(R.id.textViewChild);
+
+        ArrayList<Child> children = options.getChildList();
+        int index = options.getChildFlipIndex(CoinFlipActivity.this);
+
+        //if there's no children, essentially hide the text view.
+        if (children.size() == 0){
+            textViewChild.setText("");
+        }
+        else if (index < 0 || index >= children.size()){
+            textViewChild.setText(R.string.no_children);
+        }
+        else {
+            textViewChild.setText(getString(R.string.current_child, children.get(index).getName()));
+        }
     }
 
     private View.OnClickListener getFlipCoinListener() {
@@ -91,6 +116,44 @@ public class CoinFlipActivity extends AppCompatActivity {
                     assert false;
                     break;
             }
+
+            updateUI();
+        };
+    }
+
+    private View.OnClickListener getChangeChildListener() {
+        return view -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(CoinFlipActivity.this);
+
+            View changeChildView = CoinFlipActivity.this.getLayoutInflater().inflate(R.layout.change_child_flip, null);
+            builder.setView(changeChildView);
+
+            ArrayList<Child> children = options.getChildList();
+            String[] names = new String[children.size()];
+            for (int i = 0; i < names.length; i++){
+                names[i] = children.get(i).getName();
+            }
+
+            builder.setItems(names, (dialogInterface, i) -> {
+                options.setChildFlipIndex(CoinFlipActivity.this, i);
+                updateUI();
+                dialogInterface.dismiss();
+            });
+
+            builder.setTitle(R.string.change_child);
+
+            builder.setNegativeButton(R.string.cancel, (dialogInterface, i) -> {
+                dialogInterface.dismiss();
+            });
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        };
+    }
+
+    private AdapterView.OnItemClickListener getListViewClickListener() {
+        return (adapterView, view, i, l) -> {
+            options.setChildFlipIndex(CoinFlipActivity.this, i);
         };
     }
 
