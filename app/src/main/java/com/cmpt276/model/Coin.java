@@ -15,8 +15,9 @@ import java.util.Random;
 public class Coin {
 	//TODO: once child is done, make serializer to and from JSON objects.
 
-	private static final int TAILS = 0;
-	private static final int HEADS = 1;
+	public static final int NO_CHOICE = -1;
+	public static final int TAILS = 0;
+	public static final int HEADS = 1;
 
 	private static final int NUM_RESULTS = 2;
 
@@ -31,6 +32,13 @@ public class Coin {
 	public Coin(Child child, int flipChoice){
 		this.child = child;
 		this.flipChoice = flipChoice;
+		this.time = LocalDateTime.now();
+		this.flipResult = randomCoinFlip();
+	}
+
+	public Coin(){
+		this.child = null;
+		this.flipChoice = NO_CHOICE;
 		this.time = LocalDateTime.now();
 		this.flipResult = randomCoinFlip();
 	}
