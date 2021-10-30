@@ -12,5 +12,8 @@
     <!-- Coin flip activity strings -->
     <string name="flip_a_coin">Flip A Coin!</string>
     <string name="current_child">Current child: %1$s</string>
+    <string name="change_child">Change Child</string>
+    <string name="heads">Heads</string>
+    <string name="tails">Tails</string>
 
 </resources>

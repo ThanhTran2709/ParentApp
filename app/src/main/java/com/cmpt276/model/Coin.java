@@ -16,8 +16,8 @@ public class Coin {
 	//TODO: once child is done, make serializer to and from JSON objects.
 
 	public static final int NO_CHOICE = -1;
-	public static final int TAILS = 0;
-	public static final int HEADS = 1;
+	public static final int HEADS = 0;
+	public static final int TAILS = 1;
 
 	private static final int NUM_RESULTS = 2;
 

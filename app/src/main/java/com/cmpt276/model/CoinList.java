@@ -15,10 +15,6 @@ public class CoinList {
 
 	public CoinList(){}
 
-	public CoinList(JSONObject jsonObject){
-
-	}
-
 	public Coin get(int index){
 		return coinFlipRecords.get(index);
 	}
@@ -33,9 +29,5 @@ public class CoinList {
 
 	public void clear(){
 		coinFlipRecords.clear();
-	}
-
-	public JSONObject toJSONObject(){
-		return null;
 	}
 }

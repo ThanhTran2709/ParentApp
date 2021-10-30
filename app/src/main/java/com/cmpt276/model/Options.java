@@ -18,6 +18,9 @@ public class Options {
     private static final String CHILD_TAG = "Child";
     private static final String STRING_TAG = "String";
 
+    private static final String CHILD_FLIP_INDEX_TAG = "ChildFlipIndex";
+    private static final String FLIP_LIST_TAG = "FlipList";
+
     private Options(Context context) {
         if (getChildListFromPrefs(context).size() == 0) {
             childList = new ArrayList<>();
@@ -55,9 +58,53 @@ public class Options {
         childListToString.set(index, name + "\t" + age);
     }
 
-
     public ArrayList<Child> getChildList() {
         return childList;
+    }
+
+    public void setChildFlipIndex(Context context, int index){
+        SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putInt(CHILD_FLIP_INDEX_TAG, index);
+
+        editor.apply();
+    }
+
+    public int getChildFlipIndex(Context context){
+        SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
+        return pref.getInt(CHILD_FLIP_INDEX_TAG, 0);
+    }
+
+    public void addCoinFlip(Context context, Coin coin){
+        SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        String jsonString = pref.getString(FLIP_LIST_TAG, null);
+
+        Gson gson = new Gson();
+        Type type = new TypeToken<ArrayList<Coin>>(){}.getType();
+
+        ArrayList<Coin> flipHistory;
+
+        if (jsonString == null){
+            flipHistory = new ArrayList<>();
+        }
+        else {
+            flipHistory = gson.fromJson(jsonString, type);
+            flipHistory.add(coin);
+        }
+
+        jsonString = gson.toJson(flipHistory);
+        editor.putString(FLIP_LIST_TAG, jsonString);
+
+        editor.apply();
+    }
+
+    public void clearCoinFlips(Context context){
+        SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.remove(FLIP_LIST_TAG);
+
+        editor.apply();
     }
 
 
@@ -73,7 +120,7 @@ public class Options {
     }
 
     public static ArrayList<Child> getChildListFromPrefs(Context context) {
-        SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, context.MODE_PRIVATE);
+        SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
         String jsonString = pref.getString(CHILD_TAG, "");
 
         Gson gson = new Gson();

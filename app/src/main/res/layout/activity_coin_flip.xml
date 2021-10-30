@@ -10,7 +10,7 @@
         android:id="@+id/buttonFlipCoin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="64dp"
         android:text="@string/flip_a_coin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -35,4 +35,37 @@
         app:layout_constraintBottom_toTopOf="@+id/buttonFlipCoin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/buttonChangeChild"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/change_child"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <RadioGroup
+        android:id="@+id/radioGroupFlipChoice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonFlipCoin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/buttonFlipCoin" >
+
+        <RadioButton
+            android:id="@+id/radioButtonHeads"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/heads" />
+
+        <RadioButton
+            android:id="@+id/radioButtonTails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/tails" />
+    </RadioGroup>
 </androidx.constraintlayout.widget.ConstraintLayout>
