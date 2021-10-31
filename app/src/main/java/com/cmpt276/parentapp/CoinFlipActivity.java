@@ -43,6 +43,9 @@ public class CoinFlipActivity extends AppCompatActivity {
         Button buttonChangeChild = findViewById(R.id.buttonChangeChild);
         buttonChangeChild.setOnClickListener(getChangeChildListener());
 
+        Button buttonViewHistory = findViewById(R.id.buttonViewFlipHistory);
+        buttonViewHistory.setOnClickListener(getViewHistoryListener());
+
         RadioGroup group = findViewById(R.id.radioGroupFlipChoice);
         group.setOnCheckedChangeListener(getGroupOnCheckChangeListener());
     }
@@ -148,6 +151,13 @@ public class CoinFlipActivity extends AppCompatActivity {
 
             AlertDialog dialog = builder.create();
             dialog.show();
+        };
+    }
+
+    private View.OnClickListener getViewHistoryListener() {
+        return view -> {
+            Intent intent = CoinFlipHistoryActivity.getIntent(CoinFlipActivity.this);
+            startActivity(intent);
         };
     }
 

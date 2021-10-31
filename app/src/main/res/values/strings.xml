@@ -17,5 +17,12 @@
     <string name="tails">Tails</string>
     <string name="no_children">No child selected</string>
     <string name="cancel">Cancel</string>
+    <string name="history">History</string>
+
+    <!-- Flip history activity strings -->
+    <string name="coin_flip_format">Flip: %1$s | Picked: %2$s | Time: %3$s</string>
+    <string name="clear">Clear</string>
+    <string name="confirm_reset">Are you sure  you want to clear the flip history?</string>
+    <string name="reset">Reset</string>
 
 </resources>

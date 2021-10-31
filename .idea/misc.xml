@@ -4,9 +4,11 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/MKT/AndroidStudioProjects/ParentApp/app/src/main/res/layout/activity_children.xml" value="0.19791666666666666" />
-        <entry key="..\:/Users/MKT/AndroidStudioProjects/ParentApp/app/src/main/res/layout/activity_coin_flip.xml" value="0.33" />
+        <entry key="..\:/Users/MKT/AndroidStudioProjects/ParentApp/app/src/main/res/layout/activity_coin_flip.xml" value="0.25" />
+        <entry key="..\:/Users/MKT/AndroidStudioProjects/ParentApp/app/src/main/res/layout/activity_coin_flip_history.xml" value="0.25" />
         <entry key="..\:/Users/MKT/AndroidStudioProjects/ParentApp/app/src/main/res/layout/change_child_flip.xml" value="0.19791666666666666" />
         <entry key="..\:/Users/MKT/AndroidStudioProjects/ParentApp/app/src/main/res/layout/children_list.xml" value="0.19791666666666666" />
+        <entry key="..\:/Users/MKT/AndroidStudioProjects/ParentApp/app/src/main/res/layout/flip_history_list_item.xml" value="0.33" />
         <entry key="..\:/Users/MKT/AndroidStudioProjects/ParentApp/app/src/main/res/layout/list_item.xml" value="0.19791666666666666" />
         <entry key="..\:/Users/divya/AndroidStudioProjects/ParentApp/app/src/main/res/layout/activity_main.xml" value="0.7333333333333334" />
         <entry key="..\:/Users/divya/AndroidStudioProjects/ParentApp/app/src/main/res/layout/content_main.xml" value="0.8629032258064516" />
