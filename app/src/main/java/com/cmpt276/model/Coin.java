@@ -3,6 +3,7 @@ package com.cmpt276.model;
 import org.json.JSONObject;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Random;
 
 /**
@@ -68,7 +69,9 @@ public class Coin {
 		return result;
 	}
 
-	public JSONObject toJSONObject(){
-		return null;
+	public String getTimeFormatted(){
+		String pattern = "uuuu-MMM-dd hh:mm a";
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+		return time.format(formatter);
 	}
 }

@@ -20,7 +20,9 @@
     <string name="history">History</string>
 
     <!-- Flip history activity strings -->
-    <string name="coin_flip_format">Flip: %1$s | Picked: %2$s | Time: %3$s</string>
+    <string name="coin_flip_result">Flip: %1$s</string>
+    <string name="coin_flip_picked">Picked: %1$s</string>
+    <string name="coin_flip_time">Time: %1$s</string>
     <string name="clear">Clear</string>
     <string name="confirm_reset">Are you sure  you want to clear the flip history?</string>
     <string name="reset">Reset</string>
