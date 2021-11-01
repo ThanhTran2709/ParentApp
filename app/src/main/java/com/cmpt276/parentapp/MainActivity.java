@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private void setUpTimerButton() {
         Button timerButton = findViewById(R.id.timer_button);
         timerButton.setOnClickListener(view -> {
-            Intent i = TimerActivity.getIntent(MainActivity.this);
+            Intent i = TimerOptions.getIntent(MainActivity.this);
             startActivity(i);
         });
     }

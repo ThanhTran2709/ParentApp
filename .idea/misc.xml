@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/divya/AndroidStudioProjects/ParentApp/app/src/main/res/layout/activity_timer.xml" value="0.17798913043478262" />
+        <entry key="..\:/Users/divya/AndroidStudioProjects/ParentApp/app/src/main/res/layout/activity_timer_options.xml" value="0.10190217391304347" />
         <entry key="app/src/main/res/layout/activity_children.xml" value="0.10190217391304347" />
         <entry key="app/src/main/res/layout/activity_coin_flip.xml" value="0.10190217391304347" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.3333333333333333" />
