@@ -7,20 +7,7 @@
     tools:context=".TimerActivity">
 
     <TextView
-        android:id="@+id/minutes_text"
-        android:layout_width="15dp"
-        android:layout_height="23dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/minutes"
-        app:layout_constraintBottom_toBottomOf="@+id/colon"
-        app:layout_constraintEnd_toStartOf="@+id/colon"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/timer_title"
-        app:layout_constraintTop_toTopOf="@+id/colon"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
-        android:id="@+id/colon"
+        android:id="@+id/time_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="148dp"
@@ -29,19 +16,6 @@
         app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="@+id/timer_title"
         app:layout_constraintTop_toBottomOf="@+id/timer_title" />
-
-    <TextView
-        android:id="@+id/seconds_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="@string/seconds"
-        app:layout_constraintBottom_toBottomOf="@+id/colon"
-        app:layout_constraintEnd_toEndOf="@+id/timer_title"
-        app:layout_constraintHorizontal_bias="0.75"
-        app:layout_constraintStart_toEndOf="@+id/colon"
-        app:layout_constraintTop_toTopOf="@+id/colon"
-        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/timer_title"
@@ -61,7 +35,7 @@
         android:layout_marginTop="156dp"
         android:text="@string/pause_button_text"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/colon" />
+        app:layout_constraintTop_toBottomOf="@+id/time_text" />
 
     <Button
         android:id="@+id/reset_button"
