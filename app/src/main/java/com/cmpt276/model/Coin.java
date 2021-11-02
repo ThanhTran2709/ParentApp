@@ -22,6 +22,8 @@ public class Coin {
 
 	private static final int NUM_RESULTS = 2;
 
+	private static final Child EMPTY_CHILD = new Child("");
+
 	private static final Random rng = new Random();
 
 	private Child child;
@@ -38,14 +40,10 @@ public class Coin {
 	}
 
 	public Coin(){
-		this.child = null;
+		this.child = EMPTY_CHILD;
 		this.flipChoice = NO_CHOICE;
 		this.time = LocalDateTime.now();
 		this.flipResult = randomCoinFlip();
-	}
-
-	public Coin(JSONObject jsonObject){
-
 	}
 
 	public Child getChild() {

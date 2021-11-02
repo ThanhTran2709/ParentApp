@@ -95,8 +95,8 @@ public class Options {
         }
         else {
             flipHistory = gson.fromJson(jsonString, type);
-            flipHistory.add(coin);
         }
+        flipHistory.add(coin);
 
         jsonString = gson.toJson(flipHistory);
         editor.putString(FLIP_LIST_TAG, jsonString);

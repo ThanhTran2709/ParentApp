@@ -60,10 +60,11 @@ public class CoinFlipActivity extends AppCompatActivity {
         if (children.size() == 0){
             textViewChild.setText("");
         }
-        else if (index < 0 || index >= children.size()){
-            textViewChild.setText(R.string.no_children);
-        }
         else {
+            //default index to 0 if the index is out of bounds, either by deletion of a child or some other means
+            if (index < 0 || index >= children.size()){
+                index = 0;
+            }
             textViewChild.setText(getString(R.string.current_child, children.get(index).getName()));
         }
     }
