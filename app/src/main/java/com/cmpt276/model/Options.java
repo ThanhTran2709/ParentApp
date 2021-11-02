@@ -9,6 +9,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
+//Options class implement Shared Preferences to save data between app runs
 public class Options {
     private ArrayList<Child> childList;
     private ArrayList<String> childListToString;
@@ -62,6 +63,8 @@ public class Options {
 
 
     //The next 4 functions implement shared preferences for ArrayLists of Child and String type
+
+    //Save Child List to Shared Prefs
     public static void saveChildListInPrefs(Context context, ArrayList<Child> list) {
         Gson gson = new Gson();
         String jsonString = gson.toJson(list);
@@ -72,6 +75,7 @@ public class Options {
         editor.apply();
     }
 
+    //Get Child List to Shared Prefs
     public static ArrayList<Child> getChildListFromPrefs(Context context) {
         SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, context.MODE_PRIVATE);
         String jsonString = pref.getString(CHILD_TAG, "");
@@ -86,6 +90,7 @@ public class Options {
         return list;
     }
 
+    //Save Child List in String form to Shared Prefs
     public static void saveStringListInPrefs(Context context, ArrayList<String> list) {
         Gson gson = new Gson();
         String jsonString = gson.toJson(list);
@@ -96,6 +101,7 @@ public class Options {
         editor.apply();
     }
 
+    //Get Child List in String form to Shared Prefs
     public static ArrayList<String> getStringListFromPrefs(Context context) {
         SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
         String jsonString = pref.getString(STRING_TAG, "");

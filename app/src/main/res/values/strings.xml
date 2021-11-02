@@ -9,5 +9,12 @@
     <string name="my_children">My Children</string>
     <string name="flip_a_coin">Flip A Coin!</string>
     <string name="timer">Timer</string>
+    <string name="addBtnTitle">Enter or edit name and age:</string>
+    <string name="nameHint">Enter name here</string>
+    <string name="ageHint">Enter age here</string>
+    <string name="addText">Add</string>
+    <string name="cancelText">Cancel</string>
+    <string name="saveText">Save</string>
+    <string name="deleteText">Delete</string>
 
 </resources>
