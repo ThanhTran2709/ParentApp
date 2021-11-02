@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -13,6 +14,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -43,7 +45,7 @@ public class ChildrenActivity extends AppCompatActivity {
 
     private void setUpAddBtn() {
         Button addBtn = (Button) findViewById(R.id.addBtn);
-        addBtn.setText("Add new child");
+        addBtn.setText(R.string.addBtnText);
 
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,45 +55,41 @@ public class ChildrenActivity extends AppCompatActivity {
                 LinearLayout dialogLayout = new LinearLayout(ChildrenActivity.this);
 
                 //TO DO: Reformat UI with XML
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                        RelativeLayout.LayoutParams.WRAP_CONTENT,
-                        RelativeLayout.LayoutParams.WRAP_CONTENT
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
                 );
-                params.setMargins(5, 5, 5, 0);
+                params.setMargins(5, 5, 5, 5);
 
                 dialogLayout.setOrientation(LinearLayout.VERTICAL);
 
-                builder.setTitle("Enter or edit name and age:");
+                builder.setTitle(R.string.addBtnTitle);
 
+                // displays the user input bar
                 final EditText nameInput = new EditText(ChildrenActivity.this);
-                final EditText ageInput = new EditText(ChildrenActivity.this);
                 nameInput.setLayoutParams(params);
-                ageInput.setLayoutParams(params);
 
                 nameInput.setInputType(InputType.TYPE_CLASS_TEXT);
-                nameInput.setHint("Enter name here");
+                nameInput.setHint(R.string.nameHint);
                 builder.setView(nameInput);
 
-                ageInput.setInputType(InputType.TYPE_CLASS_NUMBER);
-                ageInput.setHint("Enter age here");
-                builder.setView(ageInput);
-
                 dialogLayout.addView(nameInput);
-                dialogLayout.addView(ageInput);// displays the user input bar
                 builder.setView(dialogLayout);
 
                 // Set up the buttons to add or exit
-                builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton(R.string.addText, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int choice) {
-                        options.addChild(new Child(nameInput.getText().toString(), Integer.parseInt(ageInput.getText().toString())));
+
+                        options.addChild(new Child(nameInput.getText().toString()));
 
                         Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
                         Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
                         populateList();
+
                     }
                 });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(R.string.cancelText, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int choice) {
                         dialog.cancel();
@@ -126,53 +124,49 @@ public class ChildrenActivity extends AppCompatActivity {
                     LinearLayout dialogLayout = new LinearLayout(ChildrenActivity.this);
 
                     //TO DO: Reformat UI with XML
-                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                            RelativeLayout.LayoutParams.WRAP_CONTENT,
-                            RelativeLayout.LayoutParams.WRAP_CONTENT
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
                     );
-                    params.setMargins(5, 5, 5, 0);
+                    params.setMargins(5, 5, 5, 5);
 
                     dialogLayout.setOrientation(LinearLayout.VERTICAL);
 
-                    builder.setTitle("Enter or edit name and age:");
+                    builder.setTitle(R.string.addBtnTitle);
 
+                    // displays the user input bar
                     final EditText nameInput = new EditText(ChildrenActivity.this);
-                    final EditText ageInput = new EditText(ChildrenActivity.this);
                     nameInput.setLayoutParams(params);
-                    ageInput.setLayoutParams(params);
 
                     nameInput.setInputType(InputType.TYPE_CLASS_TEXT);
                     nameInput.setText(options.getChildList().get(index).getName());
                     builder.setView(nameInput);
 
-                    ageInput.setInputType(InputType.TYPE_CLASS_NUMBER);
-                    ageInput.setText(String.valueOf(options.getChildList().get(index).getAge()));
-                    builder.setView(ageInput);
-
                     dialogLayout.addView(nameInput);
-                    dialogLayout.addView(ageInput);// displays the user input bar
                     builder.setView(dialogLayout);
 
                     // Set up the buttons to save or exit
-                    builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    builder.setPositiveButton(R.string.saveText, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int choice) {
-                            String newName = nameInput.getText().toString();
-                            int newAge = Integer.parseInt(ageInput.getText().toString());
-                            options.editChild(index, newName, newAge);
+                            
+                            options.editChild(index, nameInput.getText().toString());
                             Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
                             Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
+                            Toast.makeText(ChildrenActivity.this, ChildrenActivity.this.getString(R.string.emptyNameErrorTxt), Toast.LENGTH_SHORT).show();
                             populateList();
+
+
                         }
                     });
-                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    builder.setNegativeButton(R.string.cancelText, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int choice) {
                             dialog.cancel();
                         }
                     });
 
-                    builder.setNeutralButton("Delete", new DialogInterface.OnClickListener() {
+                    builder.setNeutralButton(R.string.deleteText, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int choice) {
                             options.removeChild(index);
