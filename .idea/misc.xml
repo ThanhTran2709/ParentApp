@@ -3,19 +3,16 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/Jocelyn Tandrea/AndroidStudioProjects/CMPT276P/app/src/main/res/drawable/rounde_corner.xml" value="0.22552083333333334" />
-        <entry key="..\:/Users/Jocelyn Tandrea/AndroidStudioProjects/CMPT276P/app/src/main/res/drawable/rounded_corner.xml" value="0.22552083333333334" />
-        <entry key="..\:/Users/Jocelyn Tandrea/AndroidStudioProjects/CMPT276P/app/src/main/res/layout/activity_children.xml" value="0.18" />
-        <entry key="..\:/Users/Jocelyn Tandrea/AndroidStudioProjects/CMPT276P/app/src/main/res/layout/activity_coin_flip.xml" value="0.209375" />
-        <entry key="..\:/Users/Jocelyn Tandrea/AndroidStudioProjects/CMPT276P/app/src/main/res/layout/activity_main.xml" value="0.209375" />
-        <entry key="..\:/Users/Jocelyn Tandrea/AndroidStudioProjects/CMPT276P/app/src/main/res/layout/activity_timer.xml" value="0.209375" />
-        <entry key="..\:/Users/Jocelyn Tandrea/AndroidStudioProjects/CMPT276P/app/src/main/res/layout/content_main.xml" value="0.25" />
-        <entry key="..\:/Users/divya/AndroidStudioProjects/ParentApp/app/src/main/res/layout/activity_main.xml" value="0.7333333333333334" />
-        <entry key="..\:/Users/divya/AndroidStudioProjects/ParentApp/app/src/main/res/layout/content_main.xml" value="0.8629032258064516" />
+        <entry key="app/src/main/res/layout/activity_children.xml" value="0.10190217391304347" />
+        <entry key="app/src/main/res/layout/activity_coin_flip.xml" value="0.10190217391304347" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.3333333333333333" />
+        <entry key="app/src/main/res/layout/activity_timer.xml" value="0.10190217391304347" />
+        <entry key="app/src/main/res/layout/content_children.xml" value="0.161231884057971" />
+        <entry key="app/src/main/res/layout/content_main.xml" value="0.22" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
