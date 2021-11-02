@@ -2,12 +2,19 @@ package com.cmpt276.parentapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.cmpt276.parentapp.databinding.ActivityMainBinding;
+
+import java.util.Calendar;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        setUpWelcomeText();
+        setUpAnimation();
         setUpMyChildrenButton();
         setUpCoinFlipButton();
         setUpTimerButton();
@@ -46,5 +55,50 @@ public class MainActivity extends AppCompatActivity {
             Intent i = ChildrenActivity.getIntent(MainActivity.this);
             startActivity(i);
         });
+    }
+
+    private void setUpWelcomeText(){
+        TextView welcomeText = findViewById(R.id.main_menu_title);
+        Calendar currentTime = Calendar.getInstance();
+        int hour = currentTime.get(Calendar.HOUR_OF_DAY);
+        if(hour < 12){
+            welcomeText.setText("Good Morning!");
+        }
+        else if(hour < 18){
+            welcomeText.setText("Good Afternoon!");
+        }
+        else{
+            welcomeText.setText("Good Evening!");
+        }
+
+    }
+
+    private void setUpAnimation(){
+        Animation slideIn = AnimationUtils.loadAnimation(this, R.anim.slide_in);
+        Animation slideIn2 = AnimationUtils.loadAnimation(this, R.anim.slide_in);
+        Animation slideIn3 = AnimationUtils.loadAnimation(this, R.anim.slide_in);
+        Button timerButton = findViewById(R.id.timer_button);
+        Button coinFlipButton = findViewById(R.id.flip_a_coin_button);
+        Button myChildrenButton = findViewById(R.id.my_children_button);
+        coinFlipButton.setVisibility(View.INVISIBLE);
+        timerButton.setVisibility(View.INVISIBLE);
+        myChildrenButton.startAnimation(slideIn);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                coinFlipButton.setVisibility(View.VISIBLE);
+                coinFlipButton.startAnimation(slideIn2);
+            }
+        }, 500);
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                timerButton.setVisibility(View.VISIBLE);
+                timerButton.startAnimation(slideIn3);
+            }
+        }, 1300);
+
+
     }
 }
