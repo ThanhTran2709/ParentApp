@@ -7,10 +7,14 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.cmpt276.parentapp.databinding.ActivityMainBinding;
+
+import java.util.Calendar;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        setUpWelcomeText();
         setUpAnimation();
         setUpMyChildrenButton();
         setUpCoinFlipButton();
@@ -50,6 +55,22 @@ public class MainActivity extends AppCompatActivity {
             Intent i = ChildrenActivity.getIntent(MainActivity.this);
             startActivity(i);
         });
+    }
+
+    private void setUpWelcomeText(){
+        TextView welcomeText = findViewById(R.id.main_menu_title);
+        Calendar currentTime = Calendar.getInstance();
+        int hour = currentTime.get(Calendar.HOUR_OF_DAY);
+        if(hour < 12){
+            welcomeText.setText("Good Morning!");
+        }
+        else if(hour < 18){
+            welcomeText.setText("Good Afternoon!");
+        }
+        else{
+            welcomeText.setText("Good Evening!");
+        }
+
     }
 
     private void setUpAnimation(){
