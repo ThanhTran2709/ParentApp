@@ -42,7 +42,7 @@ public class Options {
 
     public void addChild(Child child){
         childList.add(child);
-        childListToString.add(child.getName() + "\t" + child.getAge());
+        childListToString.add(child.getName());
     }
 
     public void removeChild(int index){
@@ -50,10 +50,9 @@ public class Options {
         childListToString.remove(index);
     }
 
-    public void editChild(int index, String name, int age){
+    public void editChild(int index, String name){
         childList.get(index).setName(name);
-        childList.get(index).setAge(age);
-        childListToString.set(index, name + "\t" + age);
+        childListToString.set(index, name);
     }
 
 

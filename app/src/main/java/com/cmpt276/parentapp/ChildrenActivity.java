@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -17,6 +18,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.cmpt276.model.Child;
 import com.cmpt276.model.Options;
@@ -53,7 +55,7 @@ public class ChildrenActivity extends AppCompatActivity {
 
     private void setUpAddBtn() {
         Button addBtn = (Button) findViewById(R.id.addBtn);
-        addBtn.setText("Add new child");
+        addBtn.setText(R.string.addBtnText);
 
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,31 +77,26 @@ public class ChildrenActivity extends AppCompatActivity {
 
                 // displays the user input bar
                 final EditText nameInput = new EditText(ChildrenActivity.this);
-                final EditText ageInput = new EditText(ChildrenActivity.this);
                 nameInput.setLayoutParams(params);
-                ageInput.setLayoutParams(params);
 
                 nameInput.setInputType(InputType.TYPE_CLASS_TEXT);
                 nameInput.setHint(R.string.nameHint);
                 builder.setView(nameInput);
 
-                ageInput.setInputType(InputType.TYPE_CLASS_NUMBER);
-                ageInput.setHint(R.string.ageHint);
-                builder.setView(ageInput);
-
                 dialogLayout.addView(nameInput);
-                dialogLayout.addView(ageInput);
                 builder.setView(dialogLayout);
 
                 // Set up the buttons to add or exit
                 builder.setPositiveButton(R.string.addText, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int choice) {
-                        options.addChild(new Child(nameInput.getText().toString(), Integer.parseInt(ageInput.getText().toString())));
+
+                        options.addChild(new Child(nameInput.getText().toString()));
 
                         Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
                         Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
                         populateList();
+
                     }
                 });
                 builder.setNegativeButton(R.string.cancelText, new DialogInterface.OnClickListener() {
@@ -147,33 +144,29 @@ public class ChildrenActivity extends AppCompatActivity {
 
                     builder.setTitle(R.string.addBtnTitle);
 
+                    // displays the user input bar
                     final EditText nameInput = new EditText(ChildrenActivity.this);
-                    final EditText ageInput = new EditText(ChildrenActivity.this);
                     nameInput.setLayoutParams(params);
-                    ageInput.setLayoutParams(params);
 
                     nameInput.setInputType(InputType.TYPE_CLASS_TEXT);
                     nameInput.setText(options.getChildList().get(index).getName());
                     builder.setView(nameInput);
 
-                    ageInput.setInputType(InputType.TYPE_CLASS_NUMBER);
-                    ageInput.setText(String.valueOf(options.getChildList().get(index).getAge()));
-                    builder.setView(ageInput);
-
                     dialogLayout.addView(nameInput);
-                    dialogLayout.addView(ageInput);// displays the user input bar
                     builder.setView(dialogLayout);
 
                     // Set up the buttons to save or exit
                     builder.setPositiveButton(R.string.saveText, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int choice) {
-                            String newName = nameInput.getText().toString();
-                            int newAge = Integer.parseInt(ageInput.getText().toString());
-                            options.editChild(index, newName, newAge);
+                            
+                            options.editChild(index, nameInput.getText().toString());
                             Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
                             Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
+                            Toast.makeText(ChildrenActivity.this, ChildrenActivity.this.getString(R.string.emptyNameErrorTxt), Toast.LENGTH_SHORT).show();
                             populateList();
+
+
                         }
                     });
                     builder.setNegativeButton(R.string.cancelText, new DialogInterface.OnClickListener() {
