@@ -22,6 +22,9 @@
             android:layout_gravity="center"
             android:layout_marginEnd="60dp"
             android:layout_marginStart="60dp"
+            android:background="@color/white"
+
+            android:backgroundTint="#FFFFFF"
             app:cardCornerRadius="8dp"
             app:cardElevation="15dp">
 
@@ -31,10 +34,13 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:ems="10"
+                android:fontFamily="@font/moon_bold_font"
                 android:gravity="center"
-                android:inputType="textPersonName"
                 android:hint="Enter child name"
-                android:fontFamily="@font/moon_bold_font"/>
+                android:inputType="textPersonName"
+                android:backgroundTint="@android:color/darker_gray"
+                android:textColor="@color/black"
+                android:textColorHint="@android:color/darker_gray"/>
 
             <TextView
                 android:layout_width="wrap_content"
