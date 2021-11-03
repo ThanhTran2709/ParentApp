@@ -123,6 +123,8 @@ public class ChildrenActivity extends AppCompatActivity {
         ArrayAdapter<Child> adapter = new MyListAdapter();
         ListView childrenListView = (ListView) findViewById(R.id.childrenListView);
         childrenListView.setAdapter(adapter);
+        childrenListView.setDivider(null);
+        childrenListView.setDividerHeight(0);
     }
 
     private class MyListAdapter extends ArrayAdapter<Child>{
