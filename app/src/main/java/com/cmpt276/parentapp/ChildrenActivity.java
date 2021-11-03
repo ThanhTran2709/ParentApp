@@ -1,8 +1,11 @@
 package com.cmpt276.parentapp;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,13 +14,16 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cmpt276.model.Child;
@@ -30,6 +36,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class ChildrenActivity extends AppCompatActivity {
@@ -113,10 +120,33 @@ public class ChildrenActivity extends AppCompatActivity {
 
     //Populate list view with name and age of children
     private void populateList(){
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.children_list, options.getChildListToString());
-
+        ArrayAdapter<Child> adapter = new MyListAdapter();
         ListView childrenListView = (ListView) findViewById(R.id.childrenListView);
         childrenListView.setAdapter(adapter);
+    }
+
+    private class MyListAdapter extends ArrayAdapter<Child>{
+
+        public MyListAdapter(){
+            super(ChildrenActivity.this, R.layout.children_view, options.getChildList());
+        }
+        @SuppressLint("SetTextI18n")
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            View gamesView = convertView;
+            if (gamesView == null){
+                gamesView = getLayoutInflater().inflate(R.layout.children_view, parent, false);
+            }
+
+            Child currentChild = options.getChildList().get(position);
+
+            // set up game ListView item
+            TextView childName = gamesView.findViewById(R.id.child_name);
+            childName.setText(currentChild.getName());
+            return gamesView;
+        }
+
     }
 
     //Click handling for children list view
