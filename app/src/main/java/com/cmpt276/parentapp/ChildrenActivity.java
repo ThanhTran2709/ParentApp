@@ -6,38 +6,29 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.InputType;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cmpt276.model.Child;
 import com.cmpt276.model.Options;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.lang.reflect.Type;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class ChildrenActivity extends AppCompatActivity {
 
@@ -67,53 +58,55 @@ public class ChildrenActivity extends AppCompatActivity {
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Create dialog to edit children
-                AlertDialog.Builder builder = new AlertDialog.Builder(ChildrenActivity.this);
-                LinearLayout dialogLayout = new LinearLayout(ChildrenActivity.this);
-
-                //TO DO: Reformat UI with XML
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                );
-                params.setMargins(5, 5, 5, 5);
-
-                dialogLayout.setOrientation(LinearLayout.VERTICAL);
-
-                builder.setTitle(R.string.addBtnTitle);
-
-                // displays the user input bar
-                final EditText nameInput = new EditText(ChildrenActivity.this);
-                nameInput.setLayoutParams(params);
-
-                nameInput.setInputType(InputType.TYPE_CLASS_TEXT);
-                nameInput.setHint(R.string.nameHint);
-                builder.setView(nameInput);
-
-                dialogLayout.addView(nameInput);
-                builder.setView(dialogLayout);
-
-                // Set up the buttons to add or exit
-                builder.setPositiveButton(R.string.addText, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int choice) {
-
-                        options.addChild(new Child(nameInput.getText().toString()));
-
-                        Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
-                        Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
-                        populateList();
-
-                    }
-                });
-                builder.setNegativeButton(R.string.cancelText, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int choice) {
-                        dialog.cancel();
-                    }
-                });
-
-                builder.show();
+                ViewDialog alert = new ViewDialog();
+                alert.showDialog(ChildrenActivity.this);
+//                //Create dialog to edit children
+//                AlertDialog.Builder builder = new AlertDialog.Builder(ChildrenActivity.this);
+//                LinearLayout dialogLayout = new LinearLayout(ChildrenActivity.this);
+//
+//                //TO DO: Reformat UI with XML
+//                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+//                        LinearLayout.LayoutParams.WRAP_CONTENT,
+//                        LinearLayout.LayoutParams.WRAP_CONTENT
+//                );
+//                params.setMargins(5, 5, 5, 5);
+//
+//                dialogLayout.setOrientation(LinearLayout.VERTICAL);
+//
+//                builder.setTitle(R.string.addBtnTitle);
+//
+//                // displays the user input bar
+//                final EditText nameInput = new EditText(ChildrenActivity.this);
+//                nameInput.setLayoutParams(params);
+//
+//                nameInput.setInputType(InputType.TYPE_CLASS_TEXT);
+//                nameInput.setHint(R.string.nameHint);
+//                builder.setView(nameInput);
+//
+//                dialogLayout.addView(nameInput);
+//                builder.setView(dialogLayout);
+//
+//                // Set up the buttons to add or exit
+//                builder.setPositiveButton(R.string.addText, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int choice) {
+//
+//                        options.addChild(new Child(nameInput.getText().toString()));
+//
+//                        Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
+//                        Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
+//                        populateList();
+//
+//                    }
+//                });
+//                builder.setNegativeButton(R.string.cancelText, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int choice) {
+//                        dialog.cancel();
+//                    }
+//                });
+//
+//                builder.show();
             }
         });
     }
@@ -221,6 +214,47 @@ public class ChildrenActivity extends AppCompatActivity {
                     builder.show();
                 }
             });
+        }
+    }
+
+    public class ViewDialog {
+
+        public void showDialog(Activity activity) {
+            final Dialog dialog = new Dialog(activity);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setCancelable(false);
+            dialog.setContentView(R.layout.add_child_dialog);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+            EditText nameInput = dialog.findViewById(R.id.childNameedittext);
+
+            FloatingActionButton cancelFab = dialog.findViewById(R.id.cancelfab);
+            cancelFab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+                }
+            });
+
+            FloatingActionButton addFab = dialog.findViewById(R.id.addfab);
+            addFab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(nameInput.getText().toString().isEmpty()) {
+                        Toast.makeText(ChildrenActivity.this, "Enter a valid name for the child", Toast.LENGTH_SHORT).show();
+                    }else {
+                        options.addChild(new Child(nameInput.getText().toString()));
+
+                        Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
+                        Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
+                        populateList();
+
+                        dialog.cancel();
+                    }
+                }
+            });
+
+            dialog.show();
         }
     }
 
