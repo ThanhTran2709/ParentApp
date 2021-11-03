@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/Jocelyn Tandrea/AndroidStudioProjects/CMPT276P/app/src/main/res/drawable/children_list_shape.xml" value="0.22552083333333334" />
+        <entry key="..\:/Users/Jocelyn Tandrea/AndroidStudioProjects/CMPT276P/app/src/main/res/drawable/ic_round_delete_24.xml" value="0.22552083333333334" />
         <entry key="..\:/Users/Jocelyn Tandrea/AndroidStudioProjects/CMPT276P/app/src/main/res/drawable/rounde_corner.xml" value="0.22552083333333334" />
         <entry key="..\:/Users/Jocelyn Tandrea/AndroidStudioProjects/CMPT276P/app/src/main/res/drawable/rounded_corner.xml" value="0.22552083333333334" />
         <entry key="..\:/Users/Jocelyn Tandrea/AndroidStudioProjects/CMPT276P/app/src/main/res/drawable/rounded_corner2.xml" value="0.22552083333333334" />
@@ -18,6 +19,7 @@
         <entry key="..\:/Users/Jocelyn Tandrea/AndroidStudioProjects/CMPT276P/app/src/main/res/layout/children_view.xml" value="0.209375" />
         <entry key="..\:/Users/Jocelyn Tandrea/AndroidStudioProjects/CMPT276P/app/src/main/res/layout/content_main.xml" value="0.25" />
         <entry key="..\:/Users/Jocelyn Tandrea/AndroidStudioProjects/CMPT276P/app/src/main/res/layout/dialog_layout.xml" value="0.25" />
+        <entry key="..\:/Users/Jocelyn Tandrea/AndroidStudioProjects/CMPT276P/app/src/main/res/layout/edit_child_dialog.xml" value="0.209375" />
         <entry key="..\:/Users/divya/AndroidStudioProjects/ParentApp/app/src/main/res/layout/activity_main.xml" value="0.7333333333333334" />
         <entry key="..\:/Users/divya/AndroidStudioProjects/ParentApp/app/src/main/res/layout/content_main.xml" value="0.8629032258064516" />
       </map>
