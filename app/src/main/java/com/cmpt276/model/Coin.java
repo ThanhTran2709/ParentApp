@@ -3,6 +3,7 @@ package com.cmpt276.model;
 import org.json.JSONObject;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Random;
 
 /**
@@ -15,10 +16,13 @@ import java.util.Random;
 public class Coin {
 	//TODO: once child is done, make serializer to and from JSON objects.
 
-	private static final int TAILS = 0;
-	private static final int HEADS = 1;
+	public static final int NO_CHOICE = -1;
+	public static final int HEADS = 0;
+	public static final int TAILS = 1;
 
 	private static final int NUM_RESULTS = 2;
+
+	private static final Child EMPTY_CHILD = new Child("");
 
 	private static final Random rng = new Random();
 
@@ -35,8 +39,11 @@ public class Coin {
 		this.flipResult = randomCoinFlip();
 	}
 
-	public Coin(JSONObject jsonObject){
-
+	public Coin(){
+		this.child = EMPTY_CHILD;
+		this.flipChoice = NO_CHOICE;
+		this.time = LocalDateTime.now();
+		this.flipResult = randomCoinFlip();
 	}
 
 	public Child getChild() {
@@ -60,7 +67,9 @@ public class Coin {
 		return result;
 	}
 
-	public JSONObject toJSONObject(){
-		return null;
+	public String getTimeFormatted(){
+		String pattern = "uuuu-MMM-dd hh:mm a";
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+		return time.format(formatter);
 	}
 }
