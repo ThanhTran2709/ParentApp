@@ -8,7 +8,7 @@
     <string name="main_menu_text">Main Menu</string>
     <string name="my_children">My Children</string>
     <string name="timer">Timer</string>
-    <string name="addBtnTitle">Enter or edit name and age:</string>
+    <string name="addBtnTitle">Enter or edit name:</string>
     <string name="nameHint">Enter name here</string>
     <string name="ageHint">Enter age here</string>
     <string name="addText">Add</string>
