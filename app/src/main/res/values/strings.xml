@@ -19,8 +19,8 @@
     <string name="emptyNameErrorTxt">Your child must have a name!</string>
 
     <!-- Coin flip activity strings -->
-    <string name="flip_a_coin">Flip A Coin!</string>
-    <string name="current_child">Current child: %1$s</string>
+    <string name="flip_a_coin">Flip the Coin!</string>
+    <string name="current_child">Hi %1$s!\nIt\'s your turn to flip the coin!</string>
     <string name="change_child">Change Child</string>
     <string name="heads">Heads</string>
     <string name="tails">Tails</string>
