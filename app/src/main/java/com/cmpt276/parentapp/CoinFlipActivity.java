@@ -2,6 +2,7 @@ package com.cmpt276.parentapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
@@ -138,7 +139,9 @@ public class CoinFlipActivity extends AppCompatActivity {
                         throw new IllegalStateException("Cannot have selection that is neither heads nor tails.");
                 }
                 coin = new Coin(children.get(index), flipChoice);
+                MediaPlayer mp = MediaPlayer.create(this, R.raw.coinflip);
                 flipCoinAnimationTrigger(coin.getFlipResult());
+                mp.start();
             }
 
             //cycles to the next child, looping back to the first if it reaches the end of the list
