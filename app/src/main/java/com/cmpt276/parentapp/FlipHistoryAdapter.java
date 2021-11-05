@@ -1,0 +1,109 @@
+package com.cmpt276.parentapp;
+
+import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.cmpt276.model.Coin;
+
+import java.util.ArrayList;
+
+
+public class FlipHistoryAdapter extends RecyclerView.Adapter<FlipHistoryAdapter.ViewHolder> {
+
+	//taken more or less from android's recyclerview guide
+	//https://developer.android.com/guide/topics/ui/layout/recyclerview
+
+	public static class ViewHolder extends RecyclerView.ViewHolder {
+		private final TextView textViewFlipResult;
+		private final TextView textViewChildPicked;
+		private final TextView textViewTime;
+		private final ImageView imageViewAcceptedFlip;
+
+		public ViewHolder(View view) {
+			super(view);
+			textViewFlipResult = view.findViewById(R.id.textViewFlipResult);
+			textViewChildPicked = view.findViewById(R.id.textViewChildPicked);
+			textViewTime = view.findViewById(R.id.textViewFlipTime);
+			imageViewAcceptedFlip = view.findViewById(R.id.imageViewAcceptedFlip);
+		}
+
+		public TextView getTextViewFlipResult() {
+			return textViewFlipResult;
+		}
+
+		public TextView getTextViewChildPicked() {
+			return textViewChildPicked;
+		}
+
+		public TextView getTextViewTime() {
+			return textViewTime;
+		}
+
+		public ImageView getImageViewResult() {
+			return imageViewAcceptedFlip;
+		}
+	}
+
+	private Context context;
+	private ArrayList<Coin> flips;
+
+	public FlipHistoryAdapter(Context context, ArrayList<Coin> flips){
+		this.context = context;
+		this.flips = flips;
+	}
+
+	@NonNull
+	@Override
+	public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+		View view = LayoutInflater.from(context).inflate(R.layout.flip_history_list_item, parent, false);
+		return new ViewHolder(view);
+	}
+
+	@Override
+	public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+		Coin coin = flips.get(position);
+		String flipResult;
+		switch (coin.getFlipResult()){
+			case Coin.HEADS:
+				flipResult = context.getString(R.string.heads);
+				break;
+			case Coin.TAILS:
+				flipResult = context.getString(R.string.tails);
+				break;
+			default:
+				throw new IllegalStateException("Cannot have coin flip that has result neither heads nor tails.");
+		}
+
+		String flipResultString = context.getString(R.string.coin_flip_result, flipResult);
+		holder.getTextViewFlipResult().setText(flipResultString);
+
+		String childPickedString = context.getString(R.string.coin_flip_picked, coin.getChild().getName());
+		holder.getTextViewChildPicked().setText(childPickedString);
+
+		String timeString = context.getString(R.string.coin_flip_time, coin.getTimeFormatted());
+		holder.getTextViewTime().setText(timeString);
+
+		if (coin.getFlipChoice() == coin.getFlipResult()){
+			Drawable checkmark = AppCompatResources.getDrawable(context, R.drawable.ic_baseline_check_circle_24);
+			holder.getImageViewResult().setImageDrawable(checkmark);
+		}
+		else {
+			Drawable cross = AppCompatResources.getDrawable(context, R.drawable.ic_baseline_cancel_24);
+			holder.getImageViewResult().setImageDrawable(cross);
+		}
+	}
+
+	@Override
+	public int getItemCount() {
+		return flips.size();
+	}
+}

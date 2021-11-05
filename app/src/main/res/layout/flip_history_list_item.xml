@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/textViewFlipResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="@string/coin_flip_result"
+        app:layout_constraintBottom_toTopOf="@+id/textViewChildPicked"
+        app:layout_constraintStart_toStartOf="@+id/textViewChildPicked" />
+
+    <ImageView
+        android:id="@+id/imageViewAcceptedFlip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginBottom="48dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_check_circle_24" />
+
+    <TextView
+        android:id="@+id/textViewChildPicked"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="@string/coin_flip_picked"
+        app:layout_constraintBottom_toBottomOf="@+id/imageViewAcceptedFlip"
+        app:layout_constraintStart_toEndOf="@+id/imageViewAcceptedFlip"
+        app:layout_constraintTop_toTopOf="@+id/imageViewAcceptedFlip" />
+
+    <TextView
+        android:id="@+id/textViewFlipTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/coin_flip_time"
+        app:layout_constraintStart_toStartOf="@+id/textViewChildPicked"
+        app:layout_constraintTop_toBottomOf="@+id/textViewChildPicked" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

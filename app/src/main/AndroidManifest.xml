@@ -16,24 +16,24 @@
             android:name=".TimerOptions"
             android:exported="true"
             android:screenOrientation="portrait"/>
+        android:theme="@style/Theme.ParentApp.NoActionBar">
+        <activity
+            android:name=".CoinFlipHistoryActivity"
+            android:exported="true" />
         <activity
             android:name=".TimerActivity"
-            android:exported="true"
-            android:screenOrientation="portrait"/>
+            android:exported="true" />
         <activity
             android:name=".CoinFlipActivity"
-            android:exported="true"
-            android:screenOrientation="portrait"/>
+            android:exported="true" />
         <activity
             android:name=".ChildrenActivity"
-            android:exported="true"
-            android:screenOrientation="portrait"/>
+            android:exported="true" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            >
+            android:theme="@style/Theme.ParentApp.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

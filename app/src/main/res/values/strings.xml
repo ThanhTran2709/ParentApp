@@ -7,7 +7,6 @@
 
     <string name="main_menu_text">Main Menu</string>
     <string name="my_children">My Children</string>
-    <string name="flip_a_coin">Flip A Coin!</string>
     <string name="timer">Timer</string>
     <string name="minutes">-</string>
     <string name="colon_text">:</string>
@@ -18,5 +17,31 @@
     <string name="timer_options_button_text">Timer Options</string>
     <string name="timer_options_title">Timer Options</string>
     <string name="start_button_text">Start!</string>
+    <string name="addBtnTitle">Enter or edit name:</string>
+    <string name="nameHint">Enter name here</string>
+    <string name="ageHint">Enter age here</string>
+    <string name="addText">Add</string>
+    <string name="cancelText">Cancel</string>
+    <string name="saveText">Save</string>
+    <string name="deleteText">Delete</string>
+    <string name="addBtnText">Add new child</string>
+    <string name="emptyNameErrorTxt">Your child must have a name!</string>
+
+    <!-- Coin flip activity strings -->
+    <string name="flip_a_coin">Flip A Coin!</string>
+    <string name="current_child">Current child: %1$s</string>
+    <string name="change_child">Change Child</string>
+    <string name="heads">Heads</string>
+    <string name="tails">Tails</string>
+    <string name="cancel">Cancel</string>
+    <string name="history">History</string>
+
+    <!-- Flip history activity strings -->
+    <string name="coin_flip_result">Flip: %1$s</string>
+    <string name="coin_flip_picked">Picked: %1$s</string>
+    <string name="coin_flip_time">Time: %1$s</string>
+    <string name="clear">Clear</string>
+    <string name="confirm_reset">Are you sure  you want to clear the flip history?</string>
+    <string name="reset">Reset</string>
 
 </resources>
