@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -14,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.cmpt276.model.Child;
 import com.cmpt276.model.Coin;
+import com.cmpt276.model.CoinToss;
 import com.cmpt276.model.Options;
 
 import java.util.ArrayList;
@@ -23,6 +26,9 @@ public class CoinFlipActivity extends AppCompatActivity {
 
     Options options;
     private int coinChoiceIndex = Coin.HEADS;
+    private ImageView coinImage;
+
+    private int currentSide = R.drawable.heads;
 
     public static Intent getIntent(Context context){
         return new Intent(context, CoinFlipActivity.class);
@@ -34,6 +40,8 @@ public class CoinFlipActivity extends AppCompatActivity {
         setContentView(R.layout.activity_coin_flip);
 
         options = Options.getInstance(this);
+        coinImage = (ImageView) findViewById(R.id.coin);
+        coinImage.setImageResource(R.drawable.heads);
 
         updateUI();
 
@@ -49,6 +57,40 @@ public class CoinFlipActivity extends AppCompatActivity {
         RadioGroup group = findViewById(R.id.radioGroupFlipChoice);
         group.setOnCheckedChangeListener(getGroupOnCheckChangeListener());
     }
+
+    //Set up coin animation
+    private void animateCoin(boolean stayTheSame) {
+        CoinToss coinAnimation;
+
+        if (currentSide == R.drawable.heads)
+            coinAnimation = new CoinToss(coinImage, R.drawable.heads, R.drawable.tails, 0, 180, 0, 0, 0, 0);
+        else
+            coinAnimation = new CoinToss(coinImage, R.drawable.tails, R.drawable.heads, 0, 180, 0, 0, 0, 0);
+
+        if (stayTheSame)
+            coinAnimation.setRepeatCount(7); // value + 1 must be even so the side will stay the same
+        else
+            coinAnimation.setRepeatCount(8); // value + 1 must be odd so the side will not stay the same
+
+        coinAnimation.setDuration(100);
+        coinAnimation.setInterpolator(new AccelerateInterpolator());
+        coinImage.startAnimation(coinAnimation);
+    }
+
+    //Trigger coin animation
+    public void flipCoinAnimationTrigger(int coinSide) {
+        if (coinSide == 0) {  //Heads
+            boolean stayTheSame = (currentSide == R.drawable.heads);
+            animateCoin(stayTheSame);
+            currentSide = R.drawable.heads;
+        }
+        if (coinSide == 1) {  //Tails
+            boolean stayTheSame = (currentSide == R.drawable.tails);
+            animateCoin(stayTheSame);
+            currentSide = R.drawable.tails;
+        }
+    }
+
 
     private void updateUI() {
         TextView textViewChild = findViewById(R.id.textViewChild);
@@ -95,8 +137,8 @@ public class CoinFlipActivity extends AppCompatActivity {
                     default:
                         throw new IllegalStateException("Cannot have selection that is neither heads nor tails.");
                 }
-
                 coin = new Coin(children.get(index), flipChoice);
+                flipCoinAnimationTrigger(coin.getFlipResult());
             }
 
             //cycles to the next child, looping back to the first if it reaches the end of the list

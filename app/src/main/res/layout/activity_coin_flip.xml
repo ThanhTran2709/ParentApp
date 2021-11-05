@@ -22,10 +22,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TEMPORARY"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="@+id/buttonViewFlipHistory"
+        app:layout_constraintStart_toStartOf="@+id/buttonViewFlipHistory"
+        app:layout_constraintTop_toBottomOf="@+id/buttonViewFlipHistory" />
 
     <TextView
         android:id="@+id/textViewChild"
@@ -54,7 +53,7 @@
         android:layout_marginStart="16dp"
         app:layout_constraintBottom_toBottomOf="@+id/buttonFlipCoin"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/buttonFlipCoin" >
+        app:layout_constraintTop_toTopOf="@+id/buttonFlipCoin">
 
         <RadioButton
             android:id="@+id/radioButtonHeads"
@@ -79,4 +78,15 @@
         android:text="@string/history"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/coin"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        app:layout_constraintBottom_toTopOf="@+id/textViewChild"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/heads" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
