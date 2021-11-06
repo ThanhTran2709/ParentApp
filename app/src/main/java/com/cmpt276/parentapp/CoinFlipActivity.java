@@ -7,8 +7,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -177,18 +179,6 @@ public class CoinFlipActivity extends AppCompatActivity {
             View changeChildView = CoinFlipActivity.this.getLayoutInflater().inflate(R.layout.change_child_flip, null);
             builder.setView(changeChildView);
 
-            ArrayList<Child> children = options.getChildList();
-            String[] names = new String[children.size()];
-            for (int i = 0; i < names.length; i++){
-                names[i] = children.get(i).getName();
-            }
-
-            builder.setItems(names, (dialogInterface, i) -> {
-                options.setChildFlipIndex(CoinFlipActivity.this, i);
-                updateUI();
-                dialogInterface.dismiss();
-            });
-
             builder.setTitle(R.string.change_child);
 
             builder.setNegativeButton(R.string.cancel, (dialogInterface, i) -> {
@@ -197,6 +187,23 @@ public class CoinFlipActivity extends AppCompatActivity {
 
             AlertDialog dialog = builder.create();
             dialog.show();
+
+            ArrayList<Child> children = options.getChildList();
+            String[] names = new String[children.size()];
+            for (int i = 0; i < names.length; i++){
+                names[i] = children.get(i).getName();
+            }
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(CoinFlipActivity.this, R.layout.children_list, names);
+
+            ListView listView = changeChildView.findViewById(R.id.listViewChildSelect);
+            listView.setAdapter(adapter);
+
+            listView.setOnItemClickListener((adapterView, view1, i, l) -> {
+                options.setChildFlipIndex(CoinFlipActivity.this, i);
+                updateUI();
+                dialog.dismiss();
+            });
         };
     }
 
