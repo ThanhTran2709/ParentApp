@@ -20,7 +20,7 @@
 
     <!-- Coin flip activity strings -->
     <string name="flip_a_coin">Flip the Coin!</string>
-    <string name="current_child">Hi %1$s!\nIt\'s your turn to flip the coin!</string>
+    <string name="current_child">Hi %1$s!\nIt\'s your turn to\nflip the coin!</string>
     <string name="change_child">Change Child</string>
     <string name="heads">Heads</string>
     <string name="tails">Tails</string>

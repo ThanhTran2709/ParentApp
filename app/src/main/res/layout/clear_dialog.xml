@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- https://stackoverflow.com/questions/36789561/how-to-create-custom-dialog-box-with-two-button-in-android-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -19,7 +18,7 @@
 
         <androidx.cardview.widget.CardView
             android:layout_width="250dp"
-            android:layout_height="165dp"
+            android:layout_height="120dp"
             android:layout_gravity="center"
             android:layout_marginEnd="60dp"
             android:layout_marginStart="60dp"
@@ -29,21 +28,6 @@
             app:cardCornerRadius="8dp"
             app:cardElevation="15dp">
 
-            <EditText
-                android:id="@+id/childNameedittext"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:backgroundTint="@android:color/darker_gray"
-                android:ems="10"
-                android:fontFamily="@font/moon_bold_font"
-                android:gravity="center"
-                android:hint="Enter child name"
-                android:inputType="textPersonName"
-                android:minHeight="48dp"
-                android:textColor="@color/black"
-                android:textColorHint="@android:color/darker_gray" />
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -51,7 +35,7 @@
                 android:layout_marginTop="14dp"
                 android:fontFamily="@font/moon_bold_font"
                 android:gravity="center"
-                android:text="Add a new child"
+                android:text="Are you sure you want to clear coin flip history?"
                 android:textColor="@android:color/black"
                 android:textSize="20dp" />
 
@@ -59,15 +43,15 @@
     </LinearLayout>
 
     <FrameLayout
-        android:id="@+id/frmNo"
+        android:id="@+id/frmCancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginRight="45dp"
-        android:layout_marginTop="75dp">
+        android:layout_marginTop="50dp">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/cancelfab"
+            android:id="@+id/cancelFab"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:src="@drawable/ic_round_close_24"
@@ -78,15 +62,15 @@
     </FrameLayout>
 
     <FrameLayout
-        android:id="@+id/frmOk"
+        android:id="@+id/frmOkay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginLeft="50dp"
-        android:layout_marginTop="75dp">
+        android:layout_marginTop="50dp">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/addfab"
+            android:id="@+id/okFab"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:src="@drawable/ic_round_check_24"
