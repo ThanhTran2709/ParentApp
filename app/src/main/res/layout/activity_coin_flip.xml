@@ -20,6 +20,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/moon_bold_font"
+            android:text="Pick heads or tail!"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+
         <RadioGroup
             android:id="@+id/radioGroupFlipChoice"
             android:layout_width="wrap_content"
@@ -48,18 +59,6 @@
                 android:textSize="16sp" />
 
         </RadioGroup>
-
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
-            android:fontFamily="@font/moon_bold_font"
-            android:text="Pick heads or tail!"
-            android:textColor="@color/black"
-            android:textSize="20sp" />
 
     </LinearLayout>
 
@@ -94,7 +93,7 @@
         android:id="@+id/textViewChild"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:fontFamily="@font/moon_bold_font"
         android:gravity="center"
         android:text="@string/current_child"
