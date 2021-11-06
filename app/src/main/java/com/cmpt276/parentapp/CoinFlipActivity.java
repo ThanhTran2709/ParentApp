@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -160,19 +161,26 @@ public class CoinFlipActivity extends AppCompatActivity {
             //TODO: show result of coin flip through animated coin rather than a textview
             int result = coin.getFlipResult();
             TextView tv = findViewById(R.id.textViewShowResult);
-            switch (result){
-                case Coin.HEADS:
-                    tv.setText("HEADS");
-                    break;
-                case Coin.TAILS:
-                    tv.setText("TAILS");
-                    break;
-                default:
-                    assert false;
-                    break;
-            }
+            tv.setText("");
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    switch (result){
+                        case Coin.HEADS:
+                            tv.setText("HEADS");
+                            break;
+                        case Coin.TAILS:
+                            tv.setText("TAILS");
+                            break;
+                        default:
+                            assert false;
+                            break;
+                    }
+                    updateUI();
+                }
+            }, 1100);
 
-            updateUI();
         };
     }
 
