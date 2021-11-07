@@ -1,34 +1,41 @@
 package com.cmpt276.parentapp;
-
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.MediaPlayer;
+import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Locale;
+import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
-public class TimerActivity extends AppCompatActivity {
+public class TimerActivity extends AppCompatActivity{
 
-    private CountDownTimer timer;
-    private static final String MINUTES_TAG = "minutes tag";
-    private static final int DEFAULT_MINUTES = 5;
-    private int minutes;
+    private static final String MINUTES_IN_MILLI_SECONDS_TAG = "minutes_in_milli_seconds_tag";
+    private static final String TIMER_SERVICE_BROADCAST = "timer_service_broadcast";
+    private static final String PAUSE_TIMER_BROADCAST = "pause_timer_broadcast";
+    private static final String PLAY_TIMER_BROADCAST = "play_timer_broadcast";
+    private static final String SERVICE_RUNNING_FLAG = "service_running_flag";
+    private static final String RESET_TIMER_BROADCAST = "reset_timer_broadcast";
+    private static final long DEFAULT_MINUTES_IN_MILLI_SECONDS = 0L;
+    private static final int TEN = 10;
+    private boolean isPaused;
     TextView remainingTime;
+    private long minutesInMilliSeconds;
+    private long remainingMilliSeconds;
+    private boolean isServiceRunning;
+    BroadcastReceiver timerReceiver;
+    private Intent serviceIntent;
 
-    public static Intent getIntent(Context context, int minutes){
+    public static Intent getIntent(Context context, long minutesInMilliSeconds, boolean isServiceRunning){
         Intent i = new Intent(context, TimerActivity.class);
-        i.putExtra(MINUTES_TAG, minutes);
+        i.putExtra(MINUTES_IN_MILLI_SECONDS_TAG, minutesInMilliSeconds);
+        i.putExtra(SERVICE_RUNNING_FLAG, isServiceRunning);
         return i;
 
     }
@@ -36,74 +43,101 @@ public class TimerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        isPaused = false;
         setContentView(R.layout.activity_timer);
-        minutes = this.getIntent().getIntExtra(MINUTES_TAG, DEFAULT_MINUTES);
+        minutesInMilliSeconds = this.getIntent().getLongExtra(MINUTES_IN_MILLI_SECONDS_TAG, DEFAULT_MINUTES_IN_MILLI_SECONDS);
+        remainingMilliSeconds = minutesInMilliSeconds;
+        isServiceRunning = this.getIntent().getBooleanExtra(SERVICE_RUNNING_FLAG, false);
+        setUpServiceIntent();
         setUpPausePlayButton();
         setUpResetButton();
-        setupTimeOutTimer();
-        Toast.makeText(this, "You chose " + minutes + " minutes", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "You chose " + minutesInMilliSeconds + " minutes", Toast.LENGTH_SHORT).show();
 
     }
 
-    private void setupTimeOutTimer() {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setupBroadCastReceiver();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(timerReceiver);
+    }
+
+    private void setUpServiceIntent() {
+        serviceIntent = TimerService.getIntent(this, remainingMilliSeconds, minutesInMilliSeconds);
+        if(!isServiceRunning){
+            startService(serviceIntent);
+            isServiceRunning = true;
+        }
+    }
+
+    private void setupBroadCastReceiver() {
         remainingTime = findViewById(R.id.time_text);
-        timer = new CountDownTimer(minutes* 60000L, 1000) {
+        timerReceiver = new BroadcastReceiver() {
             @Override
-            public void onTick(long l) {
-                long remainingMinutes = TimeUnit.MILLISECONDS.toMinutes(l);
-                long remainingSeconds =  TimeUnit.MILLISECONDS.toSeconds(l) -
-                                TimeUnit.MINUTES.toSeconds(remainingMinutes);
+            public void onReceive(Context context, Intent intent) {
+                remainingMilliSeconds = intent.getLongExtra(MINUTES_IN_MILLI_SECONDS_TAG, DEFAULT_MINUTES_IN_MILLI_SECONDS);
+                long remainingMinutes = TimeUnit.MILLISECONDS.toMinutes(remainingMilliSeconds);
+                long remainingSeconds =  TimeUnit.MILLISECONDS.toSeconds(remainingMilliSeconds) -
+                        TimeUnit.MINUTES.toSeconds(remainingMinutes);
                 String remainingMinutesText = remainingMinutes + "";
                 String remainingSecondsText = remainingSeconds + "";
-                if(remainingMinutes < 10){
+                if(remainingMinutes < TEN){
                     remainingMinutesText = "0" + remainingMinutesText;
                 }
-                if(remainingSeconds < 10){
+                if(remainingSeconds < TEN){
                     remainingSecondsText = "0" + remainingSecondsText;
                 }
                 remainingTime.setText(remainingMinutesText + " : " + remainingSecondsText);
             }
-
-            @Override
-            public void onFinish() {
-                Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-                long[] pattern = {0, 100, 100, 100};
-                vibrator.vibrate(VibrationEffect.createWaveform(pattern, 1));
-                final MediaPlayer mp = MediaPlayer.create(TimerActivity.this, R.raw.alarm_sound);
-                mp.setLooping(true);
-                mp.start();
-                new AlertDialog.Builder(TimerActivity.this).setTitle("Times Up!")
-                        .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                vibrator.cancel();
-                                mp.stop();
-                                resetTimer();
-                            }
-                        }).show();
-            }
         };
-
-        timer.start();
-
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(TIMER_SERVICE_BROADCAST);
+        registerReceiver(timerReceiver, filter);
     }
 
     private void resetTimer(){
-        if(minutes < 10){
-            remainingTime.setText("0" + minutes + " : " + "00");
-        }
-        else{
-            remainingTime.setText(minutes + " : " + "00");
-        }
+        isPaused = false;
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction(RESET_TIMER_BROADCAST);
+        broadcastIntent.putExtra(MINUTES_IN_MILLI_SECONDS_TAG, minutesInMilliSeconds);
+        sendBroadcast(broadcastIntent);
     }
 
-
-
     private void setUpResetButton() {
+
+        Button resetButton = findViewById(R.id.reset_button);
+        resetButton.setOnClickListener(view -> {
+            Button pausePlayButton = findViewById(R.id.pause_play);
+            pausePlayButton.setText("Pause");
+            resetTimer();
+        });
     }
 
     private void setUpPausePlayButton() {
-    }
 
+        Button pausePlayButton = findViewById(R.id.pause_play);
+        pausePlayButton.setOnClickListener(view -> {
+            if(isPaused) {
+                isPaused = false;
+                pausePlayButton.setText("Pause");
+                Intent broadcastIntent = new Intent();
+                broadcastIntent.setAction(PLAY_TIMER_BROADCAST);
+                broadcastIntent.putExtra(MINUTES_IN_MILLI_SECONDS_TAG, remainingMilliSeconds);
+                sendBroadcast(broadcastIntent);
+            }
+            else{
+                isPaused = true;
+                pausePlayButton.setText("Play");
+                Intent broadcastIntent = new Intent();
+                broadcastIntent.setAction(PAUSE_TIMER_BROADCAST);
+                sendBroadcast(broadcastIntent);
+            }
+        });
+    }
 
 }
