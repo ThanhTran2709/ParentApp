@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+/**
+ * Activity for setting up an alarm
+ * */
 public class TimerActivity extends AppCompatActivity {
 
     public static Intent getIntent(Context context){

@@ -12,10 +12,13 @@ import android.view.View;
 import android.widget.Button;
 
 import com.cmpt276.model.Coin;
-import com.cmpt276.model.Options;
 
 import java.util.ArrayList;
 
+/**
+ * Activity for viewing all previous results of coin flips, including who picked,
+ * the result of the flip, and the time it happened.
+ * */
 public class CoinFlipHistoryActivity extends AppCompatActivity {
 
 	Options options;

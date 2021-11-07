@@ -14,11 +14,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.cmpt276.model.Child;
 import com.cmpt276.model.Coin;
-import com.cmpt276.model.Options;
 
 import java.util.ArrayList;
 
-//TODO: add a way to view and clear flip history
+/**
+ *Activity for flipping coin
+ * */
 public class CoinFlipActivity extends AppCompatActivity {
 
     Options options;
@@ -106,15 +107,14 @@ public class CoinFlipActivity extends AppCompatActivity {
             }
             options.addCoinFlip(CoinFlipActivity.this, coin);
 
-            //TODO: show result of coin flip through animated coin rather than a textview
             int result = coin.getFlipResult();
             TextView tv = findViewById(R.id.textViewShowResult);
             switch (result){
                 case Coin.HEADS:
-                    tv.setText("HEADS");
+                    tv.setText(R.string.heads);
                     break;
                 case Coin.TAILS:
-                    tv.setText("TAILS");
+                    tv.setText(R.string.tails);
                     break;
                 default:
                     assert false;

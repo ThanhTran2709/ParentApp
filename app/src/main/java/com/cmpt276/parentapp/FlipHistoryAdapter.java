@@ -13,10 +13,13 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cmpt276.model.Coin;
+import com.cmpt276.parentapp.serializer.LocalDateTimeAdapter;
 
 import java.util.ArrayList;
 
-
+/**
+ * Adapter for recyclerview in viewing history of flips.
+ * */
 public class FlipHistoryAdapter extends RecyclerView.Adapter<FlipHistoryAdapter.ViewHolder> {
 
 	//taken more or less from android's recyclerview guide
@@ -89,7 +92,7 @@ public class FlipHistoryAdapter extends RecyclerView.Adapter<FlipHistoryAdapter.
 		String childPickedString = context.getString(R.string.coin_flip_picked, coin.getChild().getName());
 		holder.getTextViewChildPicked().setText(childPickedString);
 
-		String timeString = context.getString(R.string.coin_flip_time, coin.getTimeFormatted());
+		String timeString = context.getString(R.string.coin_flip_time, LocalDateTimeAdapter.getTimeFormatted(coin.getTime()));
 		holder.getTextViewTime().setText(timeString);
 
 		if (coin.getFlipChoice() == coin.getFlipResult()){

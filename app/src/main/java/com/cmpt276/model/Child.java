@@ -1,5 +1,8 @@
 package com.cmpt276.model;
 
+/**
+ * Container for information about a single child
+ * */
 public class Child {
     private String name;
 

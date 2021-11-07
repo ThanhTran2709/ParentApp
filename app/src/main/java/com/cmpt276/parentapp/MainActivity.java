@@ -14,8 +14,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.cmpt276.parentapp.databinding.ActivityMainBinding;
 
 import java.util.Calendar;
-import java.util.Date;
 
+/**
+ * Main menu for the application, hub for accessing other functions of the app.
+ * */
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
@@ -62,13 +64,13 @@ public class MainActivity extends AppCompatActivity {
         Calendar currentTime = Calendar.getInstance();
         int hour = currentTime.get(Calendar.HOUR_OF_DAY);
         if(hour < 12){
-            welcomeText.setText("Good Morning!");
+            welcomeText.setText(R.string.good_morning);
         }
         else if(hour < 18){
-            welcomeText.setText("Good Afternoon!");
+            welcomeText.setText(R.string.good_afternoon);
         }
         else{
-            welcomeText.setText("Good Evening!");
+            welcomeText.setText(R.string.good_evening);
         }
 
     }
@@ -77,12 +79,15 @@ public class MainActivity extends AppCompatActivity {
         Animation slideIn = AnimationUtils.loadAnimation(this, R.anim.slide_in);
         Animation slideIn2 = AnimationUtils.loadAnimation(this, R.anim.slide_in);
         Animation slideIn3 = AnimationUtils.loadAnimation(this, R.anim.slide_in);
+
         Button timerButton = findViewById(R.id.timer_button);
         Button coinFlipButton = findViewById(R.id.flip_a_coin_button);
         Button myChildrenButton = findViewById(R.id.my_children_button);
+
         coinFlipButton.setVisibility(View.INVISIBLE);
         timerButton.setVisibility(View.INVISIBLE);
         myChildrenButton.startAnimation(slideIn);
+
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -98,7 +103,5 @@ public class MainActivity extends AppCompatActivity {
                 timerButton.startAnimation(slideIn3);
             }
         }, 1300);
-
-
     }
 }

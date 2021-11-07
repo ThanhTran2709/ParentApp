@@ -1,7 +1,5 @@
 package com.cmpt276.model;
 
-import org.json.JSONObject;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Random;
@@ -14,8 +12,6 @@ import java.util.Random;
  * - the date and time the flip occurred
  * */
 public class Coin {
-	//TODO: once child is done, make serializer to and from JSON objects.
-
 	public static final int NO_CHOICE = -1;
 	public static final int HEADS = 0;
 	public static final int TAILS = 1;
@@ -26,12 +22,12 @@ public class Coin {
 
 	private static final Random rng = new Random();
 
-	private Child child;
-	private int flipChoice;
-	private int flipResult;
-	private LocalDateTime time;
+	private final Child child;
+	private final int flipChoice;
+	private final int flipResult;
+	private final LocalDateTime time;
 
-	//on generating coin flip, records the time and chooses hads or tails randomly
+	//on generating coin flip object, records the time and chooses heads or tails randomly
 	public Coin(Child child, int flipChoice){
 		this.child = child;
 		this.flipChoice = flipChoice;
@@ -65,11 +61,5 @@ public class Coin {
 	private static int randomCoinFlip(){
 		int result = rng.nextInt(NUM_RESULTS);
 		return result;
-	}
-
-	public String getTimeFormatted(){
-		String pattern = "uuuu-MMM-dd hh:mm a";
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
-		return time.format(formatter);
 	}
 }
