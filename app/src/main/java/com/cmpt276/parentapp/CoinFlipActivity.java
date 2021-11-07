@@ -1,26 +1,31 @@
 package com.cmpt276.parentapp;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.Animation;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.cmpt276.model.Child;
 import com.cmpt276.model.Coin;
 import com.cmpt276.model.CoinToss;
 import com.cmpt276.model.Options;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -45,7 +50,6 @@ public class CoinFlipActivity extends AppCompatActivity {
         options = Options.getInstance(this);
         coinImage = (ImageView) findViewById(R.id.coin);
         coinImage.setImageResource(R.drawable.heads);
-
 
         updateUI();
 
@@ -79,12 +83,10 @@ public class CoinFlipActivity extends AppCompatActivity {
         coinAnimation.setDuration(100);
         coinAnimation.setInterpolator(new AccelerateInterpolator());
         coinImage.startAnimation(coinAnimation);
-
     }
 
     //Trigger coin animation
     public void flipCoinAnimationTrigger(int coinSide) {
-
         if (coinSide == 0) {  //Heads
             boolean stayTheSame = (currentSide == R.drawable.heads);
             animateCoin(stayTheSame);
@@ -144,7 +146,9 @@ public class CoinFlipActivity extends AppCompatActivity {
                         throw new IllegalStateException("Cannot have selection that is neither heads nor tails.");
                 }
                 coin = new Coin(children.get(index), flipChoice);
+                MediaPlayer mp = MediaPlayer.create(this, R.raw.coinflip);
                 flipCoinAnimationTrigger(coin.getFlipResult());
+                mp.start();
             }
 
             //cycles to the next child, looping back to the first if it reaches the end of the list
@@ -157,28 +161,46 @@ public class CoinFlipActivity extends AppCompatActivity {
             //TODO: show result of coin flip through animated coin rather than a textview
             int result = coin.getFlipResult();
             TextView tv = findViewById(R.id.textViewShowResult);
-            switch (result){
-                case Coin.HEADS:
-                    tv.setText("HEADS");
-                    break;
-                case Coin.TAILS:
-                    tv.setText("TAILS");
-                    break;
-                default:
-                    assert false;
-                    break;
-            }
+            tv.setText("");
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    switch (result){
+                        case Coin.HEADS:
+                            tv.setText("HEADS");
+                            break;
+                        case Coin.TAILS:
+                            tv.setText("TAILS");
+                            break;
+                        default:
+                            assert false;
+                            break;
+                    }
+                    updateUI();
+                }
+            }, 1100);
 
-            updateUI();
         };
     }
 
     private View.OnClickListener getChangeChildListener() {
         return view -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(CoinFlipActivity.this);
+            Dialog dialog = new Dialog(this);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setCancelable(false);
+            dialog.setContentView(R.layout.change_child_flip);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
-            View changeChildView = CoinFlipActivity.this.getLayoutInflater().inflate(R.layout.change_child_flip, null);
-            builder.setView(changeChildView);
+            FloatingActionButton cancelFab = dialog.findViewById(R.id.cancelfab3);
+            cancelFab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+
 
             ArrayList<Child> children = options.getChildList();
             String[] names = new String[children.size()];
@@ -186,21 +208,40 @@ public class CoinFlipActivity extends AppCompatActivity {
                 names[i] = children.get(i).getName();
             }
 
-            builder.setItems(names, (dialogInterface, i) -> {
+            ArrayAdapter<Child> adapter =  new MyListAdapter();
+            ListView listView = dialog.findViewById(R.id.listViewChildSelect);
+            listView.setAdapter(adapter);
+            listView.setDividerHeight(16);
+
+            listView.setOnItemClickListener((adapterView, view1, i, l) -> {
                 options.setChildFlipIndex(CoinFlipActivity.this, i);
                 updateUI();
-                dialogInterface.dismiss();
+                dialog.dismiss();
             });
-
-            builder.setTitle(R.string.change_child);
-
-            builder.setNegativeButton(R.string.cancel, (dialogInterface, i) -> {
-                dialogInterface.dismiss();
-            });
-
-            AlertDialog dialog = builder.create();
-            dialog.show();
         };
+    }
+
+    private class MyListAdapter extends ArrayAdapter<Child>{
+
+        public MyListAdapter(){
+            super(CoinFlipActivity.this, R.layout.child_name_view, options.getChildList());
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View gamesView = convertView;
+            if (gamesView == null){
+                gamesView = getLayoutInflater().inflate(R.layout.child_name_view, parent, false);
+            }
+
+            Child currentChild = options.getChildList().get(position);
+
+            // set up game ListView item
+            TextView childName = gamesView.findViewById(R.id.change_child_name);
+            childName.setText(currentChild.getName());
+            return gamesView;
+        }
+
     }
 
     private View.OnClickListener getViewHistoryListener() {

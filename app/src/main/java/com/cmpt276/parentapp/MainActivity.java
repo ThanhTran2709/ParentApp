@@ -90,14 +90,14 @@ public class MainActivity extends AppCompatActivity {
                 coinFlipButton.setVisibility(View.VISIBLE);
                 coinFlipButton.startAnimation(slideIn2);
             }
-        }, 500);
+        }, 400);
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 timerButton.setVisibility(View.VISIBLE);
                 timerButton.startAnimation(slideIn3);
             }
-        }, 1300);
+        }, 1200);
 
 
     }
