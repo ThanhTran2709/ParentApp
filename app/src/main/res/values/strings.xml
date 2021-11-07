@@ -8,9 +8,7 @@
     <string name="main_menu_text">Main Menu</string>
     <string name="my_children">My Children</string>
     <string name="timer">Timer</string>
-    <string name="minutes">-</string>
-    <string name="colon_text">:</string>
-    <string name="seconds">-</string>
+    <string name="minutes_text">00 : 00</string>
     <string name="timeout_timer_title">Timeout Timer</string>
     <string name="pause_button_text">Pause</string>
     <string name="reset_button_text">Reset</string>
