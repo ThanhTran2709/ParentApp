@@ -9,6 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ParentApp.NoActionBar">
+
         <activity
             android:name=".CoinFlipHistoryActivity"
             android:exported="true" />

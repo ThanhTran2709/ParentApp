@@ -93,11 +93,11 @@ public class FlipHistoryAdapter extends RecyclerView.Adapter<FlipHistoryAdapter.
 		holder.getTextViewTime().setText(timeString);
 
 		if (coin.getFlipChoice() == coin.getFlipResult()){
-			Drawable checkmark = AppCompatResources.getDrawable(context, R.drawable.ic_baseline_check_circle_24);
+			Drawable checkmark = AppCompatResources.getDrawable(context, R.drawable.ic_round_check_circle_24);
 			holder.getImageViewResult().setImageDrawable(checkmark);
 		}
 		else {
-			Drawable cross = AppCompatResources.getDrawable(context, R.drawable.ic_baseline_cancel_24);
+			Drawable cross = AppCompatResources.getDrawable(context, R.drawable.ic_round_cancel_24);
 			holder.getImageViewResult().setImageDrawable(cross);
 		}
 	}
