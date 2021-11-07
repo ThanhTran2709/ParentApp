@@ -1,6 +1,9 @@
 package com.cmpt276.parentapp;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -14,17 +17,29 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.cmpt276.parentapp.databinding.ActivityMainBinding;
 
 import java.util.Calendar;
-import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String MAIN_ACTIVITY_BROADCAST = "main_activity_broadcast";
+    private static final String START_SERVICE_BROADCAST = "start_service_broadcast";
     private ActivityMainBinding binding;
+    private boolean isStartService = false;
+    private BroadcastReceiver startServiceReceiver;
+    private static final String ORIGINAL_TIME_IN_MILLI_SECONDS_TAG = "original_time_in_milli_seconds_tag";
+    private static final long DEFAULT_MINUTES_IN_MILLI_SECONDS = 0L;
+    private long originalTimeInMilliSeconds;
+
+    public static Intent getIntent(Context context) {
+        Intent i = new Intent(context, MainActivity.class);
+        return i;
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
+        communicateWithTimerService();
         setContentView(binding.getRoot());
         setUpWelcomeText();
         setUpAnimation();
@@ -33,11 +48,41 @@ public class MainActivity extends AppCompatActivity {
         setUpTimerButton();
     }
 
+    @Override
+    protected void onPause() {
+        unregisterReceiver(startServiceReceiver);
+        super.onPause();
+    }
+
+    private void communicateWithTimerService() {
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction(MAIN_ACTIVITY_BROADCAST);
+        sendBroadcast(broadcastIntent);
+
+        startServiceReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                isStartService = true;
+                originalTimeInMilliSeconds = intent.getLongExtra(ORIGINAL_TIME_IN_MILLI_SECONDS_TAG,DEFAULT_MINUTES_IN_MILLI_SECONDS);
+            }
+        };
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(START_SERVICE_BROADCAST);
+        registerReceiver(startServiceReceiver, filter);
+    }
+
+
     private void setUpTimerButton() {
         Button timerButton = findViewById(R.id.timer_button);
         timerButton.setOnClickListener(view -> {
-            Intent i = TimerOptions.getIntent(MainActivity.this);
-            startActivity(i);
+            if(isStartService){
+                Intent i = TimerActivity.getIntent(MainActivity.this, originalTimeInMilliSeconds, true);
+                startActivity(i);
+            }
+            else{
+                Intent i = TimerOptions.getIntent(MainActivity.this);
+                startActivity(i);
+            }
         });
     }
 
@@ -98,7 +143,5 @@ public class MainActivity extends AppCompatActivity {
                 timerButton.startAnimation(slideIn3);
             }
         }, 1300);
-
-
     }
 }
