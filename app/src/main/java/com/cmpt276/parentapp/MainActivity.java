@@ -50,8 +50,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        unregisterReceiver(startServiceReceiver);
         super.onPause();
+        unregisterReceiver(startServiceReceiver);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        communicateWithTimerService();
     }
 
     private void communicateWithTimerService() {
@@ -129,19 +135,13 @@ public class MainActivity extends AppCompatActivity {
         timerButton.setVisibility(View.INVISIBLE);
         myChildrenButton.startAnimation(slideIn);
         Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                coinFlipButton.setVisibility(View.VISIBLE);
-                coinFlipButton.startAnimation(slideIn2);
-            }
+        handler.postDelayed(() -> {
+            coinFlipButton.setVisibility(View.VISIBLE);
+            coinFlipButton.startAnimation(slideIn2);
         }, 500);
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                timerButton.setVisibility(View.VISIBLE);
-                timerButton.startAnimation(slideIn3);
-            }
+        handler.postDelayed(() -> {
+            timerButton.setVisibility(View.VISIBLE);
+            timerButton.startAnimation(slideIn3);
         }, 1300);
     }
 }
