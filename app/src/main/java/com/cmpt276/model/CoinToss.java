@@ -8,6 +8,9 @@ import android.widget.ImageView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+// This class uses matrix translations on ImageView to give the illusion of the coin flipping
+// Code inspired from StackOverflow answer: https://stackoverflow.com/questions/6135930/showing-both-sides-of-a-coin-being-flipped-using-android-standard-animation
+
 public class CoinToss extends Animation {
     private final float fromXDegrees;
     private final float toXDegrees;
@@ -22,7 +25,7 @@ public class CoinToss extends Animation {
     private int currentDrawable;
     private int nextDrawable;
     private int numOfRepetition = 0;
-    ConstraintLayout.LayoutParams params;
+
 
     public CoinToss(ImageView imageView, int currentDrawable, int nextDrawable, float fromXDegrees, float toXDegrees, float fromYDegrees, float toYDegrees, float fromZDegrees, float toZDegrees) {
         this.fromXDegrees = fromXDegrees;
@@ -34,7 +37,7 @@ public class CoinToss extends Animation {
         this.imageView = imageView;
         this.currentDrawable = currentDrawable;
         this.nextDrawable = nextDrawable;
-        params = (ConstraintLayout.LayoutParams) imageView.getLayoutParams();
+
     }
 
     @Override
@@ -50,31 +53,10 @@ public class CoinToss extends Animation {
         float xDegrees = fromXDegrees + (toXDegrees  * interpolatedTime);
         float yDegrees = fromYDegrees + (toYDegrees  * interpolatedTime);
         float zDegrees = fromZDegrees + (toZDegrees  * interpolatedTime);
-
         Matrix matrix = t.getMatrix();
 
         applyZoom(interpolatedTime);
-
-        // Apply Rotation
-        if (interpolatedTime >= 0.5f) {
-            if (interpolatedTime == 1f){
-                int temp = currentDrawable;
-                currentDrawable = nextDrawable;
-                nextDrawable = temp;
-
-                numOfRepetition++;
-
-            } else {
-                imageView.setImageResource(nextDrawable);
-                imageView.setLayoutParams(params);
-            }
-
-            xDegrees -= 180f;
-
-        } else if (interpolatedTime == 0)
-            imageView.setImageResource(currentDrawable);
-
-
+        applyRotation(interpolatedTime);
 
         camera.save();
         camera.rotateX(-xDegrees);
@@ -87,14 +69,30 @@ public class CoinToss extends Animation {
         matrix.postTranslate(this.width, this.height);
     }
 
-    //TODO: fix scaling problem
     private void applyZoom(float interpolatedTime){
-        if ((numOfRepetition + interpolatedTime) / ((super.getRepeatCount() + 1) / 2) <= 1){
-            imageView.setScaleX((float)0.25 + (numOfRepetition + interpolatedTime) / ((super.getRepeatCount() + 1) / 2));
-            imageView.setScaleY((float)0.25 + (numOfRepetition + interpolatedTime) / ((super.getRepeatCount() + 1) / 2));
-        } else if (numOfRepetition < (super.getRepeatCount() + 1)){
-            imageView.setScaleX(3 - (numOfRepetition + interpolatedTime) / ((super.getRepeatCount() + 1) / 2));
-            imageView.setScaleY(3- (numOfRepetition + interpolatedTime) / ((super.getRepeatCount() + 1) / 2));
+        int repeatCount = super.getRepeatCount();
+        float scale = (numOfRepetition + interpolatedTime) / (repeatCount / 2);
+
+        if ((numOfRepetition + interpolatedTime) <= (repeatCount / 2)){
+            imageView.setScaleX((float)0.25 + scale);
+            imageView.setScaleY((float)0.25 + scale);
         }
+        else if (numOfRepetition < repeatCount){
+            imageView.setScaleX(3 - scale);
+            imageView.setScaleY(3 - scale);
+     }
+    }
+
+    private void applyRotation(float interpolatedTime){
+        if (interpolatedTime == (float) 1){
+            int temp = currentDrawable;
+            currentDrawable = nextDrawable;
+            nextDrawable = temp;
+            numOfRepetition++;
+        }
+        else if (interpolatedTime == 0)
+            imageView.setImageResource(currentDrawable);
+        else
+            imageView.setImageResource(nextDrawable);
     }
 }

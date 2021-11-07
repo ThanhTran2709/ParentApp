@@ -5,14 +5,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.cmpt276.model.Child;
 import com.cmpt276.model.Coin;
@@ -42,6 +45,7 @@ public class CoinFlipActivity extends AppCompatActivity {
         options = Options.getInstance(this);
         coinImage = (ImageView) findViewById(R.id.coin);
         coinImage.setImageResource(R.drawable.heads);
+
 
         updateUI();
 
@@ -75,10 +79,12 @@ public class CoinFlipActivity extends AppCompatActivity {
         coinAnimation.setDuration(100);
         coinAnimation.setInterpolator(new AccelerateInterpolator());
         coinImage.startAnimation(coinAnimation);
+
     }
 
     //Trigger coin animation
     public void flipCoinAnimationTrigger(int coinSide) {
+
         if (coinSide == 0) {  //Heads
             boolean stayTheSame = (currentSide == R.drawable.heads);
             animateCoin(stayTheSame);
