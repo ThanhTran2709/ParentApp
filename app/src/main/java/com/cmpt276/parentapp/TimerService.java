@@ -18,21 +18,23 @@ import androidx.core.app.NotificationCompat;
 
 public class TimerService extends Service {
 
-    private static final String MINUTES_IN_MILLIS_TAG = "minutes_in_millis_tag";
-    private static final long DEFAULT_MINUTES_IN_MILLIS = 0L;
+    private static final String MINUTES_IN_MILLI_SECONDS_TAG = "minutes_in_milli_seconds_tag";
+    private static final String ORIGINAL_TIME_IN_MILLI_SECONDS_TAG = "original_time_in_milli_seconds_tag";
+    private static final long DEFAULT_MINUTES_IN_MILLI_SECONDS = 0L;
     private static final String TIMER_SERVICE_BROADCAST = "timer_service_broadcast";
     private static final String MAIN_ACTIVITY_BROADCAST = "main_activity_broadcast";
     private static final String START_SERVICE_BROADCAST = "start_service_broadcast";
     public static final String CHANNEL_ID = "timer_service_channel";
-    public static final String SERVICE_STARTED_FLAG = "service_started_flag";
 
     private CountDownTimer timer;
-    private long minutesInMillis;
+    private long remainingMilliSeconds;
+    private long originalTimeInMilliSeconds;
     private BroadcastReceiver mainActivityReceiver;
 
-    public static Intent getIntent(Context context, long minutesInMillis){
+    public static Intent getIntent(Context context, long remainingMilliSeconds, long originalTimeInMilliSeconds){
         Intent i = new Intent(context, TimerService.class);
-        i.putExtra(MINUTES_IN_MILLIS_TAG, minutesInMillis);
+        i.putExtra(MINUTES_IN_MILLI_SECONDS_TAG, remainingMilliSeconds);
+        i.putExtra(ORIGINAL_TIME_IN_MILLI_SECONDS_TAG, originalTimeInMilliSeconds);
         return i;
     }
 
@@ -40,7 +42,8 @@ public class TimerService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Toast.makeText(this, "started service", Toast.LENGTH_SHORT).show();
-        minutesInMillis = intent.getLongExtra(MINUTES_IN_MILLIS_TAG, DEFAULT_MINUTES_IN_MILLIS);
+        remainingMilliSeconds = intent.getLongExtra(MINUTES_IN_MILLI_SECONDS_TAG, DEFAULT_MINUTES_IN_MILLI_SECONDS);
+        originalTimeInMilliSeconds = intent.getLongExtra(ORIGINAL_TIME_IN_MILLI_SECONDS_TAG, DEFAULT_MINUTES_IN_MILLI_SECONDS);
         communicateWithMainActivity();
         setUpTimerBroadcast();
         return START_STICKY;
@@ -51,8 +54,8 @@ public class TimerService extends Service {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Intent broadcastIntent = new Intent();
+                broadcastIntent.putExtra(ORIGINAL_TIME_IN_MILLI_SECONDS_TAG, originalTimeInMilliSeconds);
                 broadcastIntent.setAction(START_SERVICE_BROADCAST);
-                broadcastIntent.putExtra(SERVICE_STARTED_FLAG, true);
                 sendBroadcast(broadcastIntent);
             }
         };
@@ -65,19 +68,18 @@ public class TimerService extends Service {
     public void onDestroy() {
         super.onDestroy();
         timer.cancel();
-        unregisterReceiver(mainActivityReceiver);
     }
 
     private void setUpTimerBroadcast() {
 
-        timer = new CountDownTimer(minutesInMillis, 1000) {
+        timer = new CountDownTimer(remainingMilliSeconds, 1000) {
 
             @Override
             public void onTick(long l) {
-                //broadCast millis
                 Intent broadcastIntent = new Intent();
                 broadcastIntent.setAction(TIMER_SERVICE_BROADCAST);
-                broadcastIntent.putExtra(MINUTES_IN_MILLIS_TAG, l);
+                broadcastIntent.putExtra(MINUTES_IN_MILLI_SECONDS_TAG, l);
+                broadcastIntent.putExtra(ORIGINAL_TIME_IN_MILLI_SECONDS_TAG, originalTimeInMilliSeconds);
                 sendBroadcast(broadcastIntent);
             }
 
