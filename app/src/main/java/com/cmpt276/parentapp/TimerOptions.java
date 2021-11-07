@@ -35,8 +35,9 @@ public class TimerOptions extends AppCompatActivity {
         Button startButton = findViewById(R.id.timer_start_button);
         startButton.setOnClickListener(view -> {
             if(selected > 0) {
-                Intent i = TimerActivity.getIntent(this, selected);
+                Intent i = TimerActivity.getIntent(this, selected * 60000L, false);
                 startActivity(i);
+                finish();
             }
             else{
                 Toast.makeText(this, "Cannot start! Please enter a number greater than 0", Toast.LENGTH_SHORT).show();
