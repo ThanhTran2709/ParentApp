@@ -3,7 +3,6 @@
     package="com.cmpt276.parentapp">
 
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -12,17 +11,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ParentApp.NoActionBar">
+        <service android:name=".TimerService"></service>
         <activity
             android:name=".TimerOptions"
             android:exported="true"
-            android:screenOrientation="portrait"/>
-        android:theme="@style/Theme.ParentApp.NoActionBar">
+            android:screenOrientation="portrait" />
         <activity
             android:name=".CoinFlipHistoryActivity"
             android:exported="true" />
         <activity
             android:name=".TimerActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:parentActivityName=".MainActivity"/>
         <activity
             android:name=".CoinFlipActivity"
             android:exported="true" />

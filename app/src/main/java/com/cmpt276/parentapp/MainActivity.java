@@ -1,11 +1,11 @@
 package com.cmpt276.parentapp;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
+import android.content.ComponentName;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -15,31 +15,18 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.cmpt276.parentapp.databinding.ActivityMainBinding;
-
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String MAIN_ACTIVITY_BROADCAST = "main_activity_broadcast";
-    private static final String START_SERVICE_BROADCAST = "start_service_broadcast";
     private ActivityMainBinding binding;
-    private boolean isStartService = false;
-    private BroadcastReceiver startServiceReceiver;
-    private static final String ORIGINAL_TIME_IN_MILLI_SECONDS_TAG = "original_time_in_milli_seconds_tag";
-    private static final long DEFAULT_MINUTES_IN_MILLI_SECONDS = 0L;
-    private long originalTimeInMilliSeconds;
-
-    public static Intent getIntent(Context context) {
-        Intent i = new Intent(context, MainActivity.class);
-        return i;
-
-    }
+    TimerService timerService;
+    private boolean timerServiceBound = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
-        communicateWithTimerService();
         setContentView(binding.getRoot());
         setUpWelcomeText();
         setUpAnimation();
@@ -49,46 +36,35 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        unregisterReceiver(startServiceReceiver);
+    protected void onStart() {
+        super.onStart();
+        Intent intent = TimerService.getIntent(this);
+        bindService(intent, connection, 0);
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        communicateWithTimerService();
+    protected void onPause() {
+        super.onPause();
     }
 
-    private void communicateWithTimerService() {
-        Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction(MAIN_ACTIVITY_BROADCAST);
-        sendBroadcast(broadcastIntent);
-
-        startServiceReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                isStartService = true;
-                originalTimeInMilliSeconds = intent.getLongExtra(ORIGINAL_TIME_IN_MILLI_SECONDS_TAG,DEFAULT_MINUTES_IN_MILLI_SECONDS);
-            }
-        };
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(START_SERVICE_BROADCAST);
-        registerReceiver(startServiceReceiver, filter);
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unbindService(connection);
+        timerServiceBound = false;
     }
-
 
     private void setUpTimerButton() {
         Button timerButton = findViewById(R.id.timer_button);
         timerButton.setOnClickListener(view -> {
-            if(isStartService){
-                Intent i = TimerActivity.getIntent(MainActivity.this, originalTimeInMilliSeconds, true);
-                startActivity(i);
+            Intent i;
+            if(timerServiceBound){
+                i = TimerActivity.getIntent(MainActivity.this, timerService.getOriginalMilliSeconds(), true);
             }
             else{
-                Intent i = TimerOptions.getIntent(MainActivity.this);
-                startActivity(i);
+                i = TimerOptions.getIntent(MainActivity.this);
             }
+            startActivity(i);
         });
     }
 
@@ -124,24 +100,53 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     private void setUpAnimation(){
+
         Animation slideIn = AnimationUtils.loadAnimation(this, R.anim.slide_in);
         Animation slideIn2 = AnimationUtils.loadAnimation(this, R.anim.slide_in);
         Animation slideIn3 = AnimationUtils.loadAnimation(this, R.anim.slide_in);
+
         Button timerButton = findViewById(R.id.timer_button);
         Button coinFlipButton = findViewById(R.id.flip_a_coin_button);
         Button myChildrenButton = findViewById(R.id.my_children_button);
+
         coinFlipButton.setVisibility(View.INVISIBLE);
         timerButton.setVisibility(View.INVISIBLE);
+
         myChildrenButton.startAnimation(slideIn);
+
         Handler handler = new Handler();
+
         handler.postDelayed(() -> {
             coinFlipButton.setVisibility(View.VISIBLE);
             coinFlipButton.startAnimation(slideIn2);
         }, 500);
+
         handler.postDelayed(() -> {
             timerButton.setVisibility(View.VISIBLE);
             timerButton.startAnimation(slideIn3);
         }, 1300);
+
     }
+
+    /**
+     * https://developer.android.com/guide/components/bound-services#Binder
+     */
+    private ServiceConnection connection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+
+            TimerService.LocalBinder binder = (TimerService.LocalBinder) service;
+            timerService = binder.getService();
+            timerServiceBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            timerServiceBound = false;
+        }
+    };
 }
