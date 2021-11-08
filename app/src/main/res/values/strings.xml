@@ -54,5 +54,6 @@
     <string name="backTxt">Back</string>
     <string name="exitTxt">Exit</string>
     <string name="new_timer">New Timer</string>
+    <string name="stop_alarm">Stop Alarm</string>
 
 </resources>

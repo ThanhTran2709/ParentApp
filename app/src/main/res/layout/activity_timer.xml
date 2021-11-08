@@ -59,4 +59,15 @@
         app:layout_constraintStart_toStartOf="@+id/pause_play"
         app:layout_constraintTop_toBottomOf="@+id/pause_play" />
 
+    <Button
+        android:id="@+id/stop_alarm_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="44dp"
+        android:text="@string/stop_alarm"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@+id/new_timer_button"
+        app:layout_constraintStart_toStartOf="@+id/new_timer_button"
+        app:layout_constraintTop_toBottomOf="@+id/new_timer_button" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
