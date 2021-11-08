@@ -43,6 +43,18 @@ public class ChildrenActivity extends AppCompatActivity {
         listItemClick();
         setUpAddBtn();
         populateList();
+        setUpBackBtn();
+    }
+
+    private void setUpBackBtn() {
+        Button backBtn = (Button) findViewById(R.id.backBtn_children);
+        backBtn.setText(R.string.backTxt);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
     }
 
 
