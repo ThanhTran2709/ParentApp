@@ -49,6 +49,8 @@ public class CoinFlipActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_coin_flip);
 
+        setUpBackBtn();
+
         options = Options.getInstance(this);
         coinImage = findViewById(R.id.coin);
         coinImage.setImageResource(R.drawable.heads);
@@ -66,6 +68,17 @@ public class CoinFlipActivity extends AppCompatActivity {
 
         RadioGroup group = findViewById(R.id.radioGroupFlipChoice);
         group.setOnCheckedChangeListener(getGroupOnCheckChangeListener());
+    }
+
+    private void setUpBackBtn() {
+        Button backBtn = (Button) findViewById(R.id.backBtn_coin);
+        backBtn.setText(R.string.backTxt);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
     }
 
     //Set up coin animation

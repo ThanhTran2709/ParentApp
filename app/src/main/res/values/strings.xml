@@ -43,5 +43,7 @@
     <string name="confirm_reset">Are you sure  you want to clear the flip history?</string>
     <string name="reset">Reset</string>
     <string name="error_no_history">There is no coin flip history to clear.</string>
+    <string name="backTxt">Back</string>
+    <string name="exitTxt">Exit</string>
 
 </resources>

@@ -1,5 +1,10 @@
 package com.cmpt276.parentapp;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -9,6 +14,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,6 +38,7 @@ public class ChildrenActivity extends AppCompatActivity {
     public static Intent getIntent(Context context){
         return new Intent(context, ChildrenActivity.class);
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,8 +96,9 @@ public class ChildrenActivity extends AppCompatActivity {
 
     //Click handling for children list view
     private void listItemClick(){
-        if (options.getChildList().size() == 0)
+        if (options.getChildList().size() == 0) {
             return;
+        }
         ListView childrenListView = findViewById(R.id.childrenListView);
         childrenListView.setOnItemClickListener((adapterView, childClicked, index, position) -> {
             EditChildDialog alert = new EditChildDialog();
