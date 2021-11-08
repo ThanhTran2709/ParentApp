@@ -1,10 +1,7 @@
 package com.cmpt276.parentapp;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -42,8 +39,20 @@ public class ChildrenActivity extends AppCompatActivity {
         options = Options.getInstance(this);
 
         listItemClick();
+        setUpBackBtn();
         setUpAddBtn();
         populateList();
+    }
+
+    private void setUpBackBtn() {
+        Button backBtn = (Button) findViewById(R.id.backBtn_children);
+        backBtn.setText(R.string.backTxt);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
     }
 
 
