@@ -1,10 +1,5 @@
 package com.cmpt276.parentapp;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -14,7 +9,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,10 +16,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.cmpt276.model.Child;
-import com.cmpt276.model.Options;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+
+/**
+ * Activity for adding, editing, and deleting saved children
+ * */
 public class ChildrenActivity extends AppCompatActivity {
 
     private Options options;
@@ -48,25 +47,22 @@ public class ChildrenActivity extends AppCompatActivity {
 
 
     private void setUpAddBtn() {
-        Button addBtn = (Button) findViewById(R.id.addBtn);
+        Button addBtn = findViewById(R.id.addBtn);
         addBtn.setText(R.string.addBtnText);
 
-        addBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AddChildDialog alert = new AddChildDialog();
-                alert.showDialog(ChildrenActivity.this);
-            }
+        addBtn.setOnClickListener((view) -> {
+            AddChildDialog alert = new AddChildDialog();
+            alert.showDialog(ChildrenActivity.this);
         });
     }
 
     //Populate list view with name and age of children
     private void populateList(){
         ArrayAdapter<Child> adapter = new MyListAdapter();
-        ListView childrenListView = (ListView) findViewById(R.id.childrenListView);
+        ListView childrenListView = findViewById(R.id.childrenListView);
         childrenListView.setAdapter(adapter);
         childrenListView.setDivider(null);
-        childrenListView.setDividerHeight(0);
+        childrenListView.setDividerHeight(16);
     }
 
     private class MyListAdapter extends ArrayAdapter<Child>{
@@ -74,10 +70,9 @@ public class ChildrenActivity extends AppCompatActivity {
         public MyListAdapter(){
             super(ChildrenActivity.this, R.layout.children_view, options.getChildList());
         }
-        @SuppressLint("SetTextI18n")
-        @NonNull
+
         @Override
-        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        public View getView(int position, View convertView, ViewGroup parent) {
             View gamesView = convertView;
             if (gamesView == null){
                 gamesView = getLayoutInflater().inflate(R.layout.children_view, parent, false);
@@ -95,19 +90,14 @@ public class ChildrenActivity extends AppCompatActivity {
 
     //Click handling for children list view
     private void listItemClick(){
-        if (options.getChildList().size() == 0)
+        if (options.getChildList().size() == 0) {
             return;
-        else {
-            ListView childrenListView = (ListView) findViewById(R.id.childrenListView);
-            childrenListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View childClicked, int index, long position) {
-
-                    EditChildDialog alert = new EditChildDialog();
-                    alert.showDialog(ChildrenActivity.this, index);
-                }
-            });
         }
+        ListView childrenListView = findViewById(R.id.childrenListView);
+        childrenListView.setOnItemClickListener((adapterView, childClicked, index, position) -> {
+            EditChildDialog alert = new EditChildDialog();
+            alert.showDialog(ChildrenActivity.this, index);
+        });
     }
 
     public class AddChildDialog {
@@ -122,32 +112,35 @@ public class ChildrenActivity extends AppCompatActivity {
             EditText nameInput = dialog.findViewById(R.id.childNameedittext);
 
             FloatingActionButton cancelFab = dialog.findViewById(R.id.cancelfab);
-            cancelFab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    dialog.dismiss();
-                }
-            });
+            cancelFab.setOnClickListener(getCancelFabListener(dialog));
 
             FloatingActionButton addFab = dialog.findViewById(R.id.addfab);
-            addFab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(nameInput.getText().toString().isEmpty()) {
-                        Toast.makeText(ChildrenActivity.this, "Enter a valid name for the child", Toast.LENGTH_SHORT).show();
-                    }else {
-                        options.addChild(new Child(nameInput.getText().toString()));
-
-                        Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
-                        Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
-                        populateList();
-
-                        dialog.cancel();
-                    }
-                }
-            });
+            addFab.setOnClickListener(getAddFabListener(dialog, nameInput));
 
             dialog.show();
+        }
+
+        private View.OnClickListener getAddFabListener(Dialog dialog, EditText nameInput) {
+            return (view) -> {
+                if(nameInput.getText().toString().isEmpty()) {
+                    Toast.makeText(ChildrenActivity.this, R.string.error_validate_name, Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    options.addChild(new Child(nameInput.getText().toString()));
+
+                    Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
+                    Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
+                    populateList();
+
+                    dialog.cancel();
+                }
+            };
+        }
+
+        private View.OnClickListener getCancelFabListener(Dialog dialog) {
+            return (view) -> {
+                dialog.dismiss();
+            };
         }
     }
 
@@ -165,42 +158,45 @@ public class ChildrenActivity extends AppCompatActivity {
 
 
             FloatingActionButton cancelFab = dialog.findViewById(R.id.cancelfab2);
-            cancelFab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    dialog.dismiss();
-                }
-            });
+            cancelFab.setOnClickListener(getCancelFabListener(dialog));
 
             FloatingActionButton addFab = dialog.findViewById(R.id.addfab2);
-            addFab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (nameInput.getText().toString().isEmpty()) {
-                        Toast.makeText(ChildrenActivity.this, "Enter a valid name for the child", Toast.LENGTH_SHORT).show();
-                    } else {
-                        options.editChild(index, nameInput.getText().toString());
-                        Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
-                        Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
-                        populateList();
-                        dialog.cancel();
-                    }
-                }
-            });
+            addFab.setOnClickListener(getAddFabListener(dialog, nameInput, index));
 
             FloatingActionButton deleteFab = dialog.findViewById(R.id.deletefab2);
-            deleteFab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    options.removeChild(index);
+            deleteFab.setOnClickListener(getDeleteFabListener(dialog, index));
+
+            dialog.show();
+        }
+
+        private View.OnClickListener getCancelFabListener(Dialog dialog) {
+            return (view) -> {
+                dialog.dismiss();
+            };
+        }
+
+        private View.OnClickListener getAddFabListener(Dialog dialog, EditText nameInput, int index) {
+            return (view) -> {
+                if (nameInput.getText().toString().isEmpty()) {
+                    Toast.makeText(ChildrenActivity.this, R.string.error_validate_name, Toast.LENGTH_SHORT).show();
+                } else {
+                    options.editChild(index, nameInput.getText().toString());
                     Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
                     Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
                     populateList();
                     dialog.cancel();
                 }
-            });
+            };
+        }
 
-            dialog.show();
+        private View.OnClickListener getDeleteFabListener(Dialog dialog, int index) {
+            return (view) -> {
+                options.removeChild(index);
+                Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
+                Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
+                populateList();
+                dialog.cancel();
+            };
         }
     }
 

@@ -26,9 +26,17 @@
     <string name="addBtnText">Add new child</string>
     <string name="emptyNameErrorTxt">Your child must have a name!</string>
 
+    <!-- Child strings -->
+    <string name="error_validate_name">Enter a valid name for the child</string>
+
+    <!-- Main menu strings -->
+    <string name="good_morning">Good Morning!</string>
+    <string name="good_afternoon">Good Afternoon!</string>
+    <string name="good_evening">Good Evening!</string>
+
     <!-- Coin flip activity strings -->
-    <string name="flip_a_coin">Flip A Coin!</string>
-    <string name="current_child">Current child: %1$s</string>
+    <string name="flip_a_coin">Flip the Coin!</string>
+    <string name="current_child">Hi %1$s!\nIt\'s your turn to\nflip the coin!</string>
     <string name="change_child">Change Child</string>
     <string name="heads">Heads</string>
     <string name="tails">Tails</string>
@@ -42,6 +50,9 @@
     <string name="clear">Clear</string>
     <string name="confirm_reset">Are you sure  you want to clear the flip history?</string>
     <string name="reset">Reset</string>
+    <string name="error_no_history">There is no coin flip history to clear.</string>
+    <string name="backTxt">Back</string>
+    <string name="exitTxt">Exit</string>
     <string name="new_timer">New Timer</string>
 
 </resources>

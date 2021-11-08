@@ -7,76 +7,156 @@
     android:backgroundTint="@color/white"
     tools:context=".CoinFlipActivity">
 
-    <Button
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/children_list_shape"
+        android:backgroundTint="#d5d5d5"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonFlipCoin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/moon_bold_font"
+            android:text="Pick heads or tail!"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+
+        <RadioGroup
+            android:id="@+id/radioGroupFlipChoice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal">
+
+            <RadioButton
+                android:id="@+id/radioButtonHeads"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:buttonTint="#6c5b7b"
+                android:checked="true"
+                android:fontFamily="@font/moon_bold_font"
+                android:text="@string/heads"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <RadioButton
+                android:id="@+id/radioButtonTails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:buttonTint="#6c5b7b"
+                android:fontFamily="@font/moon_bold_font"
+                android:text="@string/tails"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+        </RadioGroup>
+
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonFlipCoin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="64dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="16dp"
+        android:background="@drawable/rounded_corner_gold"
+        android:fontFamily="@font/moon_bold_font"
+        android:padding="16sp"
         android:text="@string/flip_a_coin"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonViewFlipHistory"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/textViewShowResult"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TEMPORARY"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/moon_bold_font"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/coin"
+        app:layout_constraintStart_toStartOf="@+id/coin"
+        app:layout_constraintTop_toBottomOf="@+id/coin" />
 
     <TextView
         android:id="@+id/textViewChild"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/moon_bold_font"
+        android:gravity="center"
         android:text="@string/current_child"
-        app:layout_constraintBottom_toTopOf="@+id/buttonFlipCoin"
+        android:textColor="@color/black"
+        android:textSize="32sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonChangeChild"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/rounded_corner_pink"
+        android:fontFamily="@font/moon_bold_font"
+        android:padding="16sp"
+        android:text="@string/change_child"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonViewFlipHistory"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/buttonViewFlipHistory"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:text="@string/change_child"
+        android:background="@drawable/rounded_corner_orange"
+        android:fontFamily="@font/moon_bold_font"
+        android:padding="16sp"
+        android:text="@string/history"
+        android:textColor="@color/black"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <RadioGroup
-        android:id="@+id/radioGroupFlipChoice"
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/backBtn_coin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        app:layout_constraintBottom_toBottomOf="@+id/buttonFlipCoin"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/buttonFlipCoin" >
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/rounded_corner_red"
+        android:fontFamily="@font/moon_bold_font"
+        android:padding="16sp"
+        android:text="@string/backTxt"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <RadioButton
-            android:id="@+id/radioButtonHeads"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="@string/heads" />
-
-        <RadioButton
-            android:id="@+id/radioButtonTails"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/tails" />
-    </RadioGroup>
-
-    <Button
-        android:id="@+id/buttonViewFlipHistory"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/history"
+    <ImageView
+        android:id="@+id/coin"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewChild"
+        app:srcCompat="@drawable/heads" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

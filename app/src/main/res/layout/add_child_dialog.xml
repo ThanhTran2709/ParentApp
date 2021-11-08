@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- https://stackoverflow.com/questions/36789561/how-to-create-custom-dialog-box-with-two-button-in-android-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -33,14 +34,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:backgroundTint="@android:color/darker_gray"
                 android:ems="10"
                 android:fontFamily="@font/moon_bold_font"
                 android:gravity="center"
                 android:hint="Enter child name"
                 android:inputType="textPersonName"
-                android:backgroundTint="@android:color/darker_gray"
+                android:minHeight="48dp"
                 android:textColor="@color/black"
-                android:textColorHint="@android:color/darker_gray"/>
+                android:textColorHint="@android:color/darker_gray" />
 
             <TextView
                 android:layout_width="wrap_content"

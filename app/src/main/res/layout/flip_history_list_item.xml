@@ -2,8 +2,22 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/children_list_shape"
+    android:layout_marginBottom="16dp">
+
+    <ImageView
+        android:id="@+id/imageViewAcceptedFlip"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_check_circle_24" />
 
     <TextView
         android:id="@+id/textViewFlipResult"
@@ -11,20 +25,9 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:text="@string/coin_flip_result"
+        android:fontFamily="@font/moon_bold_font"
         app:layout_constraintBottom_toTopOf="@+id/textViewChildPicked"
         app:layout_constraintStart_toStartOf="@+id/textViewChildPicked" />
-
-    <ImageView
-        android:id="@+id/imageViewAcceptedFlip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="48dp"
-        android:layout_marginBottom="48dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_check_circle_24" />
 
     <TextView
         android:id="@+id/textViewChildPicked"
@@ -32,6 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="@string/coin_flip_picked"
+        android:fontFamily="@font/moon_bold_font"
         app:layout_constraintBottom_toBottomOf="@+id/imageViewAcceptedFlip"
         app:layout_constraintStart_toEndOf="@+id/imageViewAcceptedFlip"
         app:layout_constraintTop_toTopOf="@+id/imageViewAcceptedFlip" />
@@ -42,6 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/coin_flip_time"
+        android:fontFamily="@font/moon_bold_font"
         app:layout_constraintStart_toStartOf="@+id/textViewChildPicked"
         app:layout_constraintTop_toBottomOf="@+id/textViewChildPicked" />
 

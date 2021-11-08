@@ -1,8 +1,10 @@
-package com.cmpt276.model;
+package com.cmpt276.parentapp;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.cmpt276.model.Child;
+import com.cmpt276.model.Coin;
 import com.cmpt276.parentapp.serializer.LocalDateTimeAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -12,7 +14,9 @@ import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-//Options class implement Shared Preferences to save data between app runs
+/**
+ * Options class implement Shared Preferences to save data between app runs
+ */
 public class Options {
     private ArrayList<Child> childList;
     private ArrayList<String> childListToString;
@@ -79,6 +83,8 @@ public class Options {
     }
 
     public void addCoinFlip(Context context, Coin coin){
+        //pulls json encoded array from shared preferences, adds the coin to the list, then
+        //re-encodes it to json to be sent back to preferences
         SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         String jsonString = pref.getString(FLIP_LIST_TAG, null);

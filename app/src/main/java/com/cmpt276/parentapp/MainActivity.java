@@ -17,6 +17,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.cmpt276.parentapp.databinding.ActivityMainBinding;
 import java.util.Calendar;
 
+/**
+ * Main menu for the application, hub for accessing other functions of the app.
+ * */
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
@@ -25,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -33,6 +37,18 @@ public class MainActivity extends AppCompatActivity {
         setUpMyChildrenButton();
         setUpCoinFlipButton();
         setUpTimerButton();
+        setUpExitBtn();
+    }
+
+    private void setUpExitBtn() {
+        Button backBtn = (Button) findViewById(R.id.exitBtn);
+        backBtn.setText(R.string.exitTxt);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finishAffinity();
+            }
+        });
     }
 
     @Override
@@ -89,17 +105,16 @@ public class MainActivity extends AppCompatActivity {
         Calendar currentTime = Calendar.getInstance();
         int hour = currentTime.get(Calendar.HOUR_OF_DAY);
         if(hour < 12){
-            welcomeText.setText("Good Morning!");
+            welcomeText.setText(R.string.good_morning);
         }
         else if(hour < 18){
-            welcomeText.setText("Good Afternoon!");
+            welcomeText.setText(R.string.good_afternoon);
         }
         else{
-            welcomeText.setText("Good Evening!");
+            welcomeText.setText(R.string.good_evening);
         }
 
     }
-
 
     private void setUpAnimation(){
 
@@ -117,17 +132,14 @@ public class MainActivity extends AppCompatActivity {
         myChildrenButton.startAnimation(slideIn);
 
         Handler handler = new Handler();
-
         handler.postDelayed(() -> {
             coinFlipButton.setVisibility(View.VISIBLE);
             coinFlipButton.startAnimation(slideIn2);
         }, 500);
-
         handler.postDelayed(() -> {
             timerButton.setVisibility(View.VISIBLE);
             timerButton.startAnimation(slideIn3);
         }, 1300);
-
     }
 
     /**
