@@ -11,6 +11,7 @@
     <string name="minutes_text">00 : 00</string>
     <string name="timeout_timer_title">Timeout Timer</string>
     <string name="pause_button_text">Pause</string>
+    <string name="play_button_text">Play</string>
     <string name="reset_button_text">Reset</string>
     <string name="timer_options_button_text">Timer Options</string>
     <string name="timer_options_title">Timer Options</string>
@@ -41,5 +42,6 @@
     <string name="clear">Clear</string>
     <string name="confirm_reset">Are you sure  you want to clear the flip history?</string>
     <string name="reset">Reset</string>
+    <string name="new_timer">New Timer</string>
 
 </resources>
