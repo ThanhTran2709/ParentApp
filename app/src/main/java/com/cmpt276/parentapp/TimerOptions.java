@@ -4,9 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -59,9 +62,13 @@ public class TimerOptions extends AppCompatActivity {
 
         int []minutes = getResources().getIntArray(R.array.minutes_array);
 
+        Typeface font = getResources().getFont(R.font.moon_bold_font);
+
         for(int minute_option: minutes){
             RadioButton minuteButton = new RadioButton(this);
-
+            minuteButton.setTypeface(font);
+            minuteButton.setTextColor(Color.BLACK);
+            minuteButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
             setButtonGraphics(minuteButton, minute_option + ((minute_option == 1) ? " minute" : " minutes"));
             timerOptions.addView(minuteButton);
 
@@ -73,6 +80,11 @@ public class TimerOptions extends AppCompatActivity {
         }
 
         RadioButton customButton = new RadioButton(this);
+
+        customButton.setTypeface(font);
+        customButton.setTextColor(Color.BLACK);
+        customButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
+        customButton.setHighlightColor(Color.parseColor("#355c7d"));
         timerOptions.addView(customButton);
         setButtonGraphics(customButton, "Custom");
 
