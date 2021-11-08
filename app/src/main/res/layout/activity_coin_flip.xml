@@ -68,7 +68,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:layout_marginStart="16dp"
-        android:background="@drawable/rounded_corner_gold"
+        android:background="@drawable/rounded_corner_purple"
         android:fontFamily="@font/moon_bold_font"
         android:padding="16sp"
         android:text="@string/flip_a_coin"

@@ -14,7 +14,7 @@
     <string name="play_button_text">Play</string>
     <string name="reset_button_text">Reset</string>
     <string name="timer_options_button_text">Timer Options</string>
-    <string name="timer_options_title">Timer Options</string>
+    <string name="timer_options_title">Pick a Time!</string>
     <string name="start_button_text">Start!</string>
     <string name="addBtnTitle">Enter or edit name:</string>
     <string name="nameHint">Enter name here</string>
@@ -35,7 +35,7 @@
     <string name="good_evening">Good Evening!</string>
 
     <!-- Coin flip activity strings -->
-    <string name="flip_a_coin">Flip the Coin!</string>
+    <string name="flip_a_coin">Flip Coin!</string>
     <string name="current_child">Hi %1$s!\nIt\'s your turn to\nflip the coin!</string>
     <string name="change_child">Change Child</string>
     <string name="heads">Heads</string>
