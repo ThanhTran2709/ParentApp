@@ -121,13 +121,16 @@ public class MainActivity extends AppCompatActivity {
         Animation slideIn = AnimationUtils.loadAnimation(this, R.anim.slide_in);
         Animation slideIn2 = AnimationUtils.loadAnimation(this, R.anim.slide_in);
         Animation slideIn3 = AnimationUtils.loadAnimation(this, R.anim.slide_in);
+        Animation slideIn4 = AnimationUtils.loadAnimation(this, R.anim.slide_in);
 
         Button timerButton = findViewById(R.id.timer_button);
         Button coinFlipButton = findViewById(R.id.flip_a_coin_button);
         Button myChildrenButton = findViewById(R.id.my_children_button);
+        Button exitButton = findViewById(R.id.exitBtn);
 
         coinFlipButton.setVisibility(View.INVISIBLE);
         timerButton.setVisibility(View.INVISIBLE);
+        exitButton.setVisibility(View.INVISIBLE);
 
         myChildrenButton.startAnimation(slideIn);
 
@@ -135,11 +138,15 @@ public class MainActivity extends AppCompatActivity {
         handler.postDelayed(() -> {
             coinFlipButton.setVisibility(View.VISIBLE);
             coinFlipButton.startAnimation(slideIn2);
-        }, 500);
+        }, 300);
         handler.postDelayed(() -> {
             timerButton.setVisibility(View.VISIBLE);
             timerButton.startAnimation(slideIn3);
-        }, 1300);
+        }, 600);
+        handler.postDelayed(() -> {
+            exitButton.setVisibility(View.VISIBLE);
+            exitButton.startAnimation(slideIn4);
+        }, 900);
     }
 
     /**
