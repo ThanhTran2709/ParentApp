@@ -31,6 +31,18 @@ public class MainActivity extends AppCompatActivity {
         setUpMyChildrenButton();
         setUpCoinFlipButton();
         setUpTimerButton();
+        setUpExitBtn();
+    }
+
+    private void setUpExitBtn() {
+        Button backBtn = (Button) findViewById(R.id.exitBtn);
+        backBtn.setText(R.string.exitTxt);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finishAffinity();
+            }
+        });
     }
 
     private void setUpTimerButton() {
