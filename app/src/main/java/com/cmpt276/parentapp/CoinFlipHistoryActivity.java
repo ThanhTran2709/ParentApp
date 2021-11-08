@@ -1,11 +1,5 @@
 package com.cmpt276.parentapp;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -15,16 +9,21 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
-import com.cmpt276.model.Child;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.cmpt276.model.Coin;
-import com.cmpt276.model.Options;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
+/**
+ * Activity for viewing all previous results of coin flips, including who picked,
+ * the result of the flip, and the time it happened.
+ * */
 public class CoinFlipHistoryActivity extends AppCompatActivity {
 
 	Options options;
@@ -50,7 +49,7 @@ public class CoinFlipHistoryActivity extends AppCompatActivity {
 	private View.OnClickListener getClearListener() {
 		return view -> {
 			if(options.getFlipHistory(this).size() == 0) {
-				Toast.makeText(this, "There are no coin flip history to clear", Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, R.string.error_no_history, Toast.LENGTH_SHORT).show();
 			}
 			else {
 				ClearHistoryDialog alert = new ClearHistoryDialog();
@@ -69,23 +68,25 @@ public class CoinFlipHistoryActivity extends AppCompatActivity {
 			dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
 			FloatingActionButton cancelFab = dialog.findViewById(R.id.cancelFab);
-			cancelFab.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View view) {
-					dialog.dismiss();
-				}
-			});
+			cancelFab.setOnClickListener(getCancelFabListener(dialog));
 
 			FloatingActionButton addFab = dialog.findViewById(R.id.okFab);
-			addFab.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					options.clearCoinFlips(CoinFlipHistoryActivity.this);
-					CoinFlipHistoryActivity.this.finish();
-				}
-			});
+			addFab.setOnClickListener(getAddFabListener());
 
 			dialog.show();
+		}
+
+		private View.OnClickListener getCancelFabListener(Dialog dialog) {
+			return (view) -> {
+				dialog.dismiss();
+			};
+		}
+
+		private View.OnClickListener getAddFabListener() {
+			return (view) -> {
+				options.clearCoinFlips(CoinFlipHistoryActivity.this);
+				CoinFlipHistoryActivity.this.finish();
+			};
 		}
 	}
 

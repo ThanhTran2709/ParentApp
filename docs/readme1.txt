@@ -1,0 +1,1 @@
+For the coin toss, when the user is flipping a coin with children for the first time it defaults to the first child added.

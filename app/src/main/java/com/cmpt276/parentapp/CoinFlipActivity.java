@@ -23,14 +23,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.cmpt276.model.Child;
 import com.cmpt276.model.Coin;
-import com.cmpt276.model.CoinToss;
-import com.cmpt276.model.Options;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
-//TODO: add a way to view and clear flip history
+/**
+ * Activity for flipping coin
+ * */
 public class CoinFlipActivity extends AppCompatActivity {
+
+    private static final int NUMBER_OF_FLIPS = 7;
 
     Options options;
     private int coinChoiceIndex = Coin.HEADS;
@@ -50,7 +52,7 @@ public class CoinFlipActivity extends AppCompatActivity {
         setUpBackBtn();
 
         options = Options.getInstance(this);
-        coinImage = (ImageView) findViewById(R.id.coin);
+        coinImage = findViewById(R.id.coin);
         coinImage.setImageResource(R.drawable.heads);
 
         updateUI();
@@ -83,15 +85,19 @@ public class CoinFlipActivity extends AppCompatActivity {
     private void animateCoin(boolean stayTheSame) {
         CoinToss coinAnimation;
 
-        if (currentSide == R.drawable.heads)
+        if (currentSide == R.drawable.heads) {
             coinAnimation = new CoinToss(coinImage, R.drawable.heads, R.drawable.tails, 0, 180, 0, 0, 0, 0);
-        else
+        }
+        else {
             coinAnimation = new CoinToss(coinImage, R.drawable.tails, R.drawable.heads, 0, 180, 0, 0, 0, 0);
+        }
 
-        if (stayTheSame)
-            coinAnimation.setRepeatCount(7); // value + 1 must be even so the side will stay the same
-        else
-            coinAnimation.setRepeatCount(8); // value + 1 must be odd so the side will not stay the same
+        if (stayTheSame) {
+            coinAnimation.setRepeatCount(NUMBER_OF_FLIPS); // value + 1 must be even so the side will stay the same
+        }
+        else {
+            coinAnimation.setRepeatCount(NUMBER_OF_FLIPS + 1); // value + 1 must be odd so the side will not stay the same
+        }
 
         coinAnimation.setDuration(100);
         coinAnimation.setInterpolator(new AccelerateInterpolator());
@@ -100,18 +106,17 @@ public class CoinFlipActivity extends AppCompatActivity {
 
     //Trigger coin animation
     public void flipCoinAnimationTrigger(int coinSide) {
-        if (coinSide == 0) {  //Heads
+        if (coinSide == Coin.HEADS) {
             boolean stayTheSame = (currentSide == R.drawable.heads);
             animateCoin(stayTheSame);
             currentSide = R.drawable.heads;
         }
-        if (coinSide == 1) {  //Tails
+        if (coinSide == Coin.TAILS) {
             boolean stayTheSame = (currentSide == R.drawable.tails);
             animateCoin(stayTheSame);
             currentSide = R.drawable.tails;
         }
     }
-
 
     private void updateUI() {
         TextView textViewChild = findViewById(R.id.textViewChild);
@@ -159,10 +164,11 @@ public class CoinFlipActivity extends AppCompatActivity {
                         throw new IllegalStateException("Cannot have selection that is neither heads nor tails.");
                 }
                 coin = new Coin(children.get(index), flipChoice);
-                MediaPlayer mp = MediaPlayer.create(this, R.raw.coinflip);
-                flipCoinAnimationTrigger(coin.getFlipResult());
-                mp.start();
             }
+
+            MediaPlayer mp = MediaPlayer.create(this, R.raw.coinflip);
+            flipCoinAnimationTrigger(coin.getFlipResult());
+            mp.start();
 
             //cycles to the next child, looping back to the first if it reaches the end of the list
             if (children.size() > 0){
@@ -171,27 +177,23 @@ public class CoinFlipActivity extends AppCompatActivity {
             }
             options.addCoinFlip(CoinFlipActivity.this, coin);
 
-            //TODO: show result of coin flip through animated coin rather than a textview
             int result = coin.getFlipResult();
             TextView tv = findViewById(R.id.textViewShowResult);
             tv.setText("");
             Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    switch (result){
-                        case Coin.HEADS:
-                            tv.setText("HEADS");
-                            break;
-                        case Coin.TAILS:
-                            tv.setText("TAILS");
-                            break;
-                        default:
-                            assert false;
-                            break;
-                    }
-                    updateUI();
+            handler.postDelayed(() -> {
+                switch (result){
+                    case Coin.HEADS:
+                        tv.setText(R.string.heads);
+                        break;
+                    case Coin.TAILS:
+                        tv.setText(R.string.tails);
+                        break;
+                    default:
+                        assert false;
+                        break;
                 }
+                updateUI();
             }, 1100);
 
         };
@@ -206,37 +208,27 @@ public class CoinFlipActivity extends AppCompatActivity {
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
             FloatingActionButton cancelFab = dialog.findViewById(R.id.cancelfab3);
-            cancelFab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                }
-            });
+            cancelFab.setOnClickListener(getCancelFabListener(dialog));
             dialog.show();
 
-
-            ArrayList<Child> children = options.getChildList();
-            String[] names = new String[children.size()];
-            for (int i = 0; i < names.length; i++){
-                names[i] = children.get(i).getName();
-            }
-
-            ArrayAdapter<Child> adapter =  new MyListAdapter();
+            ArrayAdapter<Child> adapter = new ChildListAdapter();
             ListView listView = dialog.findViewById(R.id.listViewChildSelect);
             listView.setAdapter(adapter);
             listView.setDividerHeight(16);
 
-            listView.setOnItemClickListener((adapterView, view1, i, l) -> {
-                options.setChildFlipIndex(CoinFlipActivity.this, i);
-                updateUI();
-                dialog.dismiss();
-            });
+            listView.setOnItemClickListener(getListViewClickListener(dialog));
         };
     }
 
-    private class MyListAdapter extends ArrayAdapter<Child>{
+    private View.OnClickListener getCancelFabListener(Dialog dialog) {
+        return (view) -> {
+            dialog.dismiss();
+        };
+    }
 
-        public MyListAdapter(){
+    private class ChildListAdapter extends ArrayAdapter<Child>{
+
+        public ChildListAdapter(){
             super(CoinFlipActivity.this, R.layout.child_name_view, options.getChildList());
         }
 
@@ -258,15 +250,17 @@ public class CoinFlipActivity extends AppCompatActivity {
     }
 
     private View.OnClickListener getViewHistoryListener() {
-        return view -> {
+        return (view) -> {
             Intent intent = CoinFlipHistoryActivity.getIntent(CoinFlipActivity.this);
             startActivity(intent);
         };
     }
 
-    private AdapterView.OnItemClickListener getListViewClickListener() {
-        return (adapterView, view, i, l) -> {
+    private AdapterView.OnItemClickListener getListViewClickListener(Dialog dialog) {
+        return (adapterView, view1, i, l) -> {
             options.setChildFlipIndex(CoinFlipActivity.this, i);
+            updateUI();
+            dialog.dismiss();
         };
     }
 
