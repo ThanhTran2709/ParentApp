@@ -57,6 +57,13 @@ public class Coin {
 		return time;
 	}
 
+	public boolean hasNoChoice(){
+		if(flipChoice == NO_CHOICE){
+			return true;
+		}
+		return false;
+	}
+
 	private static int randomCoinFlip(){
 		int result = rng.nextInt(NUM_RESULTS);
 		return result;

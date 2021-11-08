@@ -76,7 +76,9 @@ public class TimerActivity extends AppCompatActivity {
         unregisterReceiver(timerReceiver);
         unbindService(connection);
         timerServiceBound = false;
+        finish();
     }
+
 
     private void setUpStartService() {
         serviceIntent = TimerService.getIntent(this, originalTimeInMilliSeconds);

@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -120,15 +121,17 @@ public class CoinFlipActivity extends AppCompatActivity {
 
     private void updateUI() {
         TextView textViewChild = findViewById(R.id.textViewChild);
-
+        LinearLayout flipChoiceLL = findViewById(R.id.linearLayout);
         ArrayList<Child> children = options.getChildList();
         int index = options.getChildFlipIndex(CoinFlipActivity.this);
 
         //if there's no children, essentially hide the text view.
         if (children.size() == 0){
-            textViewChild.setText("");
+            flipChoiceLL.setVisibility(View.INVISIBLE);
+            textViewChild.setText("Flip Coin!");
         }
         else {
+            flipChoiceLL.setVisibility(View.VISIBLE);
             //default index to 0 if the index is out of bounds, either by deletion of a child or some other means
             if (index < 0 || index >= children.size()){
                 index = 0;
