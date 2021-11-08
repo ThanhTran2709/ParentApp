@@ -8,6 +8,14 @@
     <string name="main_menu_text">Main Menu</string>
     <string name="my_children">My Children</string>
     <string name="timer">Timer</string>
+    <string name="minutes_text">00 : 00</string>
+    <string name="timeout_timer_title">Timeout Timer</string>
+    <string name="pause_button_text">Pause</string>
+    <string name="play_button_text">Play</string>
+    <string name="reset_button_text">Reset</string>
+    <string name="timer_options_button_text">Timer Options</string>
+    <string name="timer_options_title">Timer Options</string>
+    <string name="start_button_text">Start!</string>
     <string name="addBtnTitle">Enter or edit name:</string>
     <string name="nameHint">Enter name here</string>
     <string name="ageHint">Enter age here</string>
@@ -45,5 +53,6 @@
     <string name="error_no_history">There is no coin flip history to clear.</string>
     <string name="backTxt">Back</string>
     <string name="exitTxt">Exit</string>
+    <string name="new_timer">New Timer</string>
 
 </resources>
