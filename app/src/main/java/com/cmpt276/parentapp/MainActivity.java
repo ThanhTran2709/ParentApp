@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.cmpt276.parentapp.databinding.ActivityMainBinding;
 
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Main menu for the application, hub for accessing other functions of the app.

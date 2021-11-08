@@ -1,17 +1,22 @@
 package com.cmpt276.parentapp;
 
-import androidx.appcompat.app.AlertDialog;
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.view.View;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-
 import com.cmpt276.model.Coin;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -43,22 +48,46 @@ public class CoinFlipHistoryActivity extends AppCompatActivity {
 
 	private View.OnClickListener getClearListener() {
 		return view -> {
-			AlertDialog.Builder builder = new AlertDialog.Builder(CoinFlipHistoryActivity.this);
+			if(options.getFlipHistory(this).size() == 0) {
+				Toast.makeText(this, R.string.error_no_history, Toast.LENGTH_SHORT).show();
+			}
+			else {
+				ClearHistoryDialog alert = new ClearHistoryDialog();
+				alert.showDialog(CoinFlipHistoryActivity.this);
+			}
+		};
+	}
 
-			builder.setTitle(R.string.confirm_reset);
+	public class ClearHistoryDialog {
 
-			builder.setPositiveButton(R.string.reset, (dialogInterface, i) -> {
+		public void showDialog(Activity activity) {
+			final Dialog dialog = new Dialog(activity);
+			dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+			dialog.setCancelable(false);
+			dialog.setContentView(R.layout.clear_dialog);
+			dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+			FloatingActionButton cancelFab = dialog.findViewById(R.id.cancelFab);
+			cancelFab.setOnClickListener(getCancelFabListener(dialog));
+
+			FloatingActionButton addFab = dialog.findViewById(R.id.okFab);
+			addFab.setOnClickListener(getAddFabListener());
+
+			dialog.show();
+		}
+
+		private View.OnClickListener getCancelFabListener(Dialog dialog) {
+			return (view) -> {
+				dialog.dismiss();
+			};
+		}
+
+		private View.OnClickListener getAddFabListener() {
+			return (view) -> {
 				options.clearCoinFlips(CoinFlipHistoryActivity.this);
 				CoinFlipHistoryActivity.this.finish();
-			});
-
-			builder.setNegativeButton(R.string.cancel, (dialogInterface, i) -> {
-				dialogInterface.dismiss();
-			});
-
-			AlertDialog dialog = builder.create();
-			dialog.show();
-		};
+			};
+		}
 	}
 
 	public static Intent getIntent(Context context){

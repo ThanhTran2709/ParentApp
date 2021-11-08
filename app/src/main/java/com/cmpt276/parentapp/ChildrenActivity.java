@@ -64,7 +64,7 @@ public class ChildrenActivity extends AppCompatActivity {
         ListView childrenListView = findViewById(R.id.childrenListView);
         childrenListView.setAdapter(adapter);
         childrenListView.setDivider(null);
-        childrenListView.setDividerHeight(0);
+        childrenListView.setDividerHeight(16);
     }
 
     private class MyListAdapter extends ArrayAdapter<Child>{
@@ -72,10 +72,9 @@ public class ChildrenActivity extends AppCompatActivity {
         public MyListAdapter(){
             super(ChildrenActivity.this, R.layout.children_view, options.getChildList());
         }
-        @SuppressLint("SetTextI18n")
-        @NonNull
+
         @Override
-        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        public View getView(int position, View convertView, ViewGroup parent) {
             View gamesView = convertView;
             if (gamesView == null){
                 gamesView = getLayoutInflater().inflate(R.layout.children_view, parent, false);
