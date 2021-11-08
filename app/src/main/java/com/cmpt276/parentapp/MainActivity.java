@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.cmpt276.parentapp.databinding.ActivityMainBinding;
 
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Main menu for the application, hub for accessing other functions of the app.
@@ -90,19 +89,13 @@ public class MainActivity extends AppCompatActivity {
         myChildrenButton.startAnimation(slideIn);
 
         Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                coinFlipButton.setVisibility(View.VISIBLE);
-                coinFlipButton.startAnimation(slideIn2);
-            }
+        handler.postDelayed(() -> {
+            coinFlipButton.setVisibility(View.VISIBLE);
+            coinFlipButton.startAnimation(slideIn2);
         }, 500);
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                timerButton.setVisibility(View.VISIBLE);
-                timerButton.startAnimation(slideIn3);
-            }
+        handler.postDelayed(() -> {
+            timerButton.setVisibility(View.VISIBLE);
+            timerButton.startAnimation(slideIn3);
         }, 1300);
     }
 }

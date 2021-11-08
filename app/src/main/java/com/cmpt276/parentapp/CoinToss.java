@@ -1,13 +1,10 @@
 package com.cmpt276.parentapp;
 
-import android.view.animation.Animation;
-
-import android.view.animation.Transformation;
 import android.graphics.Camera;
 import android.graphics.Matrix;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
 import android.widget.ImageView;
-
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 // This class uses matrix translations on ImageView to give the illusion of the coin flipping
 // Code inspired from StackOverflow answer: https://stackoverflow.com/questions/6135930/showing-both-sides-of-a-coin-being-flipped-using-android-standard-animation
@@ -71,11 +68,11 @@ public class CoinToss extends Animation {
 
 	private void applyZoom(float interpolatedTime) {
 		int repeatCount = super.getRepeatCount();
-		float scale = (numOfRepetition + interpolatedTime) / (repeatCount / 2);
+		float scale = (numOfRepetition + interpolatedTime) / (repeatCount / 2.0f);
 
-		if ((numOfRepetition + interpolatedTime) <= (repeatCount / 2)) {
-			imageView.setScaleX((float) 0.25 + scale);
-			imageView.setScaleY((float) 0.25 + scale);
+		if ((numOfRepetition + interpolatedTime) <= (repeatCount / 2.0f)) {
+			imageView.setScaleX(0.25f + scale);
+			imageView.setScaleY(0.25f + scale);
 		}
 		else if (numOfRepetition < repeatCount) {
 			imageView.setScaleX(3 - scale);
@@ -84,13 +81,13 @@ public class CoinToss extends Animation {
 	}
 
 	private void applyRotation(float interpolatedTime) {
-		if (interpolatedTime >= 1.0) {
+		if (interpolatedTime >= 1.0f) {
 			int temp = currentDrawable;
 			currentDrawable = nextDrawable;
 			nextDrawable = temp;
 			numOfRepetition++;
 		}
-		else if (interpolatedTime <= 0) {
+		else if (interpolatedTime <= 0.0f) {
 			imageView.setImageResource(currentDrawable);
 		}
 		else {

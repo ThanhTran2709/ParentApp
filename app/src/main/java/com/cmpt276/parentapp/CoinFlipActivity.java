@@ -28,7 +28,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 
 /**
- *Activity for flipping coin
+ * Activity for flipping coin
  * */
 public class CoinFlipActivity extends AppCompatActivity {
 
