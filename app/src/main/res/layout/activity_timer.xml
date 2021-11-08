@@ -10,8 +10,10 @@
         android:id="@+id/time_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="148dp"
+        android:fontFamily="@font/moon_bold_font"
         android:text="@string/minutes_text"
+        android:textSize="32sp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintEnd_toEndOf="@+id/timer_title"
         app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="@+id/timer_title"
@@ -21,42 +23,54 @@
         android:id="@+id/timer_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/black"
         android:layout_marginTop="24dp"
+        android:fontFamily="@font/moon_bold_font"
         android:text="@string/timeout_timer_title"
+        android:textSize="44sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/pause_play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="84dp"
-        android:layout_marginTop="156dp"
+        android:background="@drawable/rounded_corner_pink"
+        android:fontFamily="@font/moon_bold_font"
+        android:padding="16dp"
         android:text="@string/pause_button_text"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/time_text" />
+        app:layout_constraintTop_toTopOf="@+id/guideline2" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/reset_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="68dp"
         android:text="@string/reset_button_text"
-        app:layout_constraintBottom_toBottomOf="@+id/pause_play"
-        app:layout_constraintStart_toEndOf="@+id/pause_play"
-        app:layout_constraintTop_toTopOf="@+id/pause_play"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintBottom_toTopOf="@+id/new_timer_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pause_play" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/new_timer_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
+        android:layout_marginBottom="24dp"
         android:text="@string/new_timer"
-        app:layout_constraintEnd_toEndOf="@+id/reset_button"
-        app:layout_constraintHorizontal_bias="0.493"
-        app:layout_constraintStart_toStartOf="@+id/pause_play"
-        app:layout_constraintTop_toBottomOf="@+id/pause_play" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.7" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
