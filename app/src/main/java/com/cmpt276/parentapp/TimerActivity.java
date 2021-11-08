@@ -13,6 +13,9 @@ import android.os.IBinder;
 import android.widget.Button;
 import android.widget.TextView;
 
+/**
+ * Contains the UI for the timer
+ */
 public class TimerActivity extends AppCompatActivity {
 
     private static final String ORIGINAL_TIME_IN_MILLI_SECONDS_TAG = "original_time_in_milli_seconds_tag";

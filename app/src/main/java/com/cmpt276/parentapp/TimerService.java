@@ -18,7 +18,9 @@ import androidx.core.app.NotificationCompat;
 
 import java.util.concurrent.TimeUnit;
 
-
+/**
+ * Service to keep the timer running while using other apps
+ */
 public class TimerService extends Service {
 
     private static final String ORIGINAL_TIME_IN_MILLI_SECONDS_TAG = "original_time_in_milli_seconds_tag";

@@ -14,6 +14,9 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+/**
+ * Contains options for the timer and starts the TimerActivity based on the option selected
+ */
 public class TimerOptions extends AppCompatActivity {
 
     private int selected;
