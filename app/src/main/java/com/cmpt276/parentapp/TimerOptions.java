@@ -25,17 +25,20 @@ public class TimerOptions extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timer_options);
+
         setUpRadioButtons();
         setUpStartButton();
+
     }
 
     private void setUpStartButton() {
         Button startButton = findViewById(R.id.timer_start_button);
         startButton.setOnClickListener(view -> {
             if(selected > 0) {
-                Intent i = TimerActivity.getIntent(this, selected * 60000L, false);
+                Intent i = TimerActivity.getIntent(this, selected * 60000L);
                 startActivity(i);
                 finish();
             }
@@ -46,23 +49,36 @@ public class TimerOptions extends AppCompatActivity {
     }
 
     private void setUpRadioButtons() {
+
         RadioGroup timerOptions = findViewById(R.id.timer_options_radio_group);
+
         EditText customMinutes = findViewById(R.id.custom_minutes_edit);
+
         int []minutes = getResources().getIntArray(R.array.minutes_array);
+
         for(int minute_option: minutes){
             RadioButton minuteButton = new RadioButton(this);
+
             setButtonGraphics(minuteButton, minute_option + ((minute_option == 1) ? " minute" : " minutes"));
             timerOptions.addView(minuteButton);
+
             minuteButton.setOnClickListener(view -> {
                 customMinutes.setVisibility(View.INVISIBLE);
                 selected = minute_option;
             });
+
         }
+
         RadioButton customButton = new RadioButton(this);
         timerOptions.addView(customButton);
         setButtonGraphics(customButton, "Custom");
-        customButton.setOnClickListener(view -> customMinutes.setVisibility(View.VISIBLE));
 
+        customButton.setOnClickListener(view -> customMinutes.setVisibility(View.VISIBLE));
+        setUpTextWatcher(customMinutes);
+
+    }
+
+    private void setUpTextWatcher(EditText customMinutes){
         TextWatcher textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -83,7 +99,6 @@ public class TimerOptions extends AppCompatActivity {
             }
         };
         customMinutes.addTextChangedListener(textWatcher);
-
     }
 
     private void setButtonGraphics(RadioButton button, String text){
