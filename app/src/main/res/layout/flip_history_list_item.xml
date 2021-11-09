@@ -25,6 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:text="@string/coin_flip_result"
+        android:textColor="@color/black"
         android:fontFamily="@font/moon_bold_font"
         app:layout_constraintBottom_toTopOf="@+id/textViewChildPicked"
         app:layout_constraintStart_toStartOf="@+id/textViewChildPicked" />
@@ -34,6 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:textColor="@color/black"
         android:text="@string/coin_flip_picked"
         android:fontFamily="@font/moon_bold_font"
         app:layout_constraintBottom_toBottomOf="@+id/imageViewAcceptedFlip"
@@ -46,6 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/coin_flip_time"
+        android:textColor="@color/black"
         android:fontFamily="@font/moon_bold_font"
         app:layout_constraintStart_toStartOf="@+id/textViewChildPicked"
         app:layout_constraintTop_toBottomOf="@+id/textViewChildPicked" />
