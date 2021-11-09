@@ -22,8 +22,10 @@ import android.widget.Toast;
  */
 public class TimerOptions extends AppCompatActivity {
 
-    private int selected;
-    private static final int EMPTY_STRING = -1;
+    private final int EMPTY_STRING = -1;
+    private final int NO_SELECTION = -2;
+    private final int ZERO = 0;
+    private int selected = NO_SELECTION;
 
     public static Intent getIntent(Context context){
         return new Intent(context, TimerOptions.class);
@@ -43,13 +45,21 @@ public class TimerOptions extends AppCompatActivity {
     private void setUpStartButton() {
         Button startButton = findViewById(R.id.timer_start_button);
         startButton.setOnClickListener(view -> {
-            if (selected > 0) {
+            if(selected > ZERO) {
                 Intent i = TimerActivity.getIntent(this, selected * 60000L);
                 startActivity(i);
                 finish();
             }
-            else {
-                Toast.makeText(this, R.string.error_negative_input, Toast.LENGTH_SHORT).show();
+            else{
+                if(selected == NO_SELECTION){
+                    Toast.makeText(this, "Cannot start! Please select a time", Toast.LENGTH_SHORT).show();
+                }
+                else if(selected == EMPTY_STRING){
+                    Toast.makeText(this, "Cannot start! Please enter a time", Toast.LENGTH_SHORT).show();
+                }
+                else if(selected == ZERO){
+                    Toast.makeText(this, "Cannot start! Please enter a number greater than 0", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -62,13 +72,8 @@ public class TimerOptions extends AppCompatActivity {
 
         int []minutes = getResources().getIntArray(R.array.minutes_array);
 
-        Typeface font = getResources().getFont(R.font.moon_bold_font);
-
-        for (int minute_option : minutes){
+        for(int minute_option: minutes){
             RadioButton minuteButton = new RadioButton(this);
-            minuteButton.setTypeface(font);
-            minuteButton.setTextColor(Color.BLACK);
-            minuteButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
             setButtonGraphics(minuteButton, minute_option + ((minute_option == 1) ? " minute" : " minutes"));
             timerOptions.addView(minuteButton);
 
@@ -81,14 +86,13 @@ public class TimerOptions extends AppCompatActivity {
 
         RadioButton customButton = new RadioButton(this);
 
-        customButton.setTypeface(font);
-        customButton.setTextColor(Color.BLACK);
-        customButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
-        customButton.setHighlightColor(getColor(R.color.mid_blue));
         timerOptions.addView(customButton);
-        setButtonGraphics(customButton, getString(R.string.custom));
+        setButtonGraphics(customButton, getString(R.string.custom_radio_option_string));
 
-        customButton.setOnClickListener(view -> customMinutes.setVisibility(View.VISIBLE));
+        customButton.setOnClickListener(view -> {
+            selected = EMPTY_STRING;
+            customMinutes.setVisibility(View.VISIBLE);
+        });
         setUpTextWatcher(customMinutes);
 
     }
@@ -117,7 +121,13 @@ public class TimerOptions extends AppCompatActivity {
     }
 
     private void setButtonGraphics(RadioButton button, String text){
+        Typeface font = getResources().getFont(R.font.moon_bold_font);
+
         button.setText(text);
+        button.setTypeface(font);
+        button.setTextColor(Color.BLACK);
+        button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
+        button.setHighlightColor(Color.RED);
     }
 
 }
