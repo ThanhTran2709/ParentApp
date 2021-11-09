@@ -3,6 +3,7 @@
     package="com.cmpt276.parentapp">
 
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
         android:allowBackup="true"
@@ -12,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ParentApp.NoActionBar">
 
-        <service android:name=".TimerService"></service>
+        <service android:name=".TimerService"/>
         <activity
             android:name=".TimerOptions"
             android:exported="true"
