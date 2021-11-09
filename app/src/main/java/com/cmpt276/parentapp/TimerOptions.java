@@ -59,13 +59,13 @@ public class TimerOptions extends AppCompatActivity {
             }
             else{
                 if(selected == NO_SELECTION){
-                    Toast.makeText(this, "Cannot start! Please select a time", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.error_select_time, Toast.LENGTH_SHORT).show();
                 }
                 else if(selected == EMPTY_STRING){
-                    Toast.makeText(this, "Cannot start! Please enter a time", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.error_enter_time, Toast.LENGTH_SHORT).show();
                 }
                 else if(selected == ZERO){
-                    Toast.makeText(this, "Cannot start! Please enter a number greater than 0", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.error_time_negative, Toast.LENGTH_SHORT).show();
                 }
             }
         });

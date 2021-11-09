@@ -67,5 +67,8 @@
     <string name="time_label_format">%02d : %02d</string>
     <string name="custom">Custom</string>
     <string name="timeNotification">TIMES UP! Tap to stop the alarm</string>
+    <string name="error_select_time">Cannot start! Please select a time</string>
+    <string name="error_enter_time">Cannot start! Please enter a time</string>
+    <string name="error_time_negative">Cannot start! Please enter a number greater than 0</string>
 
 </resources>
