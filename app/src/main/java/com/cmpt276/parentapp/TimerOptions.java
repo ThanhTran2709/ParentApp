@@ -43,13 +43,13 @@ public class TimerOptions extends AppCompatActivity {
     private void setUpStartButton() {
         Button startButton = findViewById(R.id.timer_start_button);
         startButton.setOnClickListener(view -> {
-            if(selected > 0) {
+            if (selected > 0) {
                 Intent i = TimerActivity.getIntent(this, selected * 60000L);
                 startActivity(i);
                 finish();
             }
-            else{
-                Toast.makeText(this, "Cannot start! Please enter a number greater than 0", Toast.LENGTH_SHORT).show();
+            else {
+                Toast.makeText(this, R.string.error_negative_input, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -64,7 +64,7 @@ public class TimerOptions extends AppCompatActivity {
 
         Typeface font = getResources().getFont(R.font.moon_bold_font);
 
-        for(int minute_option: minutes){
+        for (int minute_option : minutes){
             RadioButton minuteButton = new RadioButton(this);
             minuteButton.setTypeface(font);
             minuteButton.setTextColor(Color.BLACK);
@@ -84,9 +84,9 @@ public class TimerOptions extends AppCompatActivity {
         customButton.setTypeface(font);
         customButton.setTextColor(Color.BLACK);
         customButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
-        customButton.setHighlightColor(Color.parseColor("#355c7d"));
+        customButton.setHighlightColor(getColor(R.color.mid_blue));
         timerOptions.addView(customButton);
-        setButtonGraphics(customButton, "Custom");
+        setButtonGraphics(customButton, getString(R.string.custom));
 
         customButton.setOnClickListener(view -> customMinutes.setVisibility(View.VISIBLE));
         setUpTextWatcher(customMinutes);

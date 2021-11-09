@@ -72,13 +72,10 @@ public class CoinFlipActivity extends AppCompatActivity {
     }
 
     private void setUpBackBtn() {
-        Button backBtn = (Button) findViewById(R.id.backBtn_coin);
+        Button backBtn = findViewById(R.id.backBtn_coin);
         backBtn.setText(R.string.backTxt);
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
+        backBtn.setOnClickListener((view) -> {
+            finish();
         });
     }
 
@@ -128,7 +125,7 @@ public class CoinFlipActivity extends AppCompatActivity {
         //if there's no children, essentially hide the text view.
         if (children.size() == 0){
             flipChoiceLL.setVisibility(View.INVISIBLE);
-            textViewChild.setText("Flip Coin!");
+            textViewChild.setText(R.string.flip_coin);
         }
         else {
             flipChoiceLL.setVisibility(View.VISIBLE);

@@ -7,27 +7,20 @@
 
     <string name="main_menu_text">Main Menu</string>
     <string name="my_children">My Children</string>
-    <string name="timer">Timer</string>
-    <string name="minutes_text">00 : 00</string>
-    <string name="timeout_timer_title">Timeout Timer</string>
-    <string name="pause_button_text">Pause</string>
-    <string name="play_button_text">Play</string>
-    <string name="reset_button_text">Reset</string>
-    <string name="timer_options_button_text">Timer Options</string>
-    <string name="timer_options_title">Pick a Time!</string>
-    <string name="start_button_text">Start!</string>
-    <string name="addBtnTitle">Enter or edit name:</string>
-    <string name="nameHint">Enter name here</string>
-    <string name="ageHint">Enter age here</string>
     <string name="addText">Add</string>
     <string name="cancelText">Cancel</string>
     <string name="saveText">Save</string>
     <string name="deleteText">Delete</string>
-    <string name="addBtnText">Add new child</string>
-    <string name="emptyNameErrorTxt">Your child must have a name!</string>
 
     <!-- Child strings -->
     <string name="error_validate_name">Enter a valid name for the child</string>
+    <string name="addBtnText">Add new child</string>
+    <string name="emptyNameErrorTxt">Your child must have a name!</string>
+    <string name="addBtnTitle">Enter or edit name:</string>
+    <string name="nameHint">Enter name here</string>
+    <string name="ageHint">Enter age here</string>
+    <string name="timer_options_title">Pick a Time!</string>
+    <string name="start_button_text">Start!</string>
 
     <!-- Main menu strings -->
     <string name="good_morning">Good Morning!</string>
@@ -42,6 +35,7 @@
     <string name="tails">Tails</string>
     <string name="cancel">Cancel</string>
     <string name="history">History</string>
+    <string name="flip_coin">Flip Coin!</string>
 
     <!-- Flip history activity strings -->
     <string name="coin_flip_result">Flip: %1$s</string>
@@ -53,7 +47,18 @@
     <string name="error_no_history">There is no coin flip history to clear.</string>
     <string name="backTxt">Back</string>
     <string name="exitTxt">Exit</string>
+
+    <!-- Timer strings -->
     <string name="new_timer">New Timer</string>
     <string name="stop_alarm">Stop Alarm</string>
+    <string name="error_negative_input">Cannot start! Please enter a number greater than 0.</string>
+    <string name="timer">Timer</string>
+    <string name="minutes_text">00 : 00</string>
+    <string name="timeout_timer_title">Timeout Timer</string>
+    <string name="pause_button_text">Pause</string>
+    <string name="play_button_text">Play</string>
+    <string name="reset_button_text">Reset</string>
+    <string name="timer_options_button_text">Timer Options</string>
+    <string name="custom">Custom</string>
 
 </resources>

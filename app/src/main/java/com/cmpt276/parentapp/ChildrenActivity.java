@@ -47,16 +47,12 @@ public class ChildrenActivity extends AppCompatActivity {
     }
 
     private void setUpBackBtn() {
-        Button backBtn = (Button) findViewById(R.id.backBtn_children);
+        Button backBtn = findViewById(R.id.backBtn_children);
         backBtn.setText(R.string.backTxt);
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
+        backBtn.setOnClickListener((view) -> {
+            finish();
         });
     }
-
 
     private void setUpAddBtn() {
         Button addBtn = findViewById(R.id.addBtn);
@@ -70,16 +66,16 @@ public class ChildrenActivity extends AppCompatActivity {
 
     //Populate list view with name and age of children
     private void populateList(){
-        ArrayAdapter<Child> adapter = new MyListAdapter();
+        ArrayAdapter<Child> adapter = new ChildrenListViewAdapter();
         ListView childrenListView = findViewById(R.id.childrenListView);
         childrenListView.setAdapter(adapter);
         childrenListView.setDivider(null);
         childrenListView.setDividerHeight(16);
     }
 
-    private class MyListAdapter extends ArrayAdapter<Child>{
+    private class ChildrenListViewAdapter extends ArrayAdapter<Child>{
 
-        public MyListAdapter(){
+        public ChildrenListViewAdapter(){
             super(ChildrenActivity.this, R.layout.children_view, options.getChildList());
         }
 
