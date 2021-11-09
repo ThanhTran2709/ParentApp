@@ -3,7 +3,6 @@ package com.cmpt276.parentapp;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -44,9 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private void setUpExitBtn() {
         Button backBtn = findViewById(R.id.exitBtn);
         backBtn.setText(R.string.exitTxt);
-        backBtn.setOnClickListener((view) -> {
-            finishAffinity();
-        });
+        backBtn.setOnClickListener((view) -> finishAffinity());
     }
 
     @Override

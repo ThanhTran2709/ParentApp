@@ -49,9 +49,7 @@ public class ChildrenActivity extends AppCompatActivity {
     private void setUpBackBtn() {
         Button backBtn = findViewById(R.id.backBtn_children);
         backBtn.setText(R.string.backTxt);
-        backBtn.setOnClickListener((view) -> {
-            finish();
-        });
+        backBtn.setOnClickListener((view) -> finish());
     }
 
     private void setUpAddBtn() {
@@ -148,9 +146,7 @@ public class ChildrenActivity extends AppCompatActivity {
         }
 
         private View.OnClickListener getCancelFabListener(Dialog dialog) {
-            return (view) -> {
-                dialog.dismiss();
-            };
+            return (view) -> dialog.dismiss();
         }
     }
 
@@ -180,9 +176,7 @@ public class ChildrenActivity extends AppCompatActivity {
         }
 
         private View.OnClickListener getCancelFabListener(Dialog dialog) {
-            return (view) -> {
-                dialog.dismiss();
-            };
+            return (view) -> dialog.dismiss();
         }
 
         private View.OnClickListener getAddFabListener(Dialog dialog, EditText nameInput, int index) {
