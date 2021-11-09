@@ -151,7 +151,7 @@ public class TimerService extends Service {
         sendBroadcast(broadcastIntent);
 
 
-        setUpNotification("TIMES UP! Tap to stop the alarm");
+        setUpNotification(getString(R.string.timeNotification));
     }
 
     public void stopSoundAndVibration() {

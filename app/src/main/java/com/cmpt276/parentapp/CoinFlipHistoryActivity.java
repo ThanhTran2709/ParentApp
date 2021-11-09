@@ -41,9 +41,17 @@ public class CoinFlipHistoryActivity extends AppCompatActivity {
 		rv.setLayoutManager(new LinearLayoutManager(this));
 		FlipHistoryAdapter adapter = new FlipHistoryAdapter(this, coinFlips);
 		rv.setAdapter(adapter);
-
+		setUpBackBtn();
 		Button buttonClear = findViewById(R.id.buttonClearFlipHistory);
 		buttonClear.setOnClickListener(getClearListener());
+	}
+
+	private void setUpBackBtn() {
+		Button backBtn = findViewById(R.id.backBtn_history);
+		backBtn.setText(R.string.backTxt);
+		backBtn.setOnClickListener((view) -> {
+			finish();
+		});
 	}
 
 	private View.OnClickListener getClearListener() {

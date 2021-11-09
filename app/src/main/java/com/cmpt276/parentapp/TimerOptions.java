@@ -37,7 +37,16 @@ public class TimerOptions extends AppCompatActivity {
 
         setUpRadioButtons();
         setUpStartButton();
+        setUpBackBtn();
 
+    }
+
+    private void setUpBackBtn() {
+        Button backBtn = findViewById(R.id.backBtn_timerOptions);
+        backBtn.setText(R.string.backTxt);
+        backBtn.setOnClickListener((view) -> {
+            finish();
+        });
     }
 
     private void setUpStartButton() {
