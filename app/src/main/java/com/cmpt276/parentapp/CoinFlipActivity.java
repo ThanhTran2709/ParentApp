@@ -123,7 +123,7 @@ public class CoinFlipActivity extends AppCompatActivity {
         //if there's no children, essentially hide the text view.
         if (children.size() == 0){
             flipChoiceLL.setVisibility(View.INVISIBLE);
-            textViewChild.setText(R.string.flip_coin);
+            textViewChild.setText(R.string.flip_a_coin);
         }
         else {
             flipChoiceLL.setVisibility(View.VISIBLE);

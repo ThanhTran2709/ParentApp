@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -82,7 +81,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
         android:fontFamily="@font/moon_bold_font"
-        android:text="Good morning!"
+        android:text="@string/good_morning_message"
         android:textColor="@color/black"
         android:textSize="50sp"
         android:visibility="visible"
@@ -99,7 +98,7 @@
         android:layout_marginTop="16dp"
         android:fontFamily="@font/moon_bold_font"
         android:textSize="16sp"
-        android:text="What do you want to do today?"
+        android:text="@string/what_do_you_want_to_do_today"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/main_menu_title" />
 
