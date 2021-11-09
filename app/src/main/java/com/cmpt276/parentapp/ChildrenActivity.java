@@ -40,10 +40,10 @@ public class ChildrenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_children);
         options = Options.getInstance(this);
 
-        listItemClick();
         setUpAddBtn();
         populateList();
         setUpBackBtn();
+        listItemClick();
     }
 
     private void setUpBackBtn() {
@@ -143,6 +143,8 @@ public class ChildrenActivity extends AppCompatActivity {
                     Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
                     Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
                     populateList();
+                    listItemClick();
+
 
                     dialog.cancel();
                 }
@@ -196,6 +198,7 @@ public class ChildrenActivity extends AppCompatActivity {
                     Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
                     Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
                     populateList();
+                    listItemClick();
                     dialog.cancel();
                 }
             };
@@ -207,6 +210,7 @@ public class ChildrenActivity extends AppCompatActivity {
                 Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
                 Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
                 populateList();
+                listItemClick();
                 dialog.cancel();
             };
         }
