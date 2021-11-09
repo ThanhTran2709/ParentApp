@@ -58,13 +58,11 @@ public class Coin {
 	}
 
 	public boolean hasNoChoice(){
-		if(flipChoice == NO_CHOICE){
-			return true;
-		}
-		return false;
+		return flipChoice == NO_CHOICE;
 	}
 
 	private static int randomCoinFlip(){
+		//returns number between 0 and 1, which corresponds to heads/tails
 		int result = rng.nextInt(NUM_RESULTS);
 		return result;
 	}

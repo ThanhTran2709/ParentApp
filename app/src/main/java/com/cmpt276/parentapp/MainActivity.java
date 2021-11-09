@@ -41,13 +41,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpExitBtn() {
-        Button backBtn = (Button) findViewById(R.id.exitBtn);
+        Button backBtn = findViewById(R.id.exitBtn);
         backBtn.setText(R.string.exitTxt);
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finishAffinity();
-            }
+        backBtn.setOnClickListener((view) -> {
+            finishAffinity();
         });
     }
 
