@@ -74,9 +74,7 @@ public class CoinFlipActivity extends AppCompatActivity {
     private void setUpBackBtn() {
         Button backBtn = findViewById(R.id.backBtn_coin);
         backBtn.setText(R.string.backTxt);
-        backBtn.setOnClickListener((view) -> {
-            finish();
-        });
+        backBtn.setOnClickListener(view -> finish());
     }
 
     //Set up coin animation
@@ -125,7 +123,7 @@ public class CoinFlipActivity extends AppCompatActivity {
         //if there's no children, essentially hide the text view.
         if (children.size() == 0){
             flipChoiceLL.setVisibility(View.INVISIBLE);
-            textViewChild.setText(R.string.flip_coin);
+            textViewChild.setText(R.string.flip_a_coin);
         }
         else {
             flipChoiceLL.setVisibility(View.VISIBLE);
@@ -221,9 +219,7 @@ public class CoinFlipActivity extends AppCompatActivity {
     }
 
     private View.OnClickListener getCancelFabListener(Dialog dialog) {
-        return (view) -> {
-            dialog.dismiss();
-        };
+        return (view) -> dialog.dismiss();
     }
 
     private class ChildListAdapter extends ArrayAdapter<Child>{

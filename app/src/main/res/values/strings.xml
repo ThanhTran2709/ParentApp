@@ -35,7 +35,6 @@
     <string name="tails">Tails</string>
     <string name="cancel">Cancel</string>
     <string name="history">History</string>
-    <string name="flip_coin">Flip Coin!</string>
 
     <!-- Flip history activity strings -->
     <string name="coin_flip_result">Flip: %1$s</string>
@@ -51,6 +50,9 @@
     <!-- Timer strings -->
     <string name="new_timer">New Timer</string>
     <string name="stop_alarm">Stop Alarm</string>
+    <string name="timer_stop_message">TIMES UP! Tap to stop the alarm</string>
+    <string name="radio_button_color_string">#355c7d</string>
+    <string name="custom_radio_option_string">Custom</string>
     <string name="error_negative_input">Cannot start! Please enter a number greater than 0.</string>
     <string name="timer">Timer</string>
     <string name="minutes_text">00 : 00</string>
@@ -59,6 +61,10 @@
     <string name="play_button_text">Play</string>
     <string name="reset_button_text">Reset</string>
     <string name="timer_options_button_text">Timer Options</string>
+    <string name="good_morning_message">Good morning!</string>
+    <string name="what_do_you_want_to_do_today">What do you want to do today?</string>
+    <string name="pick_heads_or_tail">Pick heads or tail!</string>
+    <string name="time_label_format">%02d : %02d</string>
     <string name="custom">Custom</string>
     <string name="timeNotification">TIMES UP! Tap to stop the alarm</string>
 

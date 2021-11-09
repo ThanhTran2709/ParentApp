@@ -27,7 +27,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="16dp"
             android:fontFamily="@font/moon_bold_font"
-            android:text="Pick heads or tail!"
+            android:text="@string/pick_heads_or_tail"
             android:textColor="@color/black"
             android:textSize="20sp" />
 
