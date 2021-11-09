@@ -26,7 +26,11 @@ public class TimerService extends Service {
     private static final String ORIGINAL_TIME_IN_MILLI_SECONDS_TAG = "original_time_in_milli_seconds_tag";
     private static final long DEFAULT_MINUTES_IN_MILLI_SECONDS = 0L;
     private static final String TIMER_SERVICE_BROADCAST = "timer_service_broadcast";
-    private static final String CHANNEL_ID = "timer_service_channel";
+    private static final String CHANNEL_LOW_NAME = "channel_low";
+    private static final String CHANNEL_HIGH_NAME = "channel_high";
+
+    private static final String CHANNEL_LOW_PRIORITY_ID = "low_priority_channel";
+    private static final String CHANNEL_HIGH_PRIORITY_ID = "high_priority_channel";
     private static final int NOTIFICATION_ID = 1;
     private static final int REPEAT_ONCE = 1;
     private static final String STOP_ALARM_BROADCAST = "stop_alarm_broadcast";
@@ -58,7 +62,8 @@ public class TimerService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        setUpNotificationChannel();
+        setUpNotificationChannel(CHANNEL_LOW_NAME, CHANNEL_LOW_PRIORITY_ID, NotificationManager.IMPORTANCE_DEFAULT);
+        setUpNotificationChannel(CHANNEL_HIGH_NAME, CHANNEL_HIGH_PRIORITY_ID, NotificationManager.IMPORTANCE_HIGH);
 
         originalTimeInMilliSeconds = intent.getLongExtra(ORIGINAL_TIME_IN_MILLI_SECONDS_TAG, DEFAULT_MINUTES_IN_MILLI_SECONDS);
         remainingMilliSeconds = originalTimeInMilliSeconds;
@@ -85,7 +90,7 @@ public class TimerService extends Service {
 
                 remainingMilliSeconds = l;
 
-                setUpNotification(getTimeString());
+                setUpNotification(getTimeString(), CHANNEL_LOW_PRIORITY_ID);
 
                 Intent broadcastIntent = new Intent();
                 broadcastIntent.setAction(TIMER_SERVICE_BROADCAST);
@@ -109,13 +114,13 @@ public class TimerService extends Service {
         int remainingSeconds = (int) TimeUnit.MILLISECONDS.toSeconds(remainingMilliSeconds) -
                 (int) TimeUnit.MINUTES.toSeconds(remainingMinutes);
 
-        return String.format("%02d : %02d", remainingMinutes, remainingSeconds);
+        return String.format(getString(R.string.time_label_format), remainingMinutes, remainingSeconds);
     }
 
     /**
      * https://developer.android.com/training/notify-user/build-notification
      */
-    private void setUpNotification(String timeString) {
+    private void setUpNotification(String timeString, String channelId) {
 
         Intent notificationIntent = TimerActivity.getIntent(this, originalTimeInMilliSeconds, true);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
@@ -123,13 +128,12 @@ public class TimerService extends Service {
                 notificationIntent,
                 PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Timeout Timer")
+        Notification notification = new NotificationCompat.Builder(this, channelId)
+                .setContentTitle(getString(R.string.timeout_timer_title))
                 .setContentText(timeString)
                 .setSmallIcon(R.drawable.timer_icon)
                 .setContentIntent(pendingIntent)
-                .setAutoCancel(true)
-                .setSilent(true)
+                .setOnlyAlertOnce(true)
                 .build();
 
         startForeground(NOTIFICATION_ID, notification);
@@ -151,7 +155,7 @@ public class TimerService extends Service {
         sendBroadcast(broadcastIntent);
 
 
-        setUpNotification("TIMES UP! Tap to stop the alarm");
+        setUpNotification(getString(R.string.timer_stop_message), CHANNEL_HIGH_PRIORITY_ID);
     }
 
     public void stopSoundAndVibration() {
@@ -166,9 +170,9 @@ public class TimerService extends Service {
     /**
      * https://developer.android.com/training/notify-user/build-notification
      */
-    private void setUpNotificationChannel() {
+    private void setUpNotificationChannel(String channelName, String channelId, int importance) {
 
-        NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, "Timer Service", NotificationManager.IMPORTANCE_DEFAULT);
+        NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, importance);
         NotificationManager notificationManager = getSystemService(NotificationManager.class);
         notificationManager.createNotificationChannel(notificationChannel);
 
@@ -196,7 +200,7 @@ public class TimerService extends Service {
         long remainingSeconds = TimeUnit.MILLISECONDS.toSeconds(originalTimeInMilliSeconds) -
                 TimeUnit.MINUTES.toSeconds(remainingMinutes);
 
-        return String.format("%02d : %02d", remainingMinutes, remainingSeconds);
+        return String.format(getString(R.string.time_label_format), remainingMinutes, remainingSeconds);
     }
 
     public long getOriginalMilliSeconds() {
