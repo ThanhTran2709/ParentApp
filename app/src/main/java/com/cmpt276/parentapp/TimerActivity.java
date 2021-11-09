@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -18,16 +19,19 @@ import android.widget.TextView;
  */
 public class TimerActivity extends AppCompatActivity {
 
-    private static final String ORIGINAL_TIME_IN_MILLI_SECONDS_TAG = "original_time_in_milli_seconds_tag";
+    public static final String ORIGINAL_TIME_IN_MILLI_SECONDS_TAG = "original_time_in_milli_seconds_tag";
     private static final String TIMER_SERVICE_BROADCAST = "timer_service_broadcast";
+    private static final String STOP_ALARM_BROADCAST = "stop_alarm_broadcast";
     private static final String SERVICE_RUNNING_FLAG = "service_running_flag";
     private static final long DEFAULT_MINUTES_IN_MILLI_SECONDS = 0L;
 
     TextView remainingTime;
-    BroadcastReceiver timerReceiver;
     private Intent serviceIntent;
     private long originalTimeInMilliSeconds;
     private boolean isServiceRunning;
+
+    BroadcastReceiver timerReceiver;
+    BroadcastReceiver stopAlarmReceiver;
 
     TimerService timerService;
     private boolean timerServiceBound = false;
@@ -60,22 +64,29 @@ public class TimerActivity extends AppCompatActivity {
         setUpPausePlayButton();
         setUpResetButton();
         setUpNewTimerButton();
+        setUpBackBtn();
 
+    }
+
+    private void setUpBackBtn() {
+        Button backBtn = findViewById(R.id.backBtn_timer);
+        backBtn.setOnClickListener(view -> finish());
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         setUpStartService();
-        setupBroadCastReceiver();
+        setupTimerBroadCastReceiver();
+        setUpStopAlarmReceiver();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         unregisterReceiver(timerReceiver);
+        unregisterReceiver(stopAlarmReceiver);
         unbindService(connection);
-        timerServiceBound = false;
         finish();
     }
 
@@ -91,7 +102,7 @@ public class TimerActivity extends AppCompatActivity {
         bindService(serviceIntent, connection, 0);
     }
 
-    private void setupBroadCastReceiver() {
+    private void setupTimerBroadCastReceiver() {
         remainingTime = findViewById(R.id.time_text);
 
         timerReceiver = new BroadcastReceiver() {
@@ -117,22 +128,27 @@ public class TimerActivity extends AppCompatActivity {
 
         stopService(serviceIntent);
         isServiceRunning = false;
-        timerServiceBound = false;
 
         TextView timeText = findViewById(R.id.time_text);
         timeText.setText(originalTime);
     }
 
     private void setUpNewTimerButton() {
+
         Button editTimeButton = findViewById(R.id.new_timer_button);
+
         editTimeButton.setOnClickListener(view -> {
+
             if(isServiceRunning){
                 stopService(serviceIntent);
                 isServiceRunning = false;
             }
+
             Intent i = TimerOptions.getIntent(this);
             startActivity(i);
+
             finish();
+
         });
     }
 
@@ -140,10 +156,7 @@ public class TimerActivity extends AppCompatActivity {
 
         Button resetButton = findViewById(R.id.reset_button);
 
-        resetButton.setOnClickListener(view -> {
-            resetTimer();
-            updatePausePlayButtonText();
-        });
+        resetButton.setOnClickListener(view -> resetTimer());
     }
 
     private void updatePausePlayButtonText() {
@@ -178,6 +191,46 @@ public class TimerActivity extends AppCompatActivity {
 
     }
 
+    private void setUpStopAlarmReceiver() {
+         stopAlarmReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                setUpStopAlarmButton();
+            }
+        };
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(STOP_ALARM_BROADCAST);
+        registerReceiver(stopAlarmReceiver, filter);
+    }
+
+    private void setUpStopAlarmButton() {
+
+        if(timerService.isFinish()){
+            Button stopAlarmButton = findViewById(R.id.stop_alarm_button);
+            Button pausePlayButton = findViewById(R.id.pause_play);
+            Button resetButton = findViewById(R.id.reset_button);
+            Button newTimerButton = findViewById(R.id.new_timer_button);
+
+
+            stopAlarmButton.setVisibility(View.VISIBLE);
+            pausePlayButton.setVisibility(View.INVISIBLE);
+            resetButton.setVisibility(View.INVISIBLE);
+            newTimerButton.setVisibility(View.INVISIBLE);
+
+            stopAlarmButton.setOnClickListener(view -> {
+                timerService.stopSoundAndVibration();
+                resetTimer();
+                updatePausePlayButtonText();
+                stopAlarmButton.setVisibility(View.INVISIBLE);
+                pausePlayButton.setVisibility(View.VISIBLE);
+                resetButton.setVisibility(View.VISIBLE);
+                newTimerButton.setVisibility(View.VISIBLE);
+            });
+        }
+
+    }
+
     /**
      * https://developer.android.com/guide/components/bound-services#Binder
      */
@@ -193,12 +246,14 @@ public class TimerActivity extends AppCompatActivity {
 
             updateTimerLabel();
             updatePausePlayButtonText();
+            setUpStopAlarmButton();
 
         }
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
             timerServiceBound = false;
+            updatePausePlayButtonText();
         }
     };
 
