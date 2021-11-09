@@ -44,14 +44,8 @@ public class CoinFlipHistoryActivity extends AppCompatActivity {
 		setUpBackBtn();
 		Button buttonClear = findViewById(R.id.buttonClearFlipHistory);
 		buttonClear.setOnClickListener(getClearListener());
-
-		setUpBackBtn();
 	}
 
-	private void setUpBackBtn() {
-		Button backBtn = findViewById(R.id.backBtn_coin_history);
-		backBtn.setOnClickListener(view -> finish());
-	}
 
 	private void setUpBackBtn() {
 		Button backBtn = findViewById(R.id.backBtn_history);
