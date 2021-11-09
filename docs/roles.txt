@@ -1,4 +1,4 @@
-Scrum Master - Martin
-Product Owner - Jocelyn
-Team Member - Michael
-Repo Manager - Divya
+Scrum Master - Martin (mta117)
+Product Owner - Jocelyn (jta189)
+Team Member - Minh Thanh (mtt6)
+Repo Manager - Divya (dns8)
