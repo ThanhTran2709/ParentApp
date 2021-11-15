@@ -14,7 +14,7 @@
         android:background="@drawable/rounded_corner_red"
         android:fontFamily="@font/moon_bold_font"
         android:padding="32sp"
-        android:text="@string/exitTxt"
+        android:text="@string/exit"
         android:textColor="@color/black"
         android:textSize="24sp"
         android:visibility="visible"

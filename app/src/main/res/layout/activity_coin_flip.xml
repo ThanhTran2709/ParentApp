@@ -141,7 +141,7 @@
         android:background="@drawable/rounded_corner_red"
         android:fontFamily="@font/moon_bold_font"
         android:padding="16sp"
-        android:text="@string/backTxt"
+        android:text="@string/back"
         android:textColor="@color/black"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"

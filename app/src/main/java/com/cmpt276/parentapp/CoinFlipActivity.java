@@ -30,240 +30,241 @@ import java.util.ArrayList;
 
 /**
  * Activity for flipping coin
- * */
+ */
 public class CoinFlipActivity extends AppCompatActivity {
 
-    private static final int NUMBER_OF_FLIPS = 7;
+	private static final int NUMBER_OF_FLIPS = 7;
 
-    Options options;
-    private int coinChoiceIndex = Coin.HEADS;
-    private ImageView coinImage;
+	Options options;
+	private int coinChoiceIndex = Coin.HEADS;
+	private ImageView coinImage;
 
-    private int currentSide = R.drawable.heads;
+	private int currentSide = R.drawable.heads;
 
-    public static Intent getIntent(Context context){
-        return new Intent(context, CoinFlipActivity.class);
-    }
+	public static Intent getIntent(Context context) {
+		return new Intent(context, CoinFlipActivity.class);
+	}
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_coin_flip);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_coin_flip);
 
-        setUpBackBtn();
+		setUpBackButton();
 
-        options = Options.getInstance(this);
-        coinImage = findViewById(R.id.coin);
-        coinImage.setImageResource(R.drawable.heads);
+		options = Options.getInstance(this);
+		coinImage = findViewById(R.id.coin);
+		coinImage.setImageResource(R.drawable.heads);
 
-        updateUI();
+		updateUI();
 
-        Button buttonFlipCoin = findViewById(R.id.buttonFlipCoin);
-        buttonFlipCoin.setOnClickListener(getFlipCoinListener());
+		setUpFlipButton();
+		setUpChangeChildButton();
+		setUpHistoryButton();
 
-        Button buttonChangeChild = findViewById(R.id.buttonChangeChild);
-        buttonChangeChild.setOnClickListener(getChangeChildListener());
+		RadioGroup group = findViewById(R.id.radioGroupFlipChoice);
+		group.setOnCheckedChangeListener(getGroupOnCheckChangeListener());
+	}
 
-        Button buttonViewHistory = findViewById(R.id.buttonViewFlipHistory);
-        buttonViewHistory.setOnClickListener(getViewHistoryListener());
+	private void setUpBackButton() {
+		Button backBtn = findViewById(R.id.backBtn_coin);
+		backBtn.setText(R.string.back);
+		backBtn.setOnClickListener(view -> finish());
+	}
 
-        RadioGroup group = findViewById(R.id.radioGroupFlipChoice);
-        group.setOnCheckedChangeListener(getGroupOnCheckChangeListener());
-    }
+	private void setUpFlipButton() {
+		Button buttonFlipCoin = findViewById(R.id.buttonFlipCoin);
+		buttonFlipCoin.setOnClickListener((view) -> {
+			ArrayList<Child> children = options.getChildList();
+			ArrayList<Integer> queue = options.getQueueOrder(CoinFlipActivity.this);
+			int index = queue.get(0);
 
-    private void setUpBackBtn() {
-        Button backBtn = findViewById(R.id.backBtn_coin);
-        backBtn.setText(R.string.backTxt);
-        backBtn.setOnClickListener(view -> finish());
-    }
+			Coin coin;
 
-    //Set up coin animation
-    private void animateCoin(boolean stayTheSame) {
-        CoinToss coinAnimation;
+			if (children.size() == 0) {
+				coin = new Coin();
+			} else {
+				//if index is out of bounds because of children array resizing, default to the first child added
+				if (index < 0 || index >= children.size()) {
+					index = 0;
+				}
+				int flipChoice;
+				switch (coinChoiceIndex) {
+					case Coin.HEADS:
+						flipChoice = Coin.HEADS;
+						break;
+					case Coin.TAILS:
+						flipChoice = Coin.TAILS;
+						break;
+					default:
+						throw new IllegalStateException("Cannot have selection that is neither heads nor tails.");
+				}
+				coin = new Coin(children.get(index), flipChoice);
+			}
 
-        if (currentSide == R.drawable.heads) {
-            coinAnimation = new CoinToss(coinImage, R.drawable.heads, R.drawable.tails, 0, 180, 0, 0, 0, 0);
-        }
-        else {
-            coinAnimation = new CoinToss(coinImage, R.drawable.tails, R.drawable.heads, 0, 180, 0, 0, 0, 0);
-        }
+			MediaPlayer mp = MediaPlayer.create(this, R.raw.coinflip);
+			flipCoinAnimationTrigger(coin.getFlipResult());
+			mp.start();
 
-        if (stayTheSame) {
-            coinAnimation.setRepeatCount(NUMBER_OF_FLIPS); // value + 1 must be even so the side will stay the same
-        }
-        else {
-            coinAnimation.setRepeatCount(NUMBER_OF_FLIPS + 1); // value + 1 must be odd so the side will not stay the same
-        }
+			//cycles to the next child, looping back to the first if it reaches the end of the list
+			if (children.size() > 0) {
+				options.advanceQueue(CoinFlipActivity.this);
+			}
+			options.addCoinFlip(CoinFlipActivity.this, coin);
 
-        coinAnimation.setDuration(100);
-        coinAnimation.setInterpolator(new AccelerateInterpolator());
-        coinImage.startAnimation(coinAnimation);
-    }
+			int result = coin.getFlipResult();
+			TextView tv = findViewById(R.id.textViewShowResult);
+			tv.setText("");
+			Handler handler = new Handler();
+			handler.postDelayed(() -> {
+				switch (result) {
+					case Coin.HEADS:
+						tv.setText(R.string.heads);
+						break;
+					case Coin.TAILS:
+						tv.setText(R.string.tails);
+						break;
+					default:
+						assert false;
+						break;
+				}
+				updateUI();
+			}, 1100);
 
-    //Trigger coin animation
-    public void flipCoinAnimationTrigger(int coinSide) {
-        if (coinSide == Coin.HEADS) {
-            boolean stayTheSame = (currentSide == R.drawable.heads);
-            animateCoin(stayTheSame);
-            currentSide = R.drawable.heads;
-        }
-        if (coinSide == Coin.TAILS) {
-            boolean stayTheSame = (currentSide == R.drawable.tails);
-            animateCoin(stayTheSame);
-            currentSide = R.drawable.tails;
-        }
-    }
+		});
+	}
 
-    private void updateUI() {
-        TextView textViewChild = findViewById(R.id.textViewChild);
-        LinearLayout flipChoiceLL = findViewById(R.id.linearLayout);
-        ArrayList<Child> children = options.getChildList();
-        int index = options.getChildFlipIndex(CoinFlipActivity.this);
+	private void setUpChangeChildButton() {
+		Button buttonChangeChild = findViewById(R.id.buttonChangeChild);
+		buttonChangeChild.setOnClickListener((view) -> {
+			Dialog dialog = new Dialog(this);
+			dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+			dialog.setCancelable(false);
+			dialog.setContentView(R.layout.change_child_flip);
+			dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
-        //if there's no children, essentially hide the text view.
-        if (children.size() == 0){
-            flipChoiceLL.setVisibility(View.INVISIBLE);
-            textViewChild.setText(R.string.flip_a_coin);
-        }
-        else {
-            flipChoiceLL.setVisibility(View.VISIBLE);
-            //default index to 0 if the index is out of bounds, either by deletion of a child or some other means
-            if (index < 0 || index >= children.size()){
-                index = 0;
-            }
-            textViewChild.setText(getString(R.string.current_child, children.get(index).getName()));
-        }
-    }
+			FloatingActionButton cancelFab = dialog.findViewById(R.id.cancelfab3);
+			cancelFab.setOnClickListener(getCancelFabListener(dialog));
+			dialog.show();
 
-    private View.OnClickListener getFlipCoinListener() {
-        return view -> {
-            ArrayList<Child> children = options.getChildList();
-            int index = options.getChildFlipIndex(CoinFlipActivity.this);
+			ArrayAdapter<Child> adapter = new ChildListAdapter();
+			ListView listView = dialog.findViewById(R.id.listViewChildSelect);
+			listView.setAdapter(adapter);
+			listView.setDividerHeight(16);
 
-            Coin coin;
+			listView.setOnItemClickListener(getListViewClickListener(dialog));
+		});
+	}
 
-            if (children.size() == 0){
-                coin = new Coin();
-            }
-            else {
-                //if index is out of bounds because of children array resizing, default to the first child added
-                if (index < 0 || index >= children.size()){
-                    index = 0;
-                }
-                int flipChoice;
-                switch (coinChoiceIndex){
-                    case Coin.HEADS:
-                        flipChoice = Coin.HEADS;
-                        break;
-                    case Coin.TAILS:
-                        flipChoice = Coin.TAILS;
-                        break;
-                    default:
-                        throw new IllegalStateException("Cannot have selection that is neither heads nor tails.");
-                }
-                coin = new Coin(children.get(index), flipChoice);
-            }
+	private void setUpHistoryButton() {
+		Button buttonViewHistory = findViewById(R.id.buttonViewFlipHistory);
+		buttonViewHistory.setOnClickListener((view) -> {
+			Intent intent = CoinFlipHistoryActivity.getIntent(CoinFlipActivity.this);
+			startActivity(intent);
+		});
+	}
 
-            MediaPlayer mp = MediaPlayer.create(this, R.raw.coinflip);
-            flipCoinAnimationTrigger(coin.getFlipResult());
-            mp.start();
+	//Set up coin animation
+	private void animateCoin(boolean stayTheSame) {
+		CoinToss coinAnimation;
 
-            //cycles to the next child, looping back to the first if it reaches the end of the list
-            if (children.size() > 0){
-                int newChildIndex = (index + 1) % children.size();
-                options.setChildFlipIndex(CoinFlipActivity.this, newChildIndex);
-            }
-            options.addCoinFlip(CoinFlipActivity.this, coin);
+		if (currentSide == R.drawable.heads) {
+			coinAnimation = new CoinToss(coinImage, R.drawable.heads, R.drawable.tails,
+					0, 180, 0, 0, 0, 0);
+		} else {
+			coinAnimation = new CoinToss(coinImage, R.drawable.tails, R.drawable.heads,
+					0, 180, 0, 0, 0, 0);
+		}
 
-            int result = coin.getFlipResult();
-            TextView tv = findViewById(R.id.textViewShowResult);
-            tv.setText("");
-            Handler handler = new Handler();
-            handler.postDelayed(() -> {
-                switch (result){
-                    case Coin.HEADS:
-                        tv.setText(R.string.heads);
-                        break;
-                    case Coin.TAILS:
-                        tv.setText(R.string.tails);
-                        break;
-                    default:
-                        assert false;
-                        break;
-                }
-                updateUI();
-            }, 1100);
+		if (stayTheSame) {
+			coinAnimation.setRepeatCount(NUMBER_OF_FLIPS); // value + 1 must be even so the side will stay the same
+		} else {
+			coinAnimation.setRepeatCount(NUMBER_OF_FLIPS + 1); // value + 1 must be odd so the side will not stay the same
+		}
 
-        };
-    }
+		coinAnimation.setDuration(100);
+		coinAnimation.setInterpolator(new AccelerateInterpolator());
+		coinImage.startAnimation(coinAnimation);
+	}
 
-    private View.OnClickListener getChangeChildListener() {
-        return view -> {
-            Dialog dialog = new Dialog(this);
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setCancelable(false);
-            dialog.setContentView(R.layout.change_child_flip);
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+	//Trigger coin animation
+	public void flipCoinAnimationTrigger(int coinSide) {
+		if (coinSide == Coin.HEADS) {
+			boolean stayTheSame = (currentSide == R.drawable.heads);
+			animateCoin(stayTheSame);
+			currentSide = R.drawable.heads;
+		}
+		if (coinSide == Coin.TAILS) {
+			boolean stayTheSame = (currentSide == R.drawable.tails);
+			animateCoin(stayTheSame);
+			currentSide = R.drawable.tails;
+		}
+	}
 
-            FloatingActionButton cancelFab = dialog.findViewById(R.id.cancelfab3);
-            cancelFab.setOnClickListener(getCancelFabListener(dialog));
-            dialog.show();
+	private void updateUI() {
+		TextView textViewChild = findViewById(R.id.textViewChild);
+		LinearLayout flipChoiceLL = findViewById(R.id.linearLayout);
+		ArrayList<Child> children = options.getChildList();
+		ArrayList<Integer> queue = options.getQueueOrder(CoinFlipActivity.this);
+		int index = queue.get(0);
 
-            ArrayAdapter<Child> adapter = new ChildListAdapter();
-            ListView listView = dialog.findViewById(R.id.listViewChildSelect);
-            listView.setAdapter(adapter);
-            listView.setDividerHeight(16);
+		//if there's no children, essentially hide the text view.
+		if (children.size() == 0) {
+			flipChoiceLL.setVisibility(View.INVISIBLE);
+			textViewChild.setText(R.string.flip_a_coin);
+		}
+		else {
+			flipChoiceLL.setVisibility(View.VISIBLE);
+			//default index to 0 if the index is out of bounds, either by deletion of a child or some other means
+			if (index < 0 || index >= children.size()) {
+				index = 0;
+			}
+			textViewChild.setText(getString(R.string.current_child, children.get(index).getName()));
+		}
+	}
 
-            listView.setOnItemClickListener(getListViewClickListener(dialog));
-        };
-    }
+	private View.OnClickListener getCancelFabListener(Dialog dialog) {
+		return (view) -> dialog.dismiss();
+	}
 
-    private View.OnClickListener getCancelFabListener(Dialog dialog) {
-        return (view) -> dialog.dismiss();
-    }
+	private class ChildListAdapter extends ArrayAdapter<Child> {
 
-    private class ChildListAdapter extends ArrayAdapter<Child>{
+		ArrayList<Child> children = options.getChildList();
+		ArrayList<Integer> flipOrder = options.getQueueOrder(CoinFlipActivity.this);
 
-        public ChildListAdapter(){
-            super(CoinFlipActivity.this, R.layout.child_name_view, options.getChildList());
-        }
+		public ChildListAdapter() {
+			super(CoinFlipActivity.this, R.layout.child_name_view, options.getChildList());
+		}
 
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View gamesView = convertView;
-            if (gamesView == null){
-                gamesView = getLayoutInflater().inflate(R.layout.child_name_view, parent, false);
-            }
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			if (convertView == null) {
+				convertView = getLayoutInflater().inflate(R.layout.child_name_view, parent, false);
+			}
 
-            Child currentChild = options.getChildList().get(position);
 
-            // set up game ListView item
-            TextView childName = gamesView.findViewById(R.id.change_child_name);
-            childName.setText(currentChild.getName());
-            return gamesView;
-        }
+			Child currentChild = children.get(flipOrder.get(position));
 
-    }
+			// set up game ListView item
+			TextView childName = convertView.findViewById(R.id.change_child_name);
+			childName.setText(currentChild.getName());
+			return convertView;
+		}
 
-    private View.OnClickListener getViewHistoryListener() {
-        return (view) -> {
-            Intent intent = CoinFlipHistoryActivity.getIntent(CoinFlipActivity.this);
-            startActivity(intent);
-        };
-    }
+	}
 
-    private AdapterView.OnItemClickListener getListViewClickListener(Dialog dialog) {
-        return (adapterView, view1, i, l) -> {
-            options.setChildFlipIndex(CoinFlipActivity.this, i);
-            updateUI();
-            dialog.dismiss();
-        };
-    }
+	private AdapterView.OnItemClickListener getListViewClickListener(Dialog dialog) {
+		return (adapterView, view1, i, l) -> {
+			options.moveToFrontOfQueue(CoinFlipActivity.this, i);
+			updateUI();
+			dialog.dismiss();
+		};
+	}
 
-    private RadioGroup.OnCheckedChangeListener getGroupOnCheckChangeListener() {
-        return (RadioGroup radioGroup, int checkedId) -> {
-            View radioButton = radioGroup.findViewById(checkedId);
-            coinChoiceIndex = radioGroup.indexOfChild(radioButton);
-        };
-    }
+	private RadioGroup.OnCheckedChangeListener getGroupOnCheckChangeListener() {
+		return (RadioGroup radioGroup, int checkedId) -> {
+			View radioButton = radioGroup.findViewById(checkedId);
+			coinChoiceIndex = radioGroup.indexOfChild(radioButton);
+		};
+	}
 }

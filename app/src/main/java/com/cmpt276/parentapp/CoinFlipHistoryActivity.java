@@ -49,7 +49,7 @@ public class CoinFlipHistoryActivity extends AppCompatActivity {
 
 	private void setUpBackBtn() {
 		Button backBtn = findViewById(R.id.backBtn_history);
-		backBtn.setText(R.string.backTxt);
+		backBtn.setText(R.string.back);
 		backBtn.setOnClickListener((view) -> finish());
 	}
 
