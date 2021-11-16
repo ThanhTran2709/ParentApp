@@ -71,6 +71,10 @@ public class Options {
         taskList.get(taskIndex).assignNextChild(childIndex);
     }
 
+    public ArrayList<Task> getTaskList(){
+        return taskList;
+    }
+
     public ArrayList<String> getChildListToString() {
         return childListToString;
     }
