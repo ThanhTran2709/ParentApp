@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 import com.cmpt276.model.Child;
 import com.cmpt276.model.Coin;
+import com.cmpt276.model.Task;
 import com.cmpt276.parentapp.serializer.LocalDateTimeAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -20,10 +21,12 @@ import java.util.ArrayList;
 public class Options {
     private ArrayList<Child> childList;
     private ArrayList<String> childListToString;
+    private ArrayList<Task> taskList;
     private static Options instance;
 
     private static final String PREFS_TAG = "SharedPrefs";
     private static final String CHILD_TAG = "Child";
+    private static final String TASK_TAG = "Task";
     private static final String STRING_TAG = "String";
 
     private static final String CHILD_FLIP_INDEX_TAG = "ChildFlipIndex";
@@ -38,12 +41,34 @@ public class Options {
             childList = getChildListFromPrefs(context);
             childListToString = getStringListFromPrefs(context);
         }
+        if (getTaskListFromPrefs(context).size() == 0){
+            taskList = new ArrayList<>();
+        }
+        else{
+            taskList = getTaskListFromPrefs(context);
+        }
     }
 
     public static Options getInstance(Context context){
         if (instance == null)
             instance = new Options(context);
         return instance;
+    }
+
+    public void addTask(Task task){
+        taskList.add(task);
+    }
+
+    public void removeTask(int index){
+        taskList.remove(index);
+    }
+
+    public void editTaskName(String newTaskName, int taskIndex){
+        taskList.get(taskIndex).editTaskName(newTaskName);
+    }
+
+    public void assignChildToTask(int childIndex, int taskIndex){
+        taskList.get(taskIndex).assignNextChild(childIndex);
     }
 
     public ArrayList<String> getChildListToString() {
@@ -58,6 +83,9 @@ public class Options {
     public void removeChild(int index){
         childList.remove(index);
         childListToString.remove(index);
+        for(Task task : taskList){
+            task.updateIndexOnChildDelete(index, childList.size());
+        }
     }
 
     public void editChild(int index, String name){
@@ -183,6 +211,32 @@ public class Options {
         if (list == null) {
             list = new ArrayList<>();
         }
+        return list;
+    }
+
+    //Save Task List to Shared Prefs
+    public static void saveTaskListInPrefs(Context context, ArrayList<Task> list) {
+        Gson gson = new Gson();
+        String jsonString = gson.toJson(list);
+
+        SharedPreferences pref  = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(TASK_TAG, jsonString);
+        editor.apply();
+    }
+
+    //Get Task List to Shared Prefs
+    public static ArrayList<Task> getTaskListFromPrefs(Context context) {
+        SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
+        String jsonString = pref.getString(TASK_TAG, "");
+
+        Gson gson = new Gson();
+        Type type = new TypeToken<ArrayList<Task>>() {}.getType();
+        ArrayList<Task> list = gson.fromJson(jsonString, type);
+        if (list == null) {
+            list = new ArrayList<>();
+        }
+
         return list;
     }
 }
