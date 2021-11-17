@@ -95,7 +95,7 @@
         android:layout_marginTop="24dp"
         android:fontFamily="@font/moon_bold_font"
         android:gravity="center"
-        android:text="@string/current_child"
+        android:text="@string/coin_flip_current_child_prompt"
         android:textColor="@color/black"
         android:textSize="32sp"
         app:layout_constraintEnd_toEndOf="parent"

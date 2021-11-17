@@ -34,6 +34,7 @@ import java.util.ArrayList;
 public class CoinFlipActivity extends AppCompatActivity {
 
 	private static final int NUMBER_OF_FLIPS = 7;
+	private static Child EMPTY_CHILD; //meant to be final, but getString can't be used in static contexts
 
 	Options options;
 	private int coinChoiceIndex = Coin.HEADS;
@@ -49,6 +50,8 @@ public class CoinFlipActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_coin_flip);
+
+		EMPTY_CHILD = new Child(getString(R.string.no_child));
 
 		setUpBackButton();
 
@@ -78,12 +81,14 @@ public class CoinFlipActivity extends AppCompatActivity {
 			ArrayList<Child> children = options.getChildList();
 			ArrayList<Integer> queue = options.getQueueOrder(CoinFlipActivity.this);
 			int index = queue.get(0);
+			boolean isNoChildFlipping = options.isNoChildFlipping(CoinFlipActivity.this);
 
 			Coin coin;
 
-			if (children.size() == 0) {
-				coin = new Coin();
-			} else {
+			if (isNoChildFlipping || children.size() == 0) {
+				coin = new Coin(EMPTY_CHILD, Coin.NO_CHOICE);
+			}
+			else {
 				//if index is out of bounds because of children array resizing, default to the first child added
 				if (index < 0 || index >= children.size()) {
 					index = 0;
@@ -107,10 +112,13 @@ public class CoinFlipActivity extends AppCompatActivity {
 			mp.start();
 
 			//cycles to the next child, looping back to the first if it reaches the end of the list
-			if (children.size() > 0) {
+			if (!isNoChildFlipping && children.size() > 0) {
 				options.advanceQueue(CoinFlipActivity.this);
 			}
 			options.addCoinFlip(CoinFlipActivity.this, coin);
+
+			//TODO: find out if changing back to the queue of children is required
+			options.setNoChildFlipping(CoinFlipActivity.this, false);
 
 			int result = coin.getFlipResult();
 			TextView tv = findViewById(R.id.textViewShowResult);
@@ -145,6 +153,10 @@ public class CoinFlipActivity extends AppCompatActivity {
 
 			FloatingActionButton cancelFab = dialog.findViewById(R.id.cancelfab3);
 			cancelFab.setOnClickListener(getCancelFabListener(dialog));
+
+			Button noChildButton = dialog.findViewById(R.id.buttonNoChild);
+			noChildButton.setOnClickListener(getNoChildListener(dialog));
+
 			dialog.show();
 
 			ArrayAdapter<Child> adapter = new ChildListAdapter();
@@ -178,7 +190,8 @@ public class CoinFlipActivity extends AppCompatActivity {
 
 		if (stayTheSame) {
 			coinAnimation.setRepeatCount(NUMBER_OF_FLIPS); // value + 1 must be even so the side will stay the same
-		} else {
+		}
+		else {
 			coinAnimation.setRepeatCount(NUMBER_OF_FLIPS + 1); // value + 1 must be odd so the side will not stay the same
 		}
 
@@ -207,6 +220,7 @@ public class CoinFlipActivity extends AppCompatActivity {
 		ArrayList<Child> children = options.getChildList();
 		ArrayList<Integer> queue = options.getQueueOrder(CoinFlipActivity.this);
 		int index = queue.get(0);
+		boolean isNoChildFlipping = options.isNoChildFlipping(CoinFlipActivity.this);
 
 		//if there's no children, essentially hide the text view.
 		if (children.size() == 0) {
@@ -215,11 +229,12 @@ public class CoinFlipActivity extends AppCompatActivity {
 		}
 		else {
 			flipChoiceLL.setVisibility(View.VISIBLE);
-			//default index to 0 if the index is out of bounds, either by deletion of a child or some other means
-			if (index < 0 || index >= children.size()) {
-				index = 0;
+			if (isNoChildFlipping){
+				textViewChild.setText(R.string.coin_flip_no_child_prompt);
 			}
-			textViewChild.setText(getString(R.string.current_child, children.get(index).getName()));
+			else {
+				textViewChild.setText(getString(R.string.coin_flip_current_child_prompt, children.get(index).getName()));
+			}
 		}
 	}
 
@@ -242,7 +257,6 @@ public class CoinFlipActivity extends AppCompatActivity {
 				convertView = getLayoutInflater().inflate(R.layout.child_name_view, parent, false);
 			}
 
-
 			Child currentChild = children.get(flipOrder.get(position));
 
 			// set up game ListView item
@@ -256,6 +270,15 @@ public class CoinFlipActivity extends AppCompatActivity {
 	private AdapterView.OnItemClickListener getListViewClickListener(Dialog dialog) {
 		return (adapterView, view1, i, l) -> {
 			options.moveToFrontOfQueue(CoinFlipActivity.this, i);
+			options.setNoChildFlipping(CoinFlipActivity.this, false);
+			updateUI();
+			dialog.dismiss();
+		};
+	}
+
+	private View.OnClickListener getNoChildListener(Dialog dialog) {
+		return (view) -> {
+			options.setNoChildFlipping(CoinFlipActivity.this, true);
 			updateUI();
 			dialog.dismiss();
 		};

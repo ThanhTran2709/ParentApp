@@ -26,10 +26,9 @@ public class Options {
 	private static final String CHILD_TAG = "Child";
 	private static final String STRING_TAG = "String";
 
-	private static final String CHILD_FLIP_INDEX_TAG = "ChildFlipIndex";
 	private static final String FLIP_LIST_TAG = "FlipList";
-
 	private static final String FLIP_QUEUE_TAG = "FlipQueue";
+	private static final String NO_CHILD_FLIPPING = "NoChildFlipping";
 
 	private Options(Context context) {
 		if (getChildListFromPrefs(context).size() == 0) {
@@ -77,6 +76,11 @@ public class Options {
 	* CHILDREN: [Bob(0), Joe(1), Jefferey(2), Jacob(3), Jimothy(4)]
 	* QUEUE: [1, 3, 4, 2, 0]
 	* indicates that the order should be Joe, Jacob, Jimothy, Jefferey, Bob
+	*
+	* the operations we can do to the queue is to
+	* - get the queue
+	* - move an element to the front
+	* - move the front of the queue to the back
 	*
 	* Terminology:
 	* queue index - index of queue array (e.g. queue index of 2 in the above example has value 4)
@@ -152,6 +156,22 @@ public class Options {
 
 		String newQueueString = gson.toJson(queue, arrayListType);
 		editor.putString(FLIP_QUEUE_TAG, newQueueString);
+		editor.apply();
+	}
+
+	//Returns true if the current setting is that no child is selected for flipping
+	//Does not interfere with queue order in any way.
+	public boolean isNoChildFlipping(Context context){
+		SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
+		boolean isFlipping = pref.getBoolean(NO_CHILD_FLIPPING, false);
+		return isFlipping;
+	}
+
+	public void setNoChildFlipping(Context context, boolean isFlipping){
+		SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = pref.edit();
+
+		editor.putBoolean(NO_CHILD_FLIPPING, isFlipping);
 		editor.apply();
 	}
 
