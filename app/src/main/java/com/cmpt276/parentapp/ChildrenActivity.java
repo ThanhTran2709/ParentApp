@@ -132,7 +132,7 @@ public class ChildrenActivity extends AppCompatActivity {
 					Toast.makeText(ChildrenActivity.this, R.string.error_validate_name, Toast.LENGTH_SHORT).show();
 				}
 				else {
-					options.addChild(ChildrenActivity.this, new Child(nameInput.getText().toString()));
+					options.addChild(ChildrenActivity.this, nameInput.getText().toString());
 					populateList();
 					listItemClick();
 

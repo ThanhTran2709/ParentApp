@@ -5,9 +5,11 @@ package com.cmpt276.model;
  * */
 public class Child {
 	private String name;
+	private long id;
 
-	public Child(String name){
+	public Child(String name, long id){
 		this.name = name;
+		this.id = id;
 	}
 
 	public void setName(String name) {
@@ -16,6 +18,10 @@ public class Child {
 
 	public String getName() {
 		return this.name;
+	}
+
+	public long getId(){
+		return id;
 	}
 
 }

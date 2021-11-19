@@ -13,12 +13,15 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Options class implement Shared Preferences to save data between app runs
  */
 public class Options {
 	private static Options instance;
+
+	private static Random idGenerator = new Random();
 
 	private static final String PREFS_TAG = "SharedPrefs";
 	private static final String CHILD_TAG = "Child";
@@ -29,6 +32,7 @@ public class Options {
 
 	private static final Type TYPE_CHILD_LIST = new TypeToken<ArrayList<Child>>() {}.getType();
 	private static final Type TYPE_INT_LIST = new TypeToken<ArrayList<Integer>>(){}.getType();
+	private static final Type TYPE_COIN_LIST = new TypeToken<ArrayList<Coin>>(){}.getType();
 
 	private Options() {}
 
@@ -38,24 +42,25 @@ public class Options {
 		return instance;
 	}
 
-	public void addChild(Context context, Child child){
+	public void addChild(Context context, String newChildName){
 		SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = pref.edit();
 		String jsonString = pref.getString(CHILD_TAG, null);
 
 		Gson gson = new Gson();
 
-		ArrayList<Child> list;
+		ArrayList<Child> children;
 		if (jsonString == null){
-			list = new ArrayList<>();
+			children = new ArrayList<>();
 		}
 		else {
-			list = gson.fromJson(jsonString, TYPE_CHILD_LIST);
+			children = gson.fromJson(jsonString, TYPE_CHILD_LIST);
 		}
 
-		list.add(child);
+		Child child = new Child(newChildName, generateID(children));
+		children.add(child);
 
-		String newJsonString = gson.toJson(list);
+		String newJsonString = gson.toJson(children);
 		editor.putString(CHILD_TAG, newJsonString);
 		editor.apply();
 	}
@@ -243,7 +248,6 @@ public class Options {
 		Gson gson = new GsonBuilder()
 				.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
 				.create();
-		Type type = new TypeToken<ArrayList<Coin>>(){}.getType();
 
 		ArrayList<Coin> flipHistory;
 
@@ -251,7 +255,7 @@ public class Options {
 			flipHistory = new ArrayList<>();
 		}
 		else {
-			flipHistory = gson.fromJson(jsonString, type);
+			flipHistory = gson.fromJson(jsonString, TYPE_COIN_LIST);
 		}
 		flipHistory.add(coin);
 
@@ -263,6 +267,7 @@ public class Options {
 
 	public ArrayList<Coin> getFlipHistory(Context context){
 		SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = pref.edit();
 		String jsonString = pref.getString(FLIP_LIST_TAG, null);
 		if (jsonString == null){
 			return new ArrayList<>();
@@ -271,9 +276,28 @@ public class Options {
 		Gson gson = new GsonBuilder()
 				.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
 				.create();
-		Type type = new TypeToken<ArrayList<Coin>>(){}.getType();
 
-		return gson.fromJson(jsonString, type);
+		ArrayList<Coin> history = gson.fromJson(jsonString, TYPE_COIN_LIST);
+		ArrayList<Child> children = getChildList(context);
+
+		//if a child's name is changed in the settings, the corresponding entry must be changed in the history
+		//There is a chance that a child can be deleted, and another child can be made with
+		//the same ID before checking the history, thereby rewriting the history with the new child,
+		//but the odds are very, very low.
+		for (Coin coin : history){
+			Child coinChild = coin.getChild();
+			for (Child child : children){
+				if (coinChild.getId() == child.getId()){
+					coinChild.setName(child.getName());
+				}
+			}
+		}
+
+		String newJsonString = gson.toJson(history, TYPE_COIN_LIST);
+		editor.putString(FLIP_LIST_TAG, newJsonString);
+		editor.apply();
+
+		return history;
 	}
 
 	public void clearCoinFlips(Context context){
@@ -282,5 +306,27 @@ public class Options {
 		editor.remove(FLIP_LIST_TAG);
 
 		editor.apply();
+	}
+
+	private static long generateID(ArrayList<Child> children){
+		boolean isValidId = false;
+		long newId = 0;
+		//generate new IDs that are not the same as an existing ID
+		while (!isValidId){
+			isValidId = true;
+			newId = idGenerator.nextInt();
+			//prevent the reserved empty child from being overwritten
+			//TODO: make this a constant that makes sense in the grand context
+			if (newId == 0){
+				continue;
+			}
+			for (Child child : children){
+				if (newId == child.getId()){
+					isValidId = false;
+					break;
+				}
+			}
+		}
+		return newId;
 	}
 }

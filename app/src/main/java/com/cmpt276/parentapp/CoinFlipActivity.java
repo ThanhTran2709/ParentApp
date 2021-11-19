@@ -51,7 +51,7 @@ public class CoinFlipActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_coin_flip);
 
-		EMPTY_CHILD = new Child(getString(R.string.no_child));
+		EMPTY_CHILD = new Child(getString(R.string.no_child), 0);
 
 		setUpBackButton();
 
@@ -80,7 +80,6 @@ public class CoinFlipActivity extends AppCompatActivity {
 		buttonFlipCoin.setOnClickListener((view) -> {
 			ArrayList<Child> children = options.getChildList(CoinFlipActivity.this);
 			ArrayList<Integer> queue = options.getQueueOrder(CoinFlipActivity.this);
-			int index = queue.get(0);
 			boolean isNoChildFlipping = options.isNoChildFlipping(CoinFlipActivity.this);
 
 			Coin coin;
@@ -90,8 +89,9 @@ public class CoinFlipActivity extends AppCompatActivity {
 			}
 			else {
 				//if index is out of bounds because of children array resizing, default to the first child added
-				if (index < 0 || index >= children.size()) {
-					index = 0;
+				int indexOfChildInFront = queue.get(0);
+				if (indexOfChildInFront < 0 || indexOfChildInFront >= children.size()) {
+					indexOfChildInFront = 0;
 				}
 				int flipChoice;
 				switch (coinChoiceIndex) {
@@ -104,7 +104,7 @@ public class CoinFlipActivity extends AppCompatActivity {
 					default:
 						throw new IllegalStateException("Cannot have selection that is neither heads nor tails.");
 				}
-				coin = new Coin(children.get(index), flipChoice);
+				coin = new Coin(children.get(indexOfChildInFront), flipChoice);
 			}
 
 			MediaPlayer mp = MediaPlayer.create(this, R.raw.coinflip);
@@ -219,7 +219,6 @@ public class CoinFlipActivity extends AppCompatActivity {
 		LinearLayout flipChoiceLL = findViewById(R.id.linearLayout);
 		ArrayList<Child> children = options.getChildList(CoinFlipActivity.this);
 		ArrayList<Integer> queue = options.getQueueOrder(CoinFlipActivity.this);
-		int index = queue.get(0);
 		boolean isNoChildFlipping = options.isNoChildFlipping(CoinFlipActivity.this);
 
 		//if there's no children, essentially hide the text view.
@@ -233,7 +232,8 @@ public class CoinFlipActivity extends AppCompatActivity {
 				textViewChild.setText(R.string.coin_flip_no_child_prompt);
 			}
 			else {
-				textViewChild.setText(getString(R.string.coin_flip_current_child_prompt, children.get(index).getName()));
+				int indexOfChildInFront = queue.get(0);
+				textViewChild.setText(getString(R.string.coin_flip_current_child_prompt, children.get(indexOfChildInFront).getName()));
 			}
 		}
 	}
