@@ -55,7 +55,7 @@ public class CoinFlipActivity extends AppCompatActivity {
 
 		setUpBackButton();
 
-		options = Options.getInstance(this);
+		options = Options.getInstance();
 		coinImage = findViewById(R.id.coin);
 		coinImage.setImageResource(R.drawable.heads);
 
@@ -78,7 +78,7 @@ public class CoinFlipActivity extends AppCompatActivity {
 	private void setUpFlipButton() {
 		Button buttonFlipCoin = findViewById(R.id.buttonFlipCoin);
 		buttonFlipCoin.setOnClickListener((view) -> {
-			ArrayList<Child> children = options.getChildList();
+			ArrayList<Child> children = options.getChildList(CoinFlipActivity.this);
 			ArrayList<Integer> queue = options.getQueueOrder(CoinFlipActivity.this);
 			int index = queue.get(0);
 			boolean isNoChildFlipping = options.isNoChildFlipping(CoinFlipActivity.this);
@@ -217,7 +217,7 @@ public class CoinFlipActivity extends AppCompatActivity {
 	private void updateUI() {
 		TextView textViewChild = findViewById(R.id.textViewChild);
 		LinearLayout flipChoiceLL = findViewById(R.id.linearLayout);
-		ArrayList<Child> children = options.getChildList();
+		ArrayList<Child> children = options.getChildList(CoinFlipActivity.this);
 		ArrayList<Integer> queue = options.getQueueOrder(CoinFlipActivity.this);
 		int index = queue.get(0);
 		boolean isNoChildFlipping = options.isNoChildFlipping(CoinFlipActivity.this);
@@ -244,11 +244,11 @@ public class CoinFlipActivity extends AppCompatActivity {
 
 	private class ChildListAdapter extends ArrayAdapter<Child> {
 
-		ArrayList<Child> children = options.getChildList();
+		ArrayList<Child> children = options.getChildList(CoinFlipActivity.this);
 		ArrayList<Integer> flipOrder = options.getQueueOrder(CoinFlipActivity.this);
 
 		public ChildListAdapter() {
-			super(CoinFlipActivity.this, R.layout.child_name_view, options.getChildList());
+			super(CoinFlipActivity.this, R.layout.child_name_view, options.getChildList(CoinFlipActivity.this));
 		}
 
 		@Override

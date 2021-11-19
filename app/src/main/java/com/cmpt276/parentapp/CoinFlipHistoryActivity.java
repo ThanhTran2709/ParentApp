@@ -33,7 +33,7 @@ public class CoinFlipHistoryActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_coin_flip_history);
 
-		 options = Options.getInstance(this);
+		 options = Options.getInstance();
 
 		ArrayList<Coin> coinFlips = options.getFlipHistory(this);
 

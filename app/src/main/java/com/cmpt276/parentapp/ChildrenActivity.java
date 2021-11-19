@@ -38,7 +38,7 @@ public class ChildrenActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_children);
-		options = Options.getInstance(this);
+		options = Options.getInstance();
 
 		setUpAddBtn();
 		populateList();
@@ -74,7 +74,7 @@ public class ChildrenActivity extends AppCompatActivity {
 	private class ChildrenListViewAdapter extends ArrayAdapter<Child>{
 
 		public ChildrenListViewAdapter(){
-			super(ChildrenActivity.this, R.layout.children_view, options.getChildList());
+			super(ChildrenActivity.this, R.layout.children_view, options.getChildList(ChildrenActivity.this));
 		}
 
 		@Override
@@ -84,7 +84,7 @@ public class ChildrenActivity extends AppCompatActivity {
 				gamesView = getLayoutInflater().inflate(R.layout.children_view, parent, false);
 			}
 
-			Child currentChild = options.getChildList().get(position);
+			Child currentChild = options.getChildList(ChildrenActivity.this).get(position);
 
 			// set up game ListView item
 			TextView childName = gamesView.findViewById(R.id.child_name);
@@ -96,7 +96,7 @@ public class ChildrenActivity extends AppCompatActivity {
 
 	//Click handling for children list view
 	private void listItemClick(){
-		if (options.getChildList().size() == 0) {
+		if (options.getChildList(ChildrenActivity.this).size() == 0) {
 			return;
 		}
 		ListView childrenListView = findViewById(R.id.childrenListView);
@@ -132,13 +132,9 @@ public class ChildrenActivity extends AppCompatActivity {
 					Toast.makeText(ChildrenActivity.this, R.string.error_validate_name, Toast.LENGTH_SHORT).show();
 				}
 				else {
-					options.addChild(new Child(nameInput.getText().toString()));
-
-					Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
-					Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
+					options.addChild(ChildrenActivity.this, new Child(nameInput.getText().toString()));
 					populateList();
 					listItemClick();
-
 
 					dialog.cancel();
 				}
@@ -160,7 +156,7 @@ public class ChildrenActivity extends AppCompatActivity {
 			dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
 			EditText nameInput = dialog.findViewById(R.id.childNameEditText2);
-			nameInput.setText(options.getChildList().get(index).getName());
+			nameInput.setText(options.getChildList(ChildrenActivity.this).get(index).getName());
 
 
 			FloatingActionButton cancelFab = dialog.findViewById(R.id.cancelfab2);
@@ -184,9 +180,7 @@ public class ChildrenActivity extends AppCompatActivity {
 				if (nameInput.getText().toString().isEmpty()) {
 					Toast.makeText(ChildrenActivity.this, R.string.error_validate_name, Toast.LENGTH_SHORT).show();
 				} else {
-					options.editChild(index, nameInput.getText().toString());
-					Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
-					Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
+					options.editChild(ChildrenActivity.this, index, nameInput.getText().toString());
 					populateList();
 					listItemClick();
 					dialog.cancel();
@@ -196,9 +190,7 @@ public class ChildrenActivity extends AppCompatActivity {
 
 		private View.OnClickListener getDeleteFabListener(Dialog dialog, int index) {
 			return (view) -> {
-				options.removeChild(index);
-				Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
-				Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
+				options.removeChild(ChildrenActivity.this, index);
 				populateList();
 				listItemClick();
 				dialog.cancel();

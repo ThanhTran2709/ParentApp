@@ -18,56 +18,116 @@ import java.util.ArrayList;
  * Options class implement Shared Preferences to save data between app runs
  */
 public class Options {
-	private ArrayList<Child> childList;
-	private ArrayList<String> childListToString;
 	private static Options instance;
 
 	private static final String PREFS_TAG = "SharedPrefs";
 	private static final String CHILD_TAG = "Child";
-	private static final String STRING_TAG = "String";
 
 	private static final String FLIP_LIST_TAG = "FlipList";
 	private static final String FLIP_QUEUE_TAG = "FlipQueue";
 	private static final String NO_CHILD_FLIPPING = "NoChildFlipping";
 
-	private Options(Context context) {
-		if (getChildListFromPrefs(context).size() == 0) {
-			childList = new ArrayList<>();
-			childListToString = new ArrayList<>();
-		}
-		else {
-			childList = getChildListFromPrefs(context);
-			childListToString = getStringListFromPrefs(context);
-		}
-	}
+	private static final Type TYPE_CHILD_LIST = new TypeToken<ArrayList<Child>>() {}.getType();
+	private static final Type TYPE_INT_LIST = new TypeToken<ArrayList<Integer>>(){}.getType();
 
-	public static Options getInstance(Context context){
+	private Options() {}
+
+	public static Options getInstance(){
 		if (instance == null)
-			instance = new Options(context);
+			instance = new Options();
 		return instance;
 	}
 
-	public ArrayList<String> getChildListToString() {
-		return childListToString;
+	public void addChild(Context context, Child child){
+		SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = pref.edit();
+		String jsonString = pref.getString(CHILD_TAG, null);
+
+		Gson gson = new Gson();
+
+		ArrayList<Child> list;
+		if (jsonString == null){
+			list = new ArrayList<>();
+		}
+		else {
+			list = gson.fromJson(jsonString, TYPE_CHILD_LIST);
+		}
+
+		list.add(child);
+
+		String newJsonString = gson.toJson(list);
+		editor.putString(CHILD_TAG, newJsonString);
+		editor.apply();
 	}
 
-	public void addChild(Child child){
-		childList.add(child);
-		childListToString.add(child.getName());
+	public void removeChild(Context context, int index){
+		SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = pref.edit();
+		String jsonString = pref.getString(CHILD_TAG, null);
+
+		Gson gson = new Gson();
+
+		ArrayList<Child> list;
+		if (jsonString == null){
+			list = new ArrayList<>();
+		}
+		else {
+			list = gson.fromJson(jsonString, TYPE_CHILD_LIST);
+		}
+
+		if (index < 0 || index >= list.size()){
+			throw new IllegalArgumentException("Cannot remove child that is out of bounds.");
+		}
+
+		list.remove(index);
+
+		String newJsonString = gson.toJson(list);
+		editor.putString(CHILD_TAG, newJsonString);
+		editor.apply();
 	}
 
-	public void removeChild(int index){
-		childList.remove(index);
-		childListToString.remove(index);
+	public void editChild(Context context, int index, String name){
+		SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = pref.edit();
+		String jsonString = pref.getString(CHILD_TAG, null);
+
+		Gson gson = new Gson();
+
+		ArrayList<Child> list;
+		if (jsonString == null){
+			list = new ArrayList<>();
+		}
+		else {
+			list = gson.fromJson(jsonString, TYPE_CHILD_LIST);
+		}
+
+		if (index < 0 || index >= list.size()){
+			throw new IllegalArgumentException("Cannot remove child that is out of bounds.");
+		}
+
+		Child child = list.get(index);
+		child.setName(name);
+
+		String newJsonString = gson.toJson(list);
+		editor.putString(CHILD_TAG, newJsonString);
+		editor.apply();
 	}
 
-	public void editChild(int index, String name){
-		childList.get(index).setName(name);
-		childListToString.set(index, name);
-	}
+	public ArrayList<Child> getChildList(Context context) {
+		SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
+		String jsonString = pref.getString(CHILD_TAG, null);
 
-	public ArrayList<Child> getChildList() {
-		return childList;
+		Gson gson = new Gson();
+
+		ArrayList<Child> list;
+		if (jsonString == null){
+			list = new ArrayList<>();
+		}
+		else {
+			list = gson.fromJson(jsonString, TYPE_CHILD_LIST);
+		}
+
+		return list;
 	}
 
 	/*
@@ -91,32 +151,32 @@ public class Options {
 		String jsonString = pref.getString(FLIP_QUEUE_TAG, null);
 
 		Gson gson = new Gson();
-		Type arrayListType = new TypeToken<ArrayList<Integer>>(){}.getType();
 
-		ArrayList<Integer> queue = gson.fromJson(jsonString, arrayListType);
+		ArrayList<Integer> queue = gson.fromJson(jsonString, TYPE_INT_LIST);
+		ArrayList<Child> children = getChildList(context);
 
 		if (queue == null){
 			queue = new ArrayList<>();
-			for (int i = 0; i < childList.size(); i++){
+			for (int i = 0; i < children.size(); i++){
 				queue.add(i);
 			}
 		}
-		else if (queue.size() > childList.size()){
+		else if (queue.size() > children.size()){
 			//remove all indices that are greater than the current child list size to prevent out of bounds errors when removing children
 			for (int i = 0; i < queue.size(); i++){
-				if (queue.get(i) >= childList.size()){
+				if (queue.get(i) >= children.size()){
 					queue.remove(i--);
 				}
 			}
 		}
-		else if (queue.size() < childList.size()){
+		else if (queue.size() < children.size()){
 			//append the missing indices in order up to the number of children there are
-			for (int i = queue.size(); i < childList.size(); i++){
+			for (int i = queue.size(); i < children.size(); i++){
 				queue.add(i);
 			}
 		}
 
-		String newQueueString = gson.toJson(queue, arrayListType);
+		String newQueueString = gson.toJson(queue, TYPE_INT_LIST);
 		editor.putString(FLIP_QUEUE_TAG, newQueueString);
 		editor.apply();
 
@@ -134,9 +194,8 @@ public class Options {
 		queue.add(0, element);
 
 		Gson gson = new Gson();
-		Type arrayListType = new TypeToken<ArrayList<Integer>>(){}.getType();
 
-		String newQueueString = gson.toJson(queue, arrayListType);
+		String newQueueString = gson.toJson(queue, TYPE_INT_LIST);
 		editor.putString(FLIP_QUEUE_TAG, newQueueString);
 		editor.apply();
 	}
@@ -152,9 +211,8 @@ public class Options {
 		queue.add(element);
 
 		Gson gson = new Gson();
-		Type arrayListType = new TypeToken<ArrayList<Integer>>(){}.getType();
 
-		String newQueueString = gson.toJson(queue, arrayListType);
+		String newQueueString = gson.toJson(queue, TYPE_INT_LIST);
 		editor.putString(FLIP_QUEUE_TAG, newQueueString);
 		editor.apply();
 	}
@@ -224,58 +282,5 @@ public class Options {
 		editor.remove(FLIP_LIST_TAG);
 
 		editor.apply();
-	}
-
-	//The next 4 functions implement shared preferences for ArrayLists of Child and String type
-
-	//Save Child List to Shared Prefs
-	public static void saveChildListInPrefs(Context context, ArrayList<Child> list) {
-		Gson gson = new Gson();
-		String jsonString = gson.toJson(list);
-
-		SharedPreferences pref  = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
-		SharedPreferences.Editor editor = pref.edit();
-		editor.putString(CHILD_TAG, jsonString);
-		editor.apply();
-	}
-
-	//Get Child List to Shared Prefs
-	public static ArrayList<Child> getChildListFromPrefs(Context context) {
-		SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
-		String jsonString = pref.getString(CHILD_TAG, "");
-
-		Gson gson = new Gson();
-		Type type = new TypeToken<ArrayList<Child>>() {}.getType();
-		ArrayList<Child> list = gson.fromJson(jsonString, type);
-		if (list == null) {
-			list = new ArrayList<>();
-		}
-
-		return list;
-	}
-
-	//Save Child List in String form to Shared Prefs
-	public static void saveStringListInPrefs(Context context, ArrayList<String> list) {
-		Gson gson = new Gson();
-		String jsonString = gson.toJson(list);
-
-		SharedPreferences pref  = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
-		SharedPreferences.Editor editor = pref.edit();
-		editor.putString(STRING_TAG, jsonString);
-		editor.apply();
-	}
-
-	//Get Child List in String form to Shared Prefs
-	public static ArrayList<String> getStringListFromPrefs(Context context) {
-		SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
-		String jsonString = pref.getString(STRING_TAG, "");
-
-		Gson gson = new Gson();
-		Type type = new TypeToken<ArrayList<String>>() {}.getType();
-		ArrayList<String > list = gson.fromJson(jsonString, type);
-		if (list == null) {
-			list = new ArrayList<>();
-		}
-		return list;
 	}
 }
