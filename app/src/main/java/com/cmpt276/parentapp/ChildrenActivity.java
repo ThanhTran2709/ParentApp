@@ -189,7 +189,6 @@ public class ChildrenActivity extends AppCompatActivity {
                 } else {
                     options.editChild(index, nameInput.getText().toString());
                     Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
-                    Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
                     populateList();
                     listItemClick();
                     dialog.cancel();
@@ -201,11 +200,10 @@ public class ChildrenActivity extends AppCompatActivity {
             return (view) -> {
                 options.removeChild(index);
                 Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
-                Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
-
                 Options.saveTaskListInPrefs(ChildrenActivity.this, options.getTaskList());
                 populateList();
                 listItemClick();
+
                 dialog.cancel();
             };
         }

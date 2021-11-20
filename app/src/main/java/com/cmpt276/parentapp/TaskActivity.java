@@ -18,6 +18,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cmpt276.model.Child;
 import com.cmpt276.model.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -38,7 +39,6 @@ public class TaskActivity extends AppCompatActivity {
         setUpAddTaskFAB();
         setUpBackBtn();
         populateTaskList();
-
     }
 
     private void setUpBackBtn() {
@@ -89,7 +89,7 @@ public class TaskActivity extends AppCompatActivity {
                     Options.saveTaskListInPrefs(TaskActivity.this, options.getTaskList());
 
                     populateTaskList();
-                    setUpListItemClick();
+                    setUpListItemClickListener();
 
                     dialog.cancel();
                 }
@@ -141,7 +141,7 @@ public class TaskActivity extends AppCompatActivity {
                     options.editTaskName(nameInput.getText().toString(), index);
                     Options.saveTaskListInPrefs(TaskActivity.this, options.getTaskList());
                     populateTaskList();
-                    setUpListItemClick();
+                    setUpListItemClickListener();
                     dialog.cancel();
                 }
             };
@@ -152,7 +152,7 @@ public class TaskActivity extends AppCompatActivity {
                 options.removeTask(index);
                 Options.saveChildListInPrefs(TaskActivity.this, options.getChildList());
                 populateTaskList();
-                setUpListItemClick();
+                setUpListItemClickListener();
                 dialog.cancel();
             };
         }
@@ -160,9 +160,11 @@ public class TaskActivity extends AppCompatActivity {
 
 
     private void populateTaskList() {
-        ListView taskList = findViewById(R.id.taskListView);
         TaskListAdapter adapter = new TaskListAdapter();
+        ListView taskList = findViewById(R.id.taskListView);
         taskList.setAdapter(adapter);
+        setUpListItemClickListener();
+
     }
 
     private class TaskListAdapter extends ArrayAdapter<Task> {
@@ -197,14 +199,56 @@ public class TaskActivity extends AppCompatActivity {
 
     }
 
-    private void setUpListItemClick(){
+    private void setUpListItemClickListener(){
         if (options.getTaskList().size() == 0) {
             return;
         }
         ListView taskListView = findViewById(R.id.taskListView);
-        taskListView.setOnItemClickListener((adapterView, taskClicked, index, position) -> {
-            //TODO add a dialog to edit the task
+        taskListView.setOnItemClickListener((adapterView, taskClicked, position, id) -> {
+            ConfirmTaskDoneDialog dialog = new ConfirmTaskDoneDialog();
+            dialog.showDialog(TaskActivity.this, position);
 
         });
     }
+
+    public class ConfirmTaskDoneDialog {
+
+        public void showDialog(Activity activity, int index) {
+            final Dialog dialog = new Dialog(activity);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setCancelable(false);
+            dialog.setContentView(R.layout.confirm_task_done_dialog);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+            FloatingActionButton cancelFab = dialog.findViewById(R.id.cancelfab6);
+            cancelFab.setOnClickListener(getCancelFabListener(dialog));
+
+            FloatingActionButton confirmFab = dialog.findViewById(R.id.confirmfab);
+            confirmFab.setOnClickListener(getAddFabListener(dialog, index));
+
+            Task task = options.getTaskList().get(index);
+
+            TextView confirmText = dialog.findViewById(R.id.confirm_textview);
+            confirmText.setText(String.format(String.valueOf(R.string.confirm_message), options.getChildName(
+                            task.getCurrentChildIndex()), task.getTaskName()));
+            dialog.show();
+
+        }
+
+        private View.OnClickListener getCancelFabListener(Dialog dialog) {
+            return (view) -> dialog.dismiss();
+        }
+
+        private View.OnClickListener getAddFabListener(Dialog dialog, int index) {
+            return (view) -> {
+                options.getTaskList().get(index).incrementNextChildIndex(options.getChildList().size());
+                populateTaskList();
+                dialog.dismiss();
+
+
+            };
+        }
+
+    }
+
 }

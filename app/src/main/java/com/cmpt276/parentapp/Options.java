@@ -97,7 +97,6 @@ public class Options {
 
     public void removeChild(int index){
         childList.remove(index);
-        childListToString.remove(index);
         for(Task task : taskList){
             task.updateIndexOnChildDelete(index, childList.size());
         }
@@ -105,7 +104,6 @@ public class Options {
 
     public void editChild(int index, String name){
         childList.get(index).setName(name);
-        childListToString.set(index, name);
     }
 
     public ArrayList<Child> getChildList() {

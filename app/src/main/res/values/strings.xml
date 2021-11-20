@@ -81,5 +81,6 @@
     <string name="edit">EDIT</string>
     <string name="no_child_yet">No Child Yet</string>
     <string name="blank">-</string>
+    <string name="confirm_message">Is %s done with %s?</string>
 
 </resources>
