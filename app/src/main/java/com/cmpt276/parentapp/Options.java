@@ -29,6 +29,8 @@ public class Options {
     private static final String TASK_TAG = "Task";
     private static final String STRING_TAG = "String";
 
+    private static final int NO_CHILD = -1;
+
     private static final String CHILD_FLIP_INDEX_TAG = "ChildFlipIndex";
     private static final String FLIP_LIST_TAG = "FlipList";
 
@@ -82,6 +84,15 @@ public class Options {
     public void addChild(Child child){
         childList.add(child);
         childListToString.add(child.getName());
+        checkNoChildrenInTaskList();
+    }
+
+    private void checkNoChildrenInTaskList() {
+        if((childList.size() - 1) == 0){
+            for(Task task : taskList){
+                task.incrementNextChildIndex(childList.size());
+            }
+        }
     }
 
     public void removeChild(int index){
@@ -176,6 +187,15 @@ public class Options {
         SharedPreferences.Editor editor = pref.edit();
         editor.putString(CHILD_TAG, jsonString);
         editor.apply();
+    }
+
+    public String getChildName(int  childIndex){
+        if(childIndex == NO_CHILD){
+            return "No Child Added Yet";
+        }
+        else{
+            return childList.get(childIndex).getName();
+        }
     }
 
     //Get Child List to Shared Prefs
