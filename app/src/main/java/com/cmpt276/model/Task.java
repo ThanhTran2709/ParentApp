@@ -48,8 +48,11 @@ public class Task {
             currentChildIndex = NO_CHILD;
         }
         else{
-            if(deletedChildIndex != currentChildIndex){
+            if(deletedChildIndex < currentChildIndex) {
                 currentChildIndex--;
+            }
+            else if(deletedChildIndex == childListSize){
+                currentChildIndex = 0;
             }
         }
     }
