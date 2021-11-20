@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -8,18 +9,24 @@
         android:id="@+id/taskName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="16dp"
+        android:fontFamily="@font/moon_bold_font"
         android:text="@string/blank"
+        android:textColor="@color/black"
+        android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@+id/childImageInTaskList"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/childImageInTaskList" />
 
     <TextView
         android:id="@+id/childNameInTaskList"
-        android:layout_width="58dp"
-        android:layout_height="14dp"
-        android:layout_marginStart="24dp"
-        android:text= "@string/no_child_yet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:fontFamily="@font/moon_bold_font"
+        android:text="@string/no_child_yet"
+        android:textColor="@color/black"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@+id/childImageInTaskList"
         app:layout_constraintStart_toEndOf="@+id/childImageInTaskList"
         app:layout_constraintTop_toBottomOf="@+id/taskName" />
@@ -40,8 +47,10 @@
         android:id="@+id/edit_task_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
         android:focusable="false"
         android:text="@string/edit"
+        android:background="@drawable/rounded_corner_gold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
