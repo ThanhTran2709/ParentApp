@@ -18,7 +18,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cmpt276.model.Child;
 import com.cmpt276.model.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -61,18 +60,15 @@ public class TaskActivity extends AppCompatActivity {
             final Dialog dialog = new Dialog(activity);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             dialog.setCancelable(false);
-            dialog.setContentView(R.layout.add_child_dialog);
+            dialog.setContentView(R.layout.add_task_dialog);
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
-            EditText nameInput = dialog.findViewById(R.id.childNameedittext);
-            nameInput.setHint(R.string.enter_task_name);
-            TextView dialogTitle = dialog.findViewById(R.id.add_child_dialog_title);
-            dialogTitle.setText(R.string.add_new_task);
+            EditText nameInput = dialog.findViewById(R.id.add_task_edit_text);
 
-            FloatingActionButton cancelFab = dialog.findViewById(R.id.cancelfab);
+            FloatingActionButton cancelFab = dialog.findViewById(R.id.cancel_add_task_fab);
             cancelFab.setOnClickListener(getCancelFabListener(dialog));
 
-            FloatingActionButton addFab = dialog.findViewById(R.id.addfab);
+            FloatingActionButton addFab = dialog.findViewById(R.id.save_add_task_fab);
             addFab.setOnClickListener(getAddFabListener(dialog, nameInput));
 
             dialog.show();
@@ -107,23 +103,19 @@ public class TaskActivity extends AppCompatActivity {
             final Dialog dialog = new Dialog(activity);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             dialog.setCancelable(false);
-            dialog.setContentView(R.layout.edit_child_dialog);
+            dialog.setContentView(R.layout.edit_task_dialog);
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
-            EditText nameInput = dialog.findViewById(R.id.enter_child_name);
+            EditText nameInput = dialog.findViewById(R.id.edit_task_edit_text);
             nameInput.setText(options.getTaskList().get(index).getTaskName());
-            nameInput.setHint(R.string.enter_task_name);
 
-            TextView dialogTitle = dialog.findViewById(R.id.edit_child_dialog_title);
-            dialogTitle.setText(R.string.edit_task_name);
-
-            FloatingActionButton cancelFab = dialog.findViewById(R.id.cancelfab2);
+            FloatingActionButton cancelFab = dialog.findViewById(R.id.cancel_edit_task_fab);
             cancelFab.setOnClickListener(getCancelFabListener(dialog));
 
-            FloatingActionButton addFab = dialog.findViewById(R.id.addfab2);
+            FloatingActionButton addFab = dialog.findViewById(R.id.edit_task_save_fab);
             addFab.setOnClickListener(getAddFabListener(dialog, nameInput, index));
 
-            FloatingActionButton deleteFab = dialog.findViewById(R.id.deletefab2);
+            FloatingActionButton deleteFab = dialog.findViewById(R.id.delete_task_fab);
             deleteFab.setOnClickListener(getDeleteFabListener(dialog, index));
 
             dialog.show();
@@ -228,9 +220,8 @@ public class TaskActivity extends AppCompatActivity {
 
             Task task = options.getTaskList().get(index);
 
-            TextView confirmText = dialog.findViewById(R.id.confirm_textview);
-            confirmText.setText(String.format(String.valueOf(R.string.confirm_message), options.getChildName(
-                            task.getCurrentChildIndex()), task.getTaskName()));
+            TextView confirmText = dialog.findViewById(R.id.confirm_message);
+            confirmText.setText(getString(R.string.confirm_message, options.getChildName(task.getCurrentChildIndex()), task.getTaskName()));
             dialog.show();
 
         }

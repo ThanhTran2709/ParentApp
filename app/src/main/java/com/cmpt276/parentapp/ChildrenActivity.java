@@ -162,7 +162,7 @@ public class ChildrenActivity extends AppCompatActivity {
             dialog.setContentView(R.layout.edit_child_dialog);
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
-            EditText nameInput = dialog.findViewById(R.id.enter_child_name);
+            EditText nameInput = dialog.findViewById(R.id.childNameEditText2);
             nameInput.setText(options.getChildList().get(index).getName());
 
 
