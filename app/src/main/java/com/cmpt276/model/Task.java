@@ -1,13 +1,26 @@
 package com.cmpt276.model;
 
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+
 public class Task {
     private static final int NO_CHILD = -1;
     private String taskName;
     private int currentChildIndex;
 
-    public Task(String taskName) {
+    public Task(String taskName, int numberOfChildren) {
         this.taskName = taskName;
-        this.currentChildIndex = NO_CHILD;
+        setChildIndex(numberOfChildren);
+    }
+
+    private void setChildIndex(int numberOfChildren) {
+        if(numberOfChildren == 0){
+            currentChildIndex = NO_CHILD;
+        }
+        else{
+            currentChildIndex = ThreadLocalRandom.current().nextInt(0, numberOfChildren);
+        }
+
     }
 
     public void assignNextChild(int index){
@@ -35,9 +48,7 @@ public class Task {
             currentChildIndex = NO_CHILD;
         }
         else{
-            if(deletedChildIndex == currentChildIndex){
-            }
-            else{
+            if(deletedChildIndex != currentChildIndex){
                 currentChildIndex--;
             }
         }
