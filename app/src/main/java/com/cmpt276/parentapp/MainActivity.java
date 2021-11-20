@@ -37,7 +37,16 @@ public class MainActivity extends AppCompatActivity {
         setUpMyChildrenButton();
         setUpCoinFlipButton();
         setUpTimerButton();
+        setUpTaskListButton();
         setUpExitBtn();
+    }
+
+    private void setUpTaskListButton() {
+        Button taskListButton = findViewById(R.id.task_list_button);
+        taskListButton.setOnClickListener(view -> {
+            Intent i = TaskActivity.getIntent(MainActivity.this);
+            startActivity(i);
+        });
     }
 
     private void setUpExitBtn() {
