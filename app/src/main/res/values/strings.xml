@@ -70,5 +70,16 @@
     <string name="error_select_time">Cannot start! Please select a time</string>
     <string name="error_enter_time">Cannot start! Please enter a time</string>
     <string name="error_time_negative">Cannot start! Please enter a number greater than 0</string>
+    <string name="task_list_button_text">Task List</string>
+    <string name="enter_child_name">Enter child name</string>
+    <string name="add_a_new_child">Add a new child</string>
+    <string name="edit_child_name">Edit child name</string>
+    <string name="add_new_task">Add a New Task</string>
+    <string name="enter_task_name">Enter a Task Name</string>
+    <string name="edit_task_name">Edit Task Name</string>
+    <string name="task_list_title">Task List</string>
+    <string name="edit">EDIT</string>
+    <string name="no_child_yet">No Child Yet</string>
+    <string name="blank">-</string>
 
 </resources>

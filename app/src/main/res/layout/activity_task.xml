@@ -6,6 +6,22 @@
     android:layout_height="match_parent"
     tools:context=".TaskActivity">
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/backBtn_tasklist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/rounded_corner_red"
+        android:fontFamily="@font/moon_bold_font"
+        android:padding="16sp"
+        android:text="@string/backTxt"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_bias="0.744" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addTaskFAB"
         android:layout_width="wrap_content"
@@ -18,10 +34,10 @@
         app:srcCompat="@drawable/heads" />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/task_list_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
+        android:text="@string/task_list_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -34,7 +50,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4">
+        app:layout_constraintTop_toBottomOf="@+id/task_list_title">
 
     </ListView>
 </androidx.constraintlayout.widget.ConstraintLayout>
