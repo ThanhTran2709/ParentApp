@@ -19,6 +19,7 @@ import java.util.Random;
  * Options class implement Shared Preferences to save data between app runs
  */
 public class Options {
+
 	private static Options instance;
 
 	private static Random idGenerator = new Random();
@@ -30,15 +31,16 @@ public class Options {
 	private static final String FLIP_QUEUE_TAG = "FlipQueue";
 	private static final String NO_CHILD_FLIPPING = "NoChildFlipping";
 
-	private static final Type TYPE_CHILD_LIST = new TypeToken<ArrayList<Child>>() {}.getType();
+	private static final Type TYPE_CHILD_LIST = new TypeToken<ArrayList<Child>>(){}.getType();
 	private static final Type TYPE_INT_LIST = new TypeToken<ArrayList<Integer>>(){}.getType();
 	private static final Type TYPE_COIN_LIST = new TypeToken<ArrayList<Coin>>(){}.getType();
 
 	private Options() {}
 
 	public static Options getInstance(){
-		if (instance == null)
+		if (instance == null) {
 			instance = new Options();
+		}
 		return instance;
 	}
 
@@ -107,7 +109,7 @@ public class Options {
 		}
 
 		if (index < 0 || index >= list.size()){
-			throw new IllegalArgumentException("Cannot remove child that is out of bounds.");
+			throw new IllegalArgumentException("Cannot edit child that is out of bounds.");
 		}
 
 		Child child = list.get(index);
