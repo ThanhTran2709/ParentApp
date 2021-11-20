@@ -6,12 +6,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +23,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.cmpt276.model.Child;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
 
 
 /**
@@ -86,11 +91,15 @@ public class ChildrenActivity extends AppCompatActivity {
 
 			Child currentChild = options.getChildList(ChildrenActivity.this).get(position);
 
-			// set up game ListView item
-			TextView childName = gamesView.findViewById(R.id.child_name);
-			childName.setText(currentChild.getName());
-			return gamesView;
-		}
+            //todo setup child image
+            ImageView childImage = gamesView.findViewById(R.id.children_name_list_image);
+
+
+            // set up game ListView item
+            TextView childName = gamesView.findViewById(R.id.child_name);
+            childName.setText(currentChild.getName());
+            return gamesView;
+        }
 
 	}
 
@@ -119,6 +128,46 @@ public class ChildrenActivity extends AppCompatActivity {
 
 			FloatingActionButton cancelFab = dialog.findViewById(R.id.cancelfab);
 			cancelFab.setOnClickListener(getCancelFabListener(dialog));
+            //basically i just made a listview that will appear when user click the image
+            //i was trying to make the listview disappear when user click outside of the listview
+            //but i can't figure out how to do that so i just created a cancel button
+            String[] optionItem = getResources().getStringArray(R.array.add_image_option);
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(ChildrenActivity.this, R.layout.pick_image_text_view, optionItem);
+
+            ListView pickImage = dialog.findViewById(R.id.addImage);
+            pickImage.setAdapter(adapter);
+            pickImage.setVisibility(View.INVISIBLE);
+
+            ImageView childImage = dialog.findViewById(R.id.child_image);
+            childImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    pickImage.setVisibility(View.VISIBLE);
+                }
+            });
+
+            pickImage.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    switch (position){
+                        case 0:
+                            // TODO code to pick image
+                            break;
+
+                        case 1:
+                            // TODO code to take photo
+                            break;
+
+                        case 2:
+                            pickImage.setVisibility(View.INVISIBLE);
+                            break;
+                    }
+                }
+            });
+
+
+            FloatingActionButton cancelFab = dialog.findViewById(R.id.cancelfab);
+            cancelFab.setOnClickListener(getCancelFabListener(dialog));
 
 			FloatingActionButton addFab = dialog.findViewById(R.id.addfab);
 			addFab.setOnClickListener(getAddFabListener(dialog, nameInput));
