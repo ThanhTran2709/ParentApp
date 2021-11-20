@@ -136,6 +136,9 @@ public class ChildrenActivity extends AppCompatActivity {
 
                     Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
                     Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
+
+                    Options.saveTaskListInPrefs(ChildrenActivity.this, options.getTaskList());
+
                     populateList();
                     listItemClick();
 
@@ -159,7 +162,7 @@ public class ChildrenActivity extends AppCompatActivity {
             dialog.setContentView(R.layout.edit_child_dialog);
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
-            EditText nameInput = dialog.findViewById(R.id.childNameEditText2);
+            EditText nameInput = dialog.findViewById(R.id.enter_child_name);
             nameInput.setText(options.getChildList().get(index).getName());
 
 
@@ -199,6 +202,8 @@ public class ChildrenActivity extends AppCompatActivity {
                 options.removeChild(index);
                 Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
                 Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
+
+                Options.saveTaskListInPrefs(ChildrenActivity.this, options.getTaskList());
                 populateList();
                 listItemClick();
                 dialog.cancel();
