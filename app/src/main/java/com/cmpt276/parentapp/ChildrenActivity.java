@@ -29,12 +29,12 @@ import java.util.ArrayList;
 
 /**
  * Activity for adding, editing, and deleting saved children
- * */
+ */
 public class ChildrenActivity extends AppCompatActivity {
 
 	private Options options;
 
-	public static Intent getIntent(Context context){
+	public static Intent getIntent(Context context) {
 		return new Intent(context, ChildrenActivity.class);
 	}
 
@@ -68,7 +68,7 @@ public class ChildrenActivity extends AppCompatActivity {
 	}
 
 	//Populate list view with name and age of children
-	private void populateList(){
+	private void populateList() {
 		ArrayAdapter<Child> adapter = new ChildrenListViewAdapter();
 		ListView childrenListView = findViewById(R.id.childrenListView);
 		childrenListView.setAdapter(adapter);
@@ -76,35 +76,35 @@ public class ChildrenActivity extends AppCompatActivity {
 		childrenListView.setDividerHeight(16);
 	}
 
-	private class ChildrenListViewAdapter extends ArrayAdapter<Child>{
+	private class ChildrenListViewAdapter extends ArrayAdapter<Child> {
 
-		public ChildrenListViewAdapter(){
+		public ChildrenListViewAdapter() {
 			super(ChildrenActivity.this, R.layout.children_view, options.getChildList(ChildrenActivity.this));
 		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View gamesView = convertView;
-			if (gamesView == null){
+			if (gamesView == null) {
 				gamesView = getLayoutInflater().inflate(R.layout.children_view, parent, false);
 			}
 
 			Child currentChild = options.getChildList(ChildrenActivity.this).get(position);
 
-            //todo setup child image
-            ImageView childImage = gamesView.findViewById(R.id.children_name_list_image);
+			//todo setup child image
+			ImageView childImage = gamesView.findViewById(R.id.children_name_list_image);
 
 
-            // set up game ListView item
-            TextView childName = gamesView.findViewById(R.id.child_name);
-            childName.setText(currentChild.getName());
-            return gamesView;
-        }
+			// set up game ListView item
+			TextView childName = gamesView.findViewById(R.id.child_name);
+			childName.setText(currentChild.getName());
+			return gamesView;
+		}
 
 	}
 
 	//Click handling for children list view
-	private void listItemClick(){
+	private void listItemClick() {
 		if (options.getChildList(ChildrenActivity.this).size() == 0) {
 			return;
 		}
@@ -126,48 +126,46 @@ public class ChildrenActivity extends AppCompatActivity {
 
 			EditText nameInput = dialog.findViewById(R.id.childNameedittext);
 
+			//basically i just made a listview that will appear when user click the image
+			//i was trying to make the listview disappear when user click outside of the listview
+			//but i can't figure out how to do that so i just created a cancel button
+			String[] optionItem = getResources().getStringArray(R.array.add_image_option);
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(ChildrenActivity.this, R.layout.pick_image_text_view, optionItem);
+
+			ListView pickImage = dialog.findViewById(R.id.addImage);
+			pickImage.setAdapter(adapter);
+			pickImage.setVisibility(View.INVISIBLE);
+
+			ImageView childImage = dialog.findViewById(R.id.child_image);
+			childImage.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					pickImage.setVisibility(View.VISIBLE);
+				}
+			});
+
+			pickImage.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					switch (position) {
+						case 0:
+							// TODO code to pick image
+							break;
+
+						case 1:
+							// TODO code to take photo
+							break;
+
+						case 2:
+							pickImage.setVisibility(View.INVISIBLE);
+							break;
+					}
+				}
+			});
+
+
 			FloatingActionButton cancelFab = dialog.findViewById(R.id.cancelfab);
 			cancelFab.setOnClickListener(getCancelFabListener(dialog));
-            //basically i just made a listview that will appear when user click the image
-            //i was trying to make the listview disappear when user click outside of the listview
-            //but i can't figure out how to do that so i just created a cancel button
-            String[] optionItem = getResources().getStringArray(R.array.add_image_option);
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(ChildrenActivity.this, R.layout.pick_image_text_view, optionItem);
-
-            ListView pickImage = dialog.findViewById(R.id.addImage);
-            pickImage.setAdapter(adapter);
-            pickImage.setVisibility(View.INVISIBLE);
-
-            ImageView childImage = dialog.findViewById(R.id.child_image);
-            childImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    pickImage.setVisibility(View.VISIBLE);
-                }
-            });
-
-            pickImage.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    switch (position){
-                        case 0:
-                            // TODO code to pick image
-                            break;
-
-                        case 1:
-                            // TODO code to take photo
-                            break;
-
-                        case 2:
-                            pickImage.setVisibility(View.INVISIBLE);
-                            break;
-                    }
-                }
-            });
-
-
-            FloatingActionButton cancelFab = dialog.findViewById(R.id.cancelfab);
-            cancelFab.setOnClickListener(getCancelFabListener(dialog));
 
 			FloatingActionButton addFab = dialog.findViewById(R.id.addfab);
 			addFab.setOnClickListener(getAddFabListener(dialog, nameInput));
@@ -177,10 +175,9 @@ public class ChildrenActivity extends AppCompatActivity {
 
 		private View.OnClickListener getAddFabListener(Dialog dialog, EditText nameInput) {
 			return (view) -> {
-				if(nameInput.getText().toString().isEmpty()) {
+				if (nameInput.getText().toString().isEmpty()) {
 					Toast.makeText(ChildrenActivity.this, R.string.error_validate_name, Toast.LENGTH_SHORT).show();
-				}
-				else {
+				} else {
 					options.addChild(ChildrenActivity.this, nameInput.getText().toString());
 					populateList();
 					listItemClick();
