@@ -55,10 +55,11 @@ public class ChildrenActivity extends AppCompatActivity {
         listItemClick();
     }
 
+    //Handles children's images by encoding Bitmaps into Base64 Strings
     public class ImageHandler{
-        private String imageResult;
-        private int photoActivityCode; // 1 for select from gallery, 2 for taking new photo
 
+        private String encodedResult;
+        private int photoActivityCode; // 1 for select from gallery, 2 for taking new photo
         private ActivityResultLauncher<Intent> openPhotoActivity;
 
         public ImageHandler() {
@@ -66,23 +67,26 @@ public class ChildrenActivity extends AppCompatActivity {
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
+                        //Select from gallery
                         if (photoActivityCode == 1){
                             Intent data = result.getData();
                             Uri selectedImageUri = data.getData();
                             if (selectedImageUri != null) {
                                 try {
                                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri);
-                                    imageResult = encodeBitmap(bitmap);
+                                    encodedResult = encodeBitmap(bitmap);
+
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
                             }
                         }
 
+                        //Take new photo
                         if (photoActivityCode == 2){
                             Intent data = result.getData();
                             Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-                            imageResult = encodeBitmap(bitmap);
+                            encodedResult = encodeBitmap(bitmap);
                         }
                     }
                 });
@@ -102,15 +106,16 @@ public class ChildrenActivity extends AppCompatActivity {
             openPhotoActivity.launch(intent);
         }
 
-        public String encodeBitmap(Bitmap image) {
+        //Encodes bitmap into a String
+        private String encodeBitmap(Bitmap image) {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             image.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
             byte[] bytes = outputStream.toByteArray();
-            String imageEncoded = Base64.encodeToString(bytes, Base64.DEFAULT);
-            return imageEncoded;
+            return Base64.encodeToString(bytes, Base64.DEFAULT);
         }
 
-        public Bitmap decodeBitmap(String encodedString) {
+        //Decodes String into bitmap
+        private Bitmap decodeBitmap(String encodedString) {
             byte[] decodedByte = Base64.decode(encodedString, 0);
             return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
         }
@@ -145,6 +150,7 @@ public class ChildrenActivity extends AppCompatActivity {
         childrenListView.setDividerHeight(16);
     }
 
+    //Custom ArrayListAdapter to display children's names and photos
     private class ChildrenListViewAdapter extends ArrayAdapter<Child>{
 
         public ChildrenListViewAdapter(){
@@ -160,14 +166,12 @@ public class ChildrenActivity extends AppCompatActivity {
 
             Child currentChild = options.getChildList().get(position);
 
-            //todo setup child image
             ImageView childImage = gamesView.findViewById(R.id.children_name_list_image);
             if (currentChild.getEncodedImage() != null) {
                 childImage.setImageBitmap(imageHandler.decodeBitmap(currentChild.getEncodedImage()));
             }
 
-
-            // set up game ListView item
+            // Set up game ListView item
             TextView childName = gamesView.findViewById(R.id.child_name);
             childName.setText(currentChild.getName());
             return gamesView;
@@ -198,11 +202,9 @@ public class ChildrenActivity extends AppCompatActivity {
             dialog.setContentView(R.layout.add_child_dialog);
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
-            EditText nameInput = dialog.findViewById(R.id.childNameedittext);
+            EditText nameInput = dialog.findViewById(R.id.childNameEditText);
 
-            //basically i just made a listview that will appear when user click the image
-            //i was trying to make the listview disappear when user click outside of the listview
-            //but i can't figure out how to do that so i just created a cancel button
+            //Image menu to select or take new image
             String[] optionItem = getResources().getStringArray(R.array.add_image_option);
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(ChildrenActivity.this, R.layout.pick_image_text_view, optionItem);
 
@@ -210,8 +212,8 @@ public class ChildrenActivity extends AppCompatActivity {
             pickImage.setAdapter(adapter);
             pickImage.setVisibility(View.INVISIBLE);
 
-            ImageView childImage = dialog.findViewById(R.id.child_image);
-            childImage.setOnClickListener(new View.OnClickListener() {
+            ImageView addChildImage = dialog.findViewById(R.id.child_image);
+            addChildImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     pickImage.setVisibility(View.VISIBLE);
@@ -223,17 +225,21 @@ public class ChildrenActivity extends AppCompatActivity {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     switch (position){
                         case 0:
-                            // TODO code to pick image
+                            // Select from gallery
                             imageHandler.selectFromPhotos();
                             pickImage.setVisibility(View.INVISIBLE);
                             hasNewImage = true;
+                            //TODO FIX DISPLAY BUG
+                            //addChildImage.setImageBitmap(imageHandler.decodeBitmap(imageHandler.encodedResult));
                             break;
 
                         case 1:
-                            // TODO code to take photo
+                            // Take new photo
                             imageHandler.takePhoto();
                             pickImage.setVisibility(View.INVISIBLE);
                             hasNewImage = true;
+                            //TODO FIX DISPLAY BUG
+                            //addChildImage.setImageBitmap(imageHandler.decodeBitmap(imageHandler.encodedResult));
                             break;
 
                         case 2:
@@ -242,7 +248,6 @@ public class ChildrenActivity extends AppCompatActivity {
                     }
                 }
             });
-
 
             FloatingActionButton cancelFab = dialog.findViewById(R.id.cancelfab);
             cancelFab.setOnClickListener(getCancelFabListener(dialog));
@@ -255,12 +260,13 @@ public class ChildrenActivity extends AppCompatActivity {
 
         private View.OnClickListener getAddFabListener(Dialog dialog, EditText nameInput) {
             return (view) -> {
-                if(nameInput.getText().toString().isEmpty()) {
+                if (nameInput.getText().toString().isEmpty()) {
                     Toast.makeText(ChildrenActivity.this, R.string.error_validate_name, Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    if(hasNewImage)
-                        options.addChild(new Child(nameInput.getText().toString(), imageHandler.imageResult));
+                    if (hasNewImage) {
+                        options.addChild(new Child(nameInput.getText().toString(), imageHandler.encodedResult));
+                    }
                     else
                         options.addChild(new Child(nameInput.getText().toString()));
 
@@ -292,7 +298,7 @@ public class ChildrenActivity extends AppCompatActivity {
             EditText nameInput = dialog.findViewById(R.id.childNameEditText2);
             nameInput.setText(options.getChildList().get(index).getName());
 
-            //similar to add child
+            //Similar to add child dialog
             String[] optionItem = getResources().getStringArray(R.array.add_image_option);
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(ChildrenActivity.this, R.layout.pick_image_text_view, optionItem);
 
@@ -320,27 +326,30 @@ public class ChildrenActivity extends AppCompatActivity {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     switch (position){
                         case 0:
-                            // TODO code to pick image
+                            // Select from gallery
                             imageHandler.selectFromPhotos();
                             pickImage.setVisibility(View.INVISIBLE);
                             hasNewImage = true;
-                            //editChildImage.setImageBitmap(imageHandler.decodeBitmap(imageHandler.getImageResult()));
+                            //TODO FIX DISPLAY BUG
+                            //editChildImage.setImageBitmap(imageHandler.decodeBitmap(imageHandler.encodedResult));
                             break;
 
                         case 1:
-                            // TODO code to take photo
+                            // Take new photo
                             imageHandler.takePhoto();
                             pickImage.setVisibility(View.INVISIBLE);
                             hasNewImage = true;
+                            //TODO FIX DISPLAY BUG
+                            //editChildImage.setImageBitmap(imageHandler.decodeBitmap(imageHandler.encodedResult));
                             break;
 
                         case 2:
                             pickImage.setVisibility(View.INVISIBLE);
                             break;
                     }
+
                 }
             });
-
 
             FloatingActionButton cancelFab = dialog.findViewById(R.id.cancelfab2);
             cancelFab.setOnClickListener(getCancelFabListener(dialog));
@@ -363,8 +372,9 @@ public class ChildrenActivity extends AppCompatActivity {
                 if (nameInput.getText().toString().isEmpty()) {
                     Toast.makeText(ChildrenActivity.this, R.string.error_validate_name, Toast.LENGTH_SHORT).show();
                 } else {
-                    if(hasNewImage)
-                        options.editChildImage(index, imageHandler.imageResult);
+                    if(hasNewImage) {
+                        options.editChildImage(index, imageHandler.encodedResult);
+                    }
                     options.editChild(index, nameInput.getText().toString());
                     Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
                     Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
