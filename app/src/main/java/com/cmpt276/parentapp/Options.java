@@ -55,6 +55,7 @@ public class Options {
         childListToString.add(child.getName());
     }
 
+
     public void removeChild(int index){
         childList.remove(index);
         childListToString.remove(index);

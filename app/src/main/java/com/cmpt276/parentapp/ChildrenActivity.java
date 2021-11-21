@@ -40,16 +40,14 @@ import java.io.IOException;
 public class ChildrenActivity extends AppCompatActivity {
 
     private Options options;
-    private ImageHandler imageHandler = new ImageHandler();
-
+    private ImageHandler imageHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_children);
         options = Options.getInstance(this);
-
-
+        imageHandler = new ImageHandler();
 
         setUpAddBtn();
         populateList();
@@ -58,21 +56,22 @@ public class ChildrenActivity extends AppCompatActivity {
     }
 
     public class ImageHandler{
-        private int index = -1;
+        private String imageResult;
+
         private ActivityResultLauncher<Intent> openPhotoActivity;
 
         public ImageHandler() {
             openPhotoActivity = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
                         Uri selectedImageUri = data.getData();
-                        if (null != selectedImageUri) {
+                        if (selectedImageUri != null) {
                             try {
                                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri);
-                                options.editChildImage(index, encodeBitmap(bitmap));
+                                //options.editChildImage(index, encodeBitmap(bitmap));
+                                imageResult = encodeBitmap(bitmap);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -81,16 +80,14 @@ public class ChildrenActivity extends AppCompatActivity {
                 });
         }
 
-        private void selectFromPhotos(int input) {
+        private void selectFromPhotos() {
             Intent intent = new Intent();
-            index = input;
             intent.setType("image/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
             openPhotoActivity.launch(intent);
         }
 
         public String encodeBitmap(Bitmap image) {
-            //Bitmap immage = image;
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             image.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
             byte[] bytes = outputStream.toByteArray();
@@ -102,7 +99,6 @@ public class ChildrenActivity extends AppCompatActivity {
             byte[] decodedByte = Base64.decode(encodedString, 0);
             return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
         }
-
     }
 
     public static Intent getIntent(Context context){
@@ -178,6 +174,8 @@ public class ChildrenActivity extends AppCompatActivity {
     }
 
     public class AddChildDialog {
+        boolean hasNewImage = false;
+
         public void showDialog(Activity activity) {
             final Dialog dialog = new Dialog(activity);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -211,6 +209,9 @@ public class ChildrenActivity extends AppCompatActivity {
                     switch (position){
                         case 0:
                             // TODO code to pick image
+                            imageHandler.selectFromPhotos();
+                            pickImage.setVisibility(View.INVISIBLE);
+                            hasNewImage = true;
                             break;
 
                         case 1:
@@ -242,7 +243,10 @@ public class ChildrenActivity extends AppCompatActivity {
                     Toast.makeText(ChildrenActivity.this, R.string.error_validate_name, Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    options.addChild(new Child(nameInput.getText().toString()));
+                    if(hasNewImage)
+                        options.addChild(new Child(nameInput.getText().toString(), imageHandler.imageResult));
+                    else
+                        options.addChild(new Child(nameInput.getText().toString()));
 
                     Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
                     Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
@@ -261,6 +265,7 @@ public class ChildrenActivity extends AppCompatActivity {
     }
 
     public class EditChildDialog {
+        boolean hasNewImage = false;
 
         public void showDialog(Activity activity, int index) {
             final Dialog dialog = new Dialog(activity);
@@ -282,11 +287,13 @@ public class ChildrenActivity extends AppCompatActivity {
 
             Child currentChild = options.getChildList().get(index);
 
-            ImageView childImage = dialog.findViewById(R.id.child_image_edit);
-            if (currentChild.getEncodedImage() != null)
-                childImage.setImageBitmap(imageHandler.decodeBitmap(currentChild.getEncodedImage()));
+            ImageView editChildImage = dialog.findViewById(R.id.child_image_edit);
 
-            childImage.setOnClickListener(new View.OnClickListener() {
+            if (currentChild.getEncodedImage() != null) {
+                editChildImage.setImageBitmap(imageHandler.decodeBitmap(currentChild.getEncodedImage()));
+            }
+
+            editChildImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     pickImage.setVisibility(View.VISIBLE);
@@ -299,10 +306,11 @@ public class ChildrenActivity extends AppCompatActivity {
                     switch (position){
                         case 0:
                             // TODO code to pick image
-                            imageHandler.selectFromPhotos(index);
+                            imageHandler.selectFromPhotos();
                             pickImage.setVisibility(View.INVISIBLE);
-                            if (currentChild.getEncodedImage() != null)
-                                childImage.setImageBitmap(imageHandler.decodeBitmap(currentChild.getEncodedImage()));
+                            hasNewImage = true;
+                            //editChildImage.setImageBitmap(imageHandler.decodeBitmap(imageHandler.getImageResult()));
+
                             break;
 
                         case 1:
@@ -338,6 +346,8 @@ public class ChildrenActivity extends AppCompatActivity {
                 if (nameInput.getText().toString().isEmpty()) {
                     Toast.makeText(ChildrenActivity.this, R.string.error_validate_name, Toast.LENGTH_SHORT).show();
                 } else {
+                    if(hasNewImage)
+                        options.editChildImage(index, imageHandler.imageResult);
                     options.editChild(index, nameInput.getText().toString());
                     Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
                     Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());

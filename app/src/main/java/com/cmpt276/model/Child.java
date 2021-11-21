@@ -10,6 +10,10 @@ public class Child {
     public Child(String name){
         this.name = name;
     }
+    public Child(String name, String encodedImage){
+        this.name = name;
+        this.encodedImage = encodedImage;
+    }
 
     public void setName(String name) {
         this.name = name;
