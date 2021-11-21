@@ -57,6 +57,7 @@ public class ChildrenActivity extends AppCompatActivity {
 
     public class ImageHandler{
         private String imageResult;
+        private int photoActivityCode; // 1 for select from gallery, 2 for taking new photo
 
         private ActivityResultLauncher<Intent> openPhotoActivity;
 
@@ -65,25 +66,39 @@ public class ChildrenActivity extends AppCompatActivity {
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
-                        Intent data = result.getData();
-                        Uri selectedImageUri = data.getData();
-                        if (selectedImageUri != null) {
-                            try {
-                                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri);
-                                //options.editChildImage(index, encodeBitmap(bitmap));
-                                imageResult = encodeBitmap(bitmap);
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                        if (photoActivityCode == 1){
+                            Intent data = result.getData();
+                            Uri selectedImageUri = data.getData();
+                            if (selectedImageUri != null) {
+                                try {
+                                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri);
+                                    imageResult = encodeBitmap(bitmap);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
+                        }
+
+                        if (photoActivityCode == 2){
+                            Intent data = result.getData();
+                            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+                            imageResult = encodeBitmap(bitmap);
                         }
                     }
                 });
         }
 
         private void selectFromPhotos() {
+            photoActivityCode = 1;
             Intent intent = new Intent();
             intent.setType("image/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
+            openPhotoActivity.launch(intent);
+        }
+
+        private void takePhoto() {
+            photoActivityCode = 2;
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             openPhotoActivity.launch(intent);
         }
 
@@ -216,6 +231,9 @@ public class ChildrenActivity extends AppCompatActivity {
 
                         case 1:
                             // TODO code to take photo
+                            imageHandler.takePhoto();
+                            pickImage.setVisibility(View.INVISIBLE);
+                            hasNewImage = true;
                             break;
 
                         case 2:
@@ -235,8 +253,6 @@ public class ChildrenActivity extends AppCompatActivity {
             dialog.show();
         }
 
-
-
         private View.OnClickListener getAddFabListener(Dialog dialog, EditText nameInput) {
             return (view) -> {
                 if(nameInput.getText().toString().isEmpty()) {
@@ -252,7 +268,6 @@ public class ChildrenActivity extends AppCompatActivity {
                     Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
                     populateList();
                     listItemClick();
-
 
                     dialog.cancel();
                 }
@@ -310,11 +325,13 @@ public class ChildrenActivity extends AppCompatActivity {
                             pickImage.setVisibility(View.INVISIBLE);
                             hasNewImage = true;
                             //editChildImage.setImageBitmap(imageHandler.decodeBitmap(imageHandler.getImageResult()));
-
                             break;
 
                         case 1:
                             // TODO code to take photo
+                            imageHandler.takePhoto();
+                            pickImage.setVisibility(View.INVISIBLE);
+                            hasNewImage = true;
                             break;
 
                         case 2:
