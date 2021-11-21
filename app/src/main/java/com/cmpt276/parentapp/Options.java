@@ -65,6 +65,12 @@ public class Options {
         childListToString.set(index, name);
     }
 
+    public void editChildImage(int index, String encodedBitmap){
+        childList.get(index).setEncodedImage(encodedBitmap);
+    }
+
+
+
     public ArrayList<Child> getChildList() {
         return childList;
     }

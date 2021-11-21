@@ -5,6 +5,7 @@ package com.cmpt276.model;
  * */
 public class Child {
     private String name;
+    private String encodedImage;
 
     public Child(String name){
         this.name = name;
@@ -18,4 +19,11 @@ public class Child {
         return this.name;
     }
 
+    public String getEncodedImage() {
+        return encodedImage;
+    }
+
+    public void setEncodedImage(String encodedImage) {
+        this.encodedImage = encodedImage;
+    }
 }

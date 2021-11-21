@@ -4,9 +4,13 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
-import android.view.MotionEvent;
+import android.provider.MediaStore;
+import android.util.Base64;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -19,12 +23,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.cmpt276.model.Child;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 
 /**
@@ -33,10 +40,7 @@ import java.util.ArrayList;
 public class ChildrenActivity extends AppCompatActivity {
 
     private Options options;
-
-    public static Intent getIntent(Context context){
-        return new Intent(context, ChildrenActivity.class);
-    }
+    private ImageHandler imageHandler = new ImageHandler();
 
 
     @Override
@@ -45,10 +49,64 @@ public class ChildrenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_children);
         options = Options.getInstance(this);
 
+
+
         setUpAddBtn();
         populateList();
         setUpBackBtn();
         listItemClick();
+    }
+
+    public class ImageHandler{
+        private int index = -1;
+        private ActivityResultLauncher<Intent> openPhotoActivity;
+
+        public ImageHandler() {
+            openPhotoActivity = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        Uri selectedImageUri = data.getData();
+                        if (null != selectedImageUri) {
+                            try {
+                                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri);
+                                options.editChildImage(index, encodeBitmap(bitmap));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                });
+        }
+
+        private void selectFromPhotos(int input) {
+            Intent intent = new Intent();
+            index = input;
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            openPhotoActivity.launch(intent);
+        }
+
+        public String encodeBitmap(Bitmap image) {
+            //Bitmap immage = image;
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            image.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+            byte[] bytes = outputStream.toByteArray();
+            String imageEncoded = Base64.encodeToString(bytes, Base64.DEFAULT);
+            return imageEncoded;
+        }
+
+        public Bitmap decodeBitmap(String encodedString) {
+            byte[] decodedByte = Base64.decode(encodedString, 0);
+            return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
+        }
+
+    }
+
+    public static Intent getIntent(Context context){
+        return new Intent(context, ChildrenActivity.class);
     }
 
     private void setUpBackBtn() {
@@ -93,6 +151,9 @@ public class ChildrenActivity extends AppCompatActivity {
 
             //todo setup child image
             ImageView childImage = gamesView.findViewById(R.id.children_name_list_image);
+            if (currentChild.getEncodedImage() != null) {
+                childImage.setImageBitmap(imageHandler.decodeBitmap(currentChild.getEncodedImage()));
+            }
 
 
             // set up game ListView item
@@ -102,6 +163,7 @@ public class ChildrenActivity extends AppCompatActivity {
         }
 
     }
+
 
     //Click handling for children list view
     private void listItemClick(){
@@ -116,8 +178,6 @@ public class ChildrenActivity extends AppCompatActivity {
     }
 
     public class AddChildDialog {
-
-
         public void showDialog(Activity activity) {
             final Dialog dialog = new Dialog(activity);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -220,7 +280,12 @@ public class ChildrenActivity extends AppCompatActivity {
             pickImage.setAdapter(adapter);
             pickImage.setVisibility(View.INVISIBLE);
 
+            Child currentChild = options.getChildList().get(index);
+
             ImageView childImage = dialog.findViewById(R.id.child_image_edit);
+            if (currentChild.getEncodedImage() != null)
+                childImage.setImageBitmap(imageHandler.decodeBitmap(currentChild.getEncodedImage()));
+
             childImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -234,6 +299,10 @@ public class ChildrenActivity extends AppCompatActivity {
                     switch (position){
                         case 0:
                             // TODO code to pick image
+                            imageHandler.selectFromPhotos(index);
+                            pickImage.setVisibility(View.INVISIBLE);
+                            if (currentChild.getEncodedImage() != null)
+                                childImage.setImageBitmap(imageHandler.decodeBitmap(currentChild.getEncodedImage()));
                             break;
 
                         case 1:
