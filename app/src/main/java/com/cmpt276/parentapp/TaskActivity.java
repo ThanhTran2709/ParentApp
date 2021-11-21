@@ -14,6 +14,7 @@ import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,9 +36,20 @@ public class TaskActivity extends AppCompatActivity {
         setContentView(R.layout.activity_task);
 
         options = Options.getInstance(this);
+
         setUpAddTaskFAB();
         setUpBackBtn();
         populateTaskList();
+    }
+
+    private void setUpEmptyMessage(){
+        TextView emptyTaskMessage = findViewById(R.id.empty_task_message);
+        if (options.getTaskList().size() == 0){
+            emptyTaskMessage.setVisibility(View.VISIBLE);
+        }
+        else{
+            emptyTaskMessage.setVisibility(View.GONE);
+        }
     }
 
     private void setUpBackBtn() {
@@ -155,8 +167,10 @@ public class TaskActivity extends AppCompatActivity {
         TaskListAdapter adapter = new TaskListAdapter();
         ListView taskList = findViewById(R.id.taskListView);
         taskList.setAdapter(adapter);
+        taskList.setDivider(null);
+        taskList.setDividerHeight(20);
         setUpListItemClickListener();
-
+        setUpEmptyMessage();
     }
 
     private class TaskListAdapter extends ArrayAdapter<Task> {
@@ -178,11 +192,15 @@ public class TaskActivity extends AppCompatActivity {
             // set up game ListView item
             TextView taskName = taskView.findViewById(R.id.taskName);
             taskName.setText(currentTask.getTaskName());
+
             Button editButton = taskView.findViewById(R.id.edit_task_button);
             editButton.setOnClickListener(view -> {
                 EditTaskDialog editTaskDialog = new EditTaskDialog();
                 editTaskDialog.showDialog(TaskActivity.this, position);
             });
+
+            ImageView childImage = taskView.findViewById(R.id.child_image_task_list);
+            //TODO setup child image
 
             TextView childName = taskView.findViewById(R.id.childNameInTaskList);
             childName.setText(options.getChildName(currentTask.getCurrentChildIndex()));
@@ -217,6 +235,9 @@ public class TaskActivity extends AppCompatActivity {
 
             FloatingActionButton confirmFab = dialog.findViewById(R.id.confirmfab);
             confirmFab.setOnClickListener(getAddFabListener(dialog, index));
+
+            ImageView childImage = dialog.findViewById(R.id.child_image_confirm_dialog);
+            //TODO setup child image
 
             Task task = options.getTaskList().get(index);
 
