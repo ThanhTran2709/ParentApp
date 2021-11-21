@@ -62,13 +62,13 @@ public class ChildrenActivity extends AppCompatActivity {
 
 		private String encodedResult;
 		private int photoActivityCode; // 1 for select from gallery, 2 for taking new photo
-		private ImageView output; //when
-		private ActivityResultLauncher<Intent> openPhotoActivity;
+		private ImageView output;     //pass in preview image from dialogs
+		private final ActivityResultLauncher<Intent> openPhotoActivity;
 
 		public ImageHandler() {
 			//ActivityResultLaunchers can only be initialized in OnCreate, hence
 			//the weird way to pass things into the ActivityResultLauncher
-			openPhotoActivity = getCameraActivity();
+			openPhotoActivity = getPhoneActivity();
 		}
 
 		private void selectFromPhotos(ImageView showImage) {
@@ -97,12 +97,11 @@ public class ChildrenActivity extends AppCompatActivity {
 
 		//Decodes String into bitmap
 		private Bitmap decodeBitmap(String encodedString) {
-			System.out.println(encodedString);
 			byte[] decodedByte = Base64.decode(encodedString, 0);
 			return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
 		}
 
-		private ActivityResultLauncher<Intent> getCameraActivity(){
+		private ActivityResultLauncher<Intent> getPhoneActivity(){
 			return registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
 				result -> {
 					if (result.getResultCode() == Activity.RESULT_OK) {
@@ -204,7 +203,7 @@ public class ChildrenActivity extends AppCompatActivity {
 	}
 
 	public class AddChildDialog {
-		boolean hasNewImage = false;
+		private boolean hasNewImage = false;
 
 		public void showDialog(Activity activity) {
 			final Dialog dialog = new Dialog(activity);

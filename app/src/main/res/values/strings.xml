@@ -73,6 +73,8 @@
     <string name="edit_child_txt">Edit child info</string>
     <string name="enter_child_name_txt">Enter child name</string>
     <string name="add_a_new_child_txt">Add a new child</string>
+    <string name="image_hint">Tap image to edit</string>
+    <string name="add_image_hint">Tap to add new image</string>
 
 
 </resources>
