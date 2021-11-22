@@ -1,5 +1,9 @@
 package com.cmpt276.model;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
+
 /**
  * Container for information about a single child
  * */
@@ -29,5 +33,10 @@ public class Child {
 
     public void setEncodedImage(String encodedImage) {
         this.encodedImage = encodedImage;
+    }
+
+    public Bitmap getImageBitmap(){
+        byte[] decodedByte = Base64.decode(encodedImage, 0);
+        return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
     }
 }
