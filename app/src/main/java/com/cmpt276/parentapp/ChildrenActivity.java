@@ -4,13 +4,16 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
-import android.view.MotionEvent;
+import android.provider.MediaStore;
+import android.util.Base64;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,31 +22,30 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.cmpt276.model.Child;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
-
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 /**
  * Activity for adding, editing, and deleting saved children
- * */
+ */
 public class ChildrenActivity extends AppCompatActivity {
 
-    private Options options;
+	private Options options;
+	private ImageHandler imageHandler;
 
-    public static Intent getIntent(Context context){
-        return new Intent(context, ChildrenActivity.class);
-    }
-
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_children);
-        options = Options.getInstance(this);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_children);
+		options = Options.getInstance();
+		imageHandler = new ImageHandler();
 
         setUpAddBtn();
         populateList();
@@ -51,247 +53,330 @@ public class ChildrenActivity extends AppCompatActivity {
         listItemClick();
     }
 
-    private void setUpBackBtn() {
-        Button backBtn = findViewById(R.id.backBtn_children);
-        backBtn.setText(R.string.backTxt);
-        backBtn.setOnClickListener((view) -> finish());
-    }
+	//Handles children's images by encoding Bitmaps into Base64 Strings
+	public class ImageHandler{
 
-    private void setUpAddBtn() {
-        Button addBtn = findViewById(R.id.addBtn);
-        addBtn.setText(R.string.addBtnText);
+		private static final int SELECT_FROM_GALLERY = 1;
+		private static final int TAKE_NEW_PHOTO = 2;
 
-        addBtn.setOnClickListener((view) -> {
-            AddChildDialog alert = new AddChildDialog();
-            alert.showDialog(ChildrenActivity.this);
-        });
-    }
+		private String encodedResult;
+		private int photoActivityCode; // 1 for select from gallery, 2 for taking new photo
+		private ImageView output;     //pass in preview image from dialogs
+		private final ActivityResultLauncher<Intent> openPhotoActivity;
 
-    //Populate list view with name and age of children
-    private void populateList(){
-        ArrayAdapter<Child> adapter = new ChildrenListViewAdapter();
-        ListView childrenListView = findViewById(R.id.childrenListView);
-        childrenListView.setAdapter(adapter);
-        childrenListView.setDivider(null);
-        childrenListView.setDividerHeight(16);
-    }
+		public ImageHandler() {
+			//ActivityResultLaunchers can only be initialized in OnCreate, hence
+			//the weird way to pass things into the ActivityResultLauncher
+			openPhotoActivity = getPhoneActivity();
+		}
 
-    private class ChildrenListViewAdapter extends ArrayAdapter<Child>{
+		private void selectFromPhotos(ImageView showImage) {
+			photoActivityCode = SELECT_FROM_GALLERY;
+			output = showImage;
+			Intent intent = new Intent();
+			intent.setType("image/*");
+			intent.setAction(Intent.ACTION_GET_CONTENT);
+			openPhotoActivity.launch(intent);
+		}
 
-        public ChildrenListViewAdapter(){
-            super(ChildrenActivity.this, R.layout.children_view, options.getChildList());
-        }
+		private void takePhoto(ImageView showImage) {
+			photoActivityCode = TAKE_NEW_PHOTO;
+			output = showImage;
+			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+			openPhotoActivity.launch(intent);
+		}
 
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View gamesView = convertView;
-            if (gamesView == null){
-                gamesView = getLayoutInflater().inflate(R.layout.children_view, parent, false);
-            }
+		//Encodes bitmap into a String
+		private String encodeBitmap(Bitmap image) {
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			image.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+			byte[] bytes = outputStream.toByteArray();
+			return Base64.encodeToString(bytes, Base64.DEFAULT);
+		}
 
-            Child currentChild = options.getChildList().get(position);
+		//Decodes String into bitmap
+		private Bitmap decodeBitmap(String encodedString) {
+			byte[] decodedByte = Base64.decode(encodedString, 0);
+			return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
+		}
 
-            //todo setup child image
-            ImageView childImage = gamesView.findViewById(R.id.children_name_list_image);
+		private ActivityResultLauncher<Intent> getPhoneActivity(){
+			return registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+				result -> {
+					if (result.getResultCode() == Activity.RESULT_OK) {
+						Intent data = result.getData();
+						switch(photoActivityCode) {
+							case SELECT_FROM_GALLERY:
+								Uri selectedImageUri = data.getData();
+								if (selectedImageUri != null) {
+									try {
+										Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri);
+										encodedResult = encodeBitmap(bitmap);
+									} catch (IOException e) {
+										e.printStackTrace();
+									}
+								}
+								break;
+							case TAKE_NEW_PHOTO:
+								Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+								encodedResult = encodeBitmap(bitmap);
+								break;
+							default:
+								throw new IllegalStateException("Invalid photo activity code.");
+						}
+						output.setImageBitmap(decodeBitmap(encodedResult));
+					}
+				});
+		}
+	}
 
+	public static Intent getIntent(Context context){
+		return new Intent(context, ChildrenActivity.class);
+	}
 
-            // set up game ListView item
-            TextView childName = gamesView.findViewById(R.id.child_name);
-            childName.setText(currentChild.getName());
-            return gamesView;
-        }
+	private void setUpBackBtn() {
+		Button backBtn = findViewById(R.id.backBtn_children);
+		backBtn.setText(R.string.back);
+		backBtn.setOnClickListener((view) -> finish());
+	}
 
-    }
+	private void setUpAddBtn() {
+		Button addBtn = findViewById(R.id.addBtn);
+		addBtn.setText(R.string.add);
 
-    //Click handling for children list view
-    private void listItemClick(){
-        if (options.getChildList().size() == 0) {
-            return;
-        }
-        ListView childrenListView = findViewById(R.id.childrenListView);
-        childrenListView.setOnItemClickListener((adapterView, childClicked, index, position) -> {
-            EditChildDialog alert = new EditChildDialog();
-            alert.showDialog(ChildrenActivity.this, index);
-        });
-    }
+		addBtn.setOnClickListener((view) -> {
+			AddChildDialog alert = new AddChildDialog();
+			alert.showDialog(ChildrenActivity.this);
+		});
+	}
 
-    public class AddChildDialog {
+	//Populate list view with name and age of children
+	private void populateList(){
+		ArrayAdapter<Child> adapter = new ChildrenListViewAdapter();
+		ListView childrenListView = findViewById(R.id.childrenListView);
+		childrenListView.setAdapter(adapter);
+		childrenListView.setDivider(null);
+		childrenListView.setDividerHeight(16);
+	}
 
+	//Custom ArrayListAdapter to display children's names and photos
+	private class ChildrenListViewAdapter extends ArrayAdapter<Child>{
 
-        public void showDialog(Activity activity) {
-            final Dialog dialog = new Dialog(activity);
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setCancelable(false);
-            dialog.setContentView(R.layout.add_child_dialog);
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+		public ChildrenListViewAdapter() {
+			super(ChildrenActivity.this, R.layout.children_view, options.getChildList(ChildrenActivity.this));
+		}
 
-            EditText nameInput = dialog.findViewById(R.id.childNameedittext);
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			View gamesView = convertView;
+			if (gamesView == null){
+				gamesView = getLayoutInflater().inflate(R.layout.children_view, parent, false);
+			}
 
-            //basically i just made a listview that will appear when user click the image
-            //i was trying to make the listview disappear when user click outside of the listview
-            //but i can't figure out how to do that so i just created a cancel button
-            String[] optionItem = getResources().getStringArray(R.array.add_image_option);
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(ChildrenActivity.this, R.layout.pick_image_text_view, optionItem);
+			Child currentChild = options.getChildList(ChildrenActivity.this).get(position);
 
-            ListView pickImage = dialog.findViewById(R.id.addImage);
-            pickImage.setAdapter(adapter);
-            pickImage.setVisibility(View.INVISIBLE);
+			ImageView childImage = gamesView.findViewById(R.id.children_name_list_image);
+			if (currentChild.getEncodedImage() != null) {
+				childImage.setImageBitmap(imageHandler.decodeBitmap(currentChild.getEncodedImage()));
+			}
 
-            ImageView childImage = dialog.findViewById(R.id.child_image);
-            childImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    pickImage.setVisibility(View.VISIBLE);
-                }
-            });
+			// Set up game ListView item
+			TextView childName = gamesView.findViewById(R.id.child_name);
+			childName.setText(currentChild.getName());
+			return gamesView;
+		}
 
-            pickImage.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    switch (position){
-                        case 0:
-                            // TODO code to pick image
-                            break;
+	}
 
-                        case 1:
-                            // TODO code to take photo
-                            break;
+	//Click handling for children list view
+	private void listItemClick() {
+		if (options.getChildList(ChildrenActivity.this).size() == 0) {
+			return;
+		}
+		ListView childrenListView = findViewById(R.id.childrenListView);
+		childrenListView.setOnItemClickListener((adapterView, childClicked, index, position) -> {
+			EditChildDialog alert = new EditChildDialog();
+			alert.showDialog(ChildrenActivity.this, index);
+		});
+	}
 
-                        case 2:
-                            pickImage.setVisibility(View.INVISIBLE);
-                            break;
-                    }
-                }
-            });
+	public class AddChildDialog {
+		private boolean hasNewImage = false;
 
+		public void showDialog(Activity activity) {
+			final Dialog dialog = new Dialog(activity);
+			dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+			dialog.setCancelable(false);
+			dialog.setContentView(R.layout.add_child_dialog);
+			dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
-            FloatingActionButton cancelFab = dialog.findViewById(R.id.cancelfab);
-            cancelFab.setOnClickListener(getCancelFabListener(dialog));
+			EditText nameInput = dialog.findViewById(R.id.childNameEditText);
 
-            FloatingActionButton addFab = dialog.findViewById(R.id.addfab);
-            addFab.setOnClickListener(getAddFabListener(dialog, nameInput));
+			//Image menu to select or take new image
+			String[] optionItem = getResources().getStringArray(R.array.add_image_option);
+			ArrayAdapter<String> adapter = new ArrayAdapter<>(ChildrenActivity.this, R.layout.pick_image_text_view, optionItem);
 
-            dialog.show();
-        }
+			ListView pickImage = dialog.findViewById(R.id.addImage);
+			pickImage.setAdapter(adapter);
+			pickImage.setVisibility(View.INVISIBLE);
 
+			ImageView addChildImage = dialog.findViewById(R.id.child_image);
+			addChildImage.setOnClickListener(v -> pickImage.setVisibility(View.VISIBLE));
 
+			pickImage.setOnItemClickListener((parent, view, position, id) -> {
+				switch (position){
+					case 0:
+						// Select from gallery
+						imageHandler.selectFromPhotos(addChildImage);
+						pickImage.setVisibility(View.INVISIBLE);
+						hasNewImage = true;
+						break;
 
-        private View.OnClickListener getAddFabListener(Dialog dialog, EditText nameInput) {
-            return (view) -> {
-                if(nameInput.getText().toString().isEmpty()) {
-                    Toast.makeText(ChildrenActivity.this, R.string.error_validate_name, Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    options.addChild(new Child(nameInput.getText().toString()));
+					case 1:
+						// Take new photo
+						imageHandler.takePhoto(addChildImage);
+						pickImage.setVisibility(View.INVISIBLE);
+						hasNewImage = true;
+						break;
 
-                    Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
-                    Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
+					case 2:
+						pickImage.setVisibility(View.INVISIBLE);
+						break;
+				}
+			});
 
-                    Options.saveTaskListInPrefs(ChildrenActivity.this, options.getTaskList());
+			FloatingActionButton cancelFab = dialog.findViewById(R.id.cancelfab);
+			cancelFab.setOnClickListener(getCancelFabListener(dialog));
 
-                    populateList();
-                    listItemClick();
+			FloatingActionButton addFab = dialog.findViewById(R.id.addfab);
+			addFab.setOnClickListener(getAddFabListener(dialog, nameInput));
 
+			dialog.show();
+		}
 
-                    dialog.cancel();
-                }
-            };
-        }
+		private View.OnClickListener getAddFabListener(Dialog dialog, EditText nameInput) {
+			return (view) -> {
+				if (nameInput.getText().toString().isEmpty()) {
+					Toast.makeText(ChildrenActivity.this, R.string.error_validate_name, Toast.LENGTH_SHORT).show();
+				}
+				else {
+					if (hasNewImage) {
+						options.addChild(ChildrenActivity.this, nameInput.getText().toString(), imageHandler.encodedResult);
+					}
+					else
+						options.addChild(ChildrenActivity.this, nameInput.getText().toString());
 
-        private View.OnClickListener getCancelFabListener(Dialog dialog) {
-            return (view) -> dialog.dismiss();
-        }
-    }
+					populateList();
+					listItemClick();
+					dialog.cancel();
+				}
+			};
+		}
 
-    public class EditChildDialog {
+		private View.OnClickListener getCancelFabListener(Dialog dialog) {
+			return (view) -> dialog.dismiss();
+		}
+	}
 
-        public void showDialog(Activity activity, int index) {
-            final Dialog dialog = new Dialog(activity);
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setCancelable(false);
-            dialog.setContentView(R.layout.edit_child_dialog);
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+	public class EditChildDialog {
+		boolean hasNewImage = false;
 
-            EditText nameInput = dialog.findViewById(R.id.childNameEditText2);
-            nameInput.setText(options.getChildList().get(index).getName());
+		public void showDialog(Activity activity, int index) {
+			final Dialog dialog = new Dialog(activity);
+			dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+			dialog.setCancelable(false);
+			dialog.setContentView(R.layout.edit_child_dialog);
+			dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
-            //similar to add child
-            String[] optionItem = getResources().getStringArray(R.array.add_image_option);
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(ChildrenActivity.this, R.layout.pick_image_text_view, optionItem);
+			EditText nameInput = dialog.findViewById(R.id.childNameEditText2);
+			nameInput.setText(options.getChildList(ChildrenActivity.this).get(index).getName());
 
-            ListView pickImage = dialog.findViewById(R.id.edit_image);
-            pickImage.setAdapter(adapter);
-            pickImage.setVisibility(View.INVISIBLE);
+			//Similar to add child dialog
+			String[] optionItem = getResources().getStringArray(R.array.add_image_option);
+			ArrayAdapter<String> adapter = new ArrayAdapter<>(ChildrenActivity.this, R.layout.pick_image_text_view, optionItem);
 
-            ImageView childImage = dialog.findViewById(R.id.child_image_edit);
-            childImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    pickImage.setVisibility(View.VISIBLE);
-                }
-            });
+			ListView pickImage = dialog.findViewById(R.id.edit_image);
+			pickImage.setAdapter(adapter);
+			pickImage.setVisibility(View.INVISIBLE);
 
-            pickImage.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    switch (position){
-                        case 0:
-                            // TODO code to pick image
-                            break;
+			Child currentChild = options.getChildList(ChildrenActivity.this).get(index);
 
-                        case 1:
-                            // TODO code to take photo
-                            break;
+			ImageView editChildImage = dialog.findViewById(R.id.child_image_edit);
 
-                        case 2:
-                            pickImage.setVisibility(View.INVISIBLE);
-                            break;
-                    }
-                }
-            });
+			if (currentChild.getEncodedImage() != null) {
+				editChildImage.setImageBitmap(imageHandler.decodeBitmap(currentChild.getEncodedImage()));
+			}
 
+			editChildImage.setOnClickListener(v -> {
+				pickImage.setVisibility(View.VISIBLE);
+			});
 
-            FloatingActionButton cancelFab = dialog.findViewById(R.id.cancelfab2);
-            cancelFab.setOnClickListener(getCancelFabListener(dialog));
+			pickImage.setOnItemClickListener((parent, view, position, id) -> {
+				switch (position){
+					case 0:
+						// Select from gallery
+						imageHandler.selectFromPhotos(editChildImage);
+						pickImage.setVisibility(View.INVISIBLE);
+						hasNewImage = true;
+						break;
 
-            FloatingActionButton addFab = dialog.findViewById(R.id.addfab2);
-            addFab.setOnClickListener(getAddFabListener(dialog, nameInput, index));
+					case 1:
+						// Take new photo
+						imageHandler.takePhoto(editChildImage);
+						pickImage.setVisibility(View.INVISIBLE);
+						hasNewImage = true;
+						break;
 
-            FloatingActionButton deleteFab = dialog.findViewById(R.id.deletefab2);
-            deleteFab.setOnClickListener(getDeleteFabListener(dialog, index));
+					case 2:
+						pickImage.setVisibility(View.INVISIBLE);
+						break;
+				}
 
-            dialog.show();
-        }
+			nameInput.setText(options.getChildList(ChildrenActivity.this).get(index).getName());
 
-        private View.OnClickListener getCancelFabListener(Dialog dialog) {
-            return (view) -> dialog.dismiss();
-        }
+			});
 
-        private View.OnClickListener getAddFabListener(Dialog dialog, EditText nameInput, int index) {
-            return (view) -> {
-                if (nameInput.getText().toString().isEmpty()) {
-                    Toast.makeText(ChildrenActivity.this, R.string.error_validate_name, Toast.LENGTH_SHORT).show();
-                } else {
-                    options.editChild(index, nameInput.getText().toString());
-                    Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
-                    populateList();
-                    listItemClick();
-                    dialog.cancel();
-                }
-            };
-        }
+			FloatingActionButton cancelFab = dialog.findViewById(R.id.cancelfab2);
+			cancelFab.setOnClickListener(getCancelFabListener(dialog));
 
-        private View.OnClickListener getDeleteFabListener(Dialog dialog, int index) {
-            return (view) -> {
-                options.removeChild(index);
-                Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
-                Options.saveTaskListInPrefs(ChildrenActivity.this, options.getTaskList());
-                populateList();
-                listItemClick();
+			FloatingActionButton addFab = dialog.findViewById(R.id.addfab2);
+			addFab.setOnClickListener(getAddFabListener(dialog, nameInput, index));
 
-                dialog.cancel();
-            };
-        }
-    }
+			FloatingActionButton deleteFab = dialog.findViewById(R.id.deletefab2);
+			deleteFab.setOnClickListener(getDeleteFabListener(dialog, index));
+
+			dialog.show();
+		}
+
+		private View.OnClickListener getCancelFabListener(Dialog dialog) {
+			return (view) -> dialog.dismiss();
+		}
+
+		private View.OnClickListener getAddFabListener(Dialog dialog, EditText nameInput, int index) {
+			return (view) -> {
+				if (nameInput.getText().toString().isEmpty()) {
+					Toast.makeText(ChildrenActivity.this, R.string.error_validate_name, Toast.LENGTH_SHORT).show();
+				} else {
+					if(hasNewImage) {
+						options.editChildImage(ChildrenActivity.this, index, imageHandler.encodedResult);
+					}
+					options.editChildName(ChildrenActivity.this, index, nameInput.getText().toString());
+
+					populateList();
+					listItemClick();
+					dialog.cancel();
+				}
+			};
+		}
+
+		private View.OnClickListener getDeleteFabListener(Dialog dialog, int index) {
+			return (view) -> {
+				options.removeChild(ChildrenActivity.this, index);
+				populateList();
+				listItemClick();
+				dialog.cancel();
+			};
+		}
+	}
 
 }
