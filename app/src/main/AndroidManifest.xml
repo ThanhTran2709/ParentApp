@@ -13,6 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ParentApp.NoActionBar">
         <activity
+            android:name=".HelpActivity"
+            android:exported="true" />
+        <activity
             android:name=".TaskActivity"
             android:exported="false" />
 

@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         setUpCoinFlipButton();
         setUpTimerButton();
         setUpTaskListButton();
+        setUpHelpBtn();
         setUpExitBtn();
     }
 
@@ -46,6 +47,17 @@ public class MainActivity extends AppCompatActivity {
         taskListButton.setOnClickListener(view -> {
             Intent i = TaskActivity.getIntent(MainActivity.this);
             startActivity(i);
+        });
+    }
+
+    private void setUpHelpBtn() {
+        Button helpBtn = findViewById(R.id.helpBtn);
+        helpBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = HelpActivity.getIntent(MainActivity.this);
+                startActivity(i);
+            }
         });
     }
 
@@ -127,16 +139,19 @@ public class MainActivity extends AppCompatActivity {
         Animation slideIn3 = AnimationUtils.loadAnimation(this, R.anim.slide_in);
         Animation slideIn4 = AnimationUtils.loadAnimation(this, R.anim.slide_in);
         Animation slideIn5 = AnimationUtils.loadAnimation(this, R.anim.slide_in);
+        Animation slideIn6 = AnimationUtils.loadAnimation(this, R.anim.slide_in);
 
 
         Button timerButton = findViewById(R.id.timer_button);
         Button coinFlipButton = findViewById(R.id.flip_a_coin_button);
         Button myChildrenButton = findViewById(R.id.my_children_button);
+        Button helpBtn = findViewById(R.id.helpBtn);
         Button exitButton = findViewById(R.id.exitBtn);
         Button taskButton = findViewById(R.id.task_list_button);
 
         coinFlipButton.setVisibility(View.INVISIBLE);
         timerButton.setVisibility(View.INVISIBLE);
+        helpBtn.setVisibility(View.INVISIBLE);
         exitButton.setVisibility(View.INVISIBLE);
         taskButton.setVisibility(View.INVISIBLE);
 
@@ -156,9 +171,13 @@ public class MainActivity extends AppCompatActivity {
             taskButton.startAnimation(slideIn4);
         }, 800);
         handler.postDelayed(() -> {
+            helpBtn.setVisibility(View.VISIBLE);
+            helpBtn.startAnimation(slideIn5);
+        }, 900);
+        handler.postDelayed(() -> {
             exitButton.setVisibility(View.VISIBLE);
-            exitButton.startAnimation(slideIn5);
-        }, 1000);
+            exitButton.startAnimation(slideIn6);
+        }, 1200);
     }
 
     /**
