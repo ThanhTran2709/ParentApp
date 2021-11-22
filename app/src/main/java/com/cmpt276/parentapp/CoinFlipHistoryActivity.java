@@ -33,7 +33,7 @@ public class CoinFlipHistoryActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_coin_flip_history);
 
-		 options = Options.getInstance(this);
+		 options = Options.getInstance();
 
 		ArrayList<Coin> coinFlips = options.getFlipHistory(this);
 
@@ -49,7 +49,7 @@ public class CoinFlipHistoryActivity extends AppCompatActivity {
 
 	private void setUpBackBtn() {
 		Button backBtn = findViewById(R.id.backBtn_history);
-		backBtn.setText(R.string.backTxt);
+		backBtn.setText(R.string.back);
 		backBtn.setOnClickListener((view) -> finish());
 	}
 
