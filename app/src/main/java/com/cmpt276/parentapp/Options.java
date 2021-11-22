@@ -67,6 +67,29 @@ public class Options {
 		editor.apply();
 	}
 
+	public void addChild(Context context, String newChildName, String encodedImage){
+		SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = pref.edit();
+		String jsonString = pref.getString(CHILD_TAG, null);
+
+		Gson gson = new Gson();
+
+		ArrayList<Child> children;
+		if (jsonString == null){
+			children = new ArrayList<>();
+		}
+		else {
+			children = gson.fromJson(jsonString, TYPE_CHILD_LIST);
+		}
+
+		Child child = new Child(newChildName, encodedImage, generateID(children));
+		children.add(child);
+
+		String newJsonString = gson.toJson(children);
+		editor.putString(CHILD_TAG, newJsonString);
+		editor.apply();
+	}
+
 	public void removeChild(Context context, int index){
 		SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = pref.edit();
@@ -93,7 +116,7 @@ public class Options {
 		editor.apply();
 	}
 
-	public void editChild(Context context, int index, String name){
+	public void editChildName(Context context, int index, String name){
 		SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = pref.edit();
 		String jsonString = pref.getString(CHILD_TAG, null);
@@ -119,6 +142,29 @@ public class Options {
 		editor.putString(CHILD_TAG, newJsonString);
 		editor.apply();
 	}
+    public void editChildImage(Context context, int index, String encodedBitmap){
+        SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        String jsonString = pref.getString(CHILD_TAG, null);
+
+        Gson gson = new Gson();
+
+        ArrayList<Child> list;
+        if (jsonString == null){
+            list = new ArrayList<>();
+        }
+        else {
+            list = gson.fromJson(jsonString, TYPE_CHILD_LIST);
+        }
+
+        if (index < 0 || index >= list.size()){
+            throw new IllegalArgumentException("Cannot edit child that is out of bounds.");
+        }
+	    list.get(index).setEncodedImage(encodedBitmap);
+        String newJsonString = gson.toJson(list);
+        editor.putString(CHILD_TAG, newJsonString);
+        editor.apply();
+    }
 
 	public ArrayList<Child> getChildList(Context context) {
 		SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
@@ -133,7 +179,6 @@ public class Options {
 		else {
 			list = gson.fromJson(jsonString, TYPE_CHILD_LIST);
 		}
-
 		return list;
 	}
 

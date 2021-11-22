@@ -70,5 +70,11 @@
     <string name="error_enter_time">Cannot start! Please enter a time</string>
     <string name="error_time_negative">Cannot start! Please enter a number greater than 0</string>
     <string name="timer_options_title">Pick a Time!</string>
+    <string name="edit_child_txt">Edit child info</string>
+    <string name="enter_child_name_txt">Enter child name</string>
+    <string name="add_a_new_child_txt">Add a new child</string>
+    <string name="image_hint">Tap image to edit</string>
+    <string name="add_image_hint">Tap to add new image</string>
+
 
 </resources>
