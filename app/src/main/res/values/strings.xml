@@ -101,5 +101,6 @@
     <string name="confirm_message">Is %1$s done with %2$s?</string>
     <string name="confirm_task_done">Confirm Task Done</string>
     <string name="no_task_created_yet">No Task\nCreated Yet</string>
+    <string name="task_name_error_toast_message">Error! Enter a valid Task Name</string>
 
 </resources>

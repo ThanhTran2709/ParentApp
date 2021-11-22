@@ -90,7 +90,7 @@ public class TaskActivity extends AppCompatActivity {
         private View.OnClickListener getAddFabListener(Dialog dialog, EditText nameInput) {
             return (view) -> {
                 if(nameInput.getText().toString().isEmpty()) {
-                    Toast.makeText(TaskActivity.this, "Error! Enter a valid Task Name", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(TaskActivity.this, R.string.task_name_error_toast_message, Toast.LENGTH_SHORT).show();
                 }
                 else {
                     options.addTask(TaskActivity.this, new Task(nameInput.getText().toString(), options.getChildList(TaskActivity.this).size()));
@@ -139,8 +139,9 @@ public class TaskActivity extends AppCompatActivity {
         private View.OnClickListener getAddFabListener(Dialog dialog, EditText nameInput, int index) {
             return (view) -> {
                 if (nameInput.getText().toString().isEmpty()) {
-                    Toast.makeText(TaskActivity.this, "Error! Enter a valid Task Name", Toast.LENGTH_SHORT).show();
-                } else {
+                    Toast.makeText(TaskActivity.this, R.string.task_name_error_toast_message, Toast.LENGTH_SHORT).show();
+                }
+                else {
                     options.editTaskName(TaskActivity.this, nameInput.getText().toString(), index);
                     populateTaskList();
                     setUpListItemClickListener();
