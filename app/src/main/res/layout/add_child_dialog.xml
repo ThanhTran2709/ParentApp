@@ -111,6 +111,7 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="4dp"
                     android:text="@string/add_image_hint"
+                    android:fontFamily="@font/moon_light_font"
                     app:layout_constraintBottom_toTopOf="@+id/child_image_card_view"
                     app:layout_constraintEnd_toEndOf="@+id/child_image_card_view"
                     app:layout_constraintStart_toStartOf="@+id/child_image_card_view"

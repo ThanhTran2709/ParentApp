@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:fontFamily="@font/moon_bold_font"
     android:padding="10dp"
+    android:textColor="@color/black"
     android:textSize="12sp">
 
 </TextView>
