@@ -22,7 +22,6 @@ import java.util.Random;
 public class Options {
 
 	private static Options instance;
-    private ArrayList<Task> taskList;
 
 	private static Random idGenerator = new Random();
 
@@ -36,17 +35,11 @@ public class Options {
 	private static final String NO_CHILD_FLIPPING = "NoChildFlipping";
 
 	private static final Type TYPE_CHILD_LIST = new TypeToken<ArrayList<Child>>(){}.getType();
+    private static final Type TYPE_TASK_LIST = new TypeToken<ArrayList<Task>>(){}.getType();
 	private static final Type TYPE_INT_LIST = new TypeToken<ArrayList<Integer>>(){}.getType();
 	private static final Type TYPE_COIN_LIST = new TypeToken<ArrayList<Coin>>(){}.getType();
 
-	private Options() {
-        if (getTaskListFromPrefs(context).size() == 0){
-            taskList = new ArrayList<>();
-        }
-        else{
-            taskList = getTaskListFromPrefs(context);
-        }
-	}
+	private Options() {}
 
 
 	public static Options getInstance(){
@@ -56,7 +49,30 @@ public class Options {
 		return instance;
 	}
 
+    public void addChild(Context context, String newChildName){
+        SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        String jsonString = pref.getString(CHILD_TAG, null);
 
+        Gson gson = new Gson();
+
+        ArrayList<Child> children;
+        if (jsonString == null){
+            children = new ArrayList<>();
+        }
+        else {
+            children = gson.fromJson(jsonString, TYPE_CHILD_LIST);
+        }
+
+        Child child = new Child(newChildName, generateID(children));
+        children.add(child);
+
+        String newJsonString = gson.toJson(children);
+        editor.putString(CHILD_TAG, newJsonString);
+        editor.apply();
+
+        checkNoChildrenInTaskList(context);
+    }
 	public void addChild(Context context, String newChildName, String encodedImage){
 		SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = pref.edit();
@@ -79,7 +95,7 @@ public class Options {
 		editor.putString(CHILD_TAG, newJsonString);
 		editor.apply();
 
-        checkNoChildrenInTaskList();
+        checkNoChildrenInTaskList(context);
 	}
 
     public void removeChild(Context context, int index){
@@ -107,10 +123,34 @@ public class Options {
         editor.putString(CHILD_TAG, newJsonString);
         editor.apply();
 
-        for(Task task : taskList){
-            task.updateIndexOnChildDelete(index, childList.size());
-        }
+        updateTasksOnChildDelete(context, list, index);
     }
+
+    private void updateTasksOnChildDelete(Context context, ArrayList<Child> children, int deletedChildIndex){
+
+        SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+
+        String jsonString = pref.getString(TASK_TAG, null);
+        Gson gson = new Gson();
+
+        ArrayList<Task> tasks;
+        if (jsonString == null){
+            tasks = new ArrayList<>();
+        }
+        else {
+            tasks = gson.fromJson(jsonString, TYPE_TASK_LIST);
+        }
+
+        for(Task task : tasks){
+            task.updateIndexOnChildDelete(deletedChildIndex, children.size());
+        }
+
+        String newJsonString = gson.toJson(tasks);
+        editor.putString(TASK_TAG, newJsonString);
+        editor.apply();
+    }
+
 
     public void editChildName(Context context, int index, String name){
         SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
@@ -375,72 +415,154 @@ public class Options {
         return newId;
     }
 
-    public void addTask(Task task){
-        taskList.add(task);
+    public void addTask(Context context, Task task){
+        SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+
+        String jsonString = pref.getString(TASK_TAG, null);
+        Gson gson = new Gson();
+
+        ArrayList<Task> tasks;
+        if (jsonString == null){
+            tasks = new ArrayList<>();
+        }
+        else {
+            tasks = gson.fromJson(jsonString, TYPE_TASK_LIST);
+        }
+
+        tasks.add(task);
+
+        String newJsonString = gson.toJson(tasks);
+        editor.putString(TASK_TAG, newJsonString);
+        editor.apply();
     }
 
-    public void removeTask(int index){
-        taskList.remove(index);
+    public void removeTask(Context context, int index){
+        SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        String jsonString = pref.getString(TASK_TAG, null);
+
+        Gson gson = new Gson();
+
+        ArrayList<Task> tasks;
+        if (jsonString == null){
+            tasks = new ArrayList<>();
+        }
+        else {
+            tasks = gson.fromJson(jsonString, TYPE_TASK_LIST);
+        }
+
+        if (index < 0 || index >= tasks.size()){
+            throw new IllegalArgumentException("Cannot remove task that is out of bounds.");
+        }
+
+        tasks.remove(index);
+
+        String newJsonString = gson.toJson(tasks);
+        editor.putString(TASK_TAG, newJsonString);
+        editor.apply();
     }
 
-    public void editTaskName(String newTaskName, int taskIndex){
-        taskList.get(taskIndex).editTaskName(newTaskName);
+    public void editTaskName(Context context, String newTaskName, int taskIndex){
+        SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+
+        String jsonString = pref.getString(TASK_TAG, null);
+        Gson gson = new Gson();
+
+        ArrayList<Task> tasks;
+        if (jsonString == null){
+            tasks = new ArrayList<>();
+        }
+        else {
+            tasks = gson.fromJson(jsonString, TYPE_TASK_LIST);
+        }
+
+
+        tasks.get(taskIndex).editTaskName(newTaskName);
+
+        String newJsonString = gson.toJson(tasks);
+        editor.putString(TASK_TAG, newJsonString);
+        editor.apply();
+
     }
 
-    public void assignChildToTask(int childIndex, int taskIndex){
-        taskList.get(taskIndex).assignNextChild(childIndex);
-    }
 
-    public ArrayList<Task> getTaskList(){
-        return taskList;
-    }
+    private void checkNoChildrenInTaskList(Context context) {
+        SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
 
-    public ArrayList<String> getChildListToString() {
-        return childListToString;
-    }
+        String jsonString = pref.getString(TASK_TAG, null);
+        Gson gson = new Gson();
 
+        ArrayList<Task> tasks;
+        if (jsonString == null){
+            tasks = new ArrayList<>();
+        }
+        else {
+            tasks = gson.fromJson(jsonString, TYPE_TASK_LIST);
+        }
 
-    private void checkNoChildrenInTaskList() {
-        if((childList.size() - 1) == 0){
-            for(Task task : taskList){
-                task.incrementNextChildIndex(childList.size());
+        if((getChildList(context).size() - 1) == 0){
+            for(Task task : tasks){
+                task.incrementNextChildIndex(getChildList(context).size());
             }
         }
+
+        String newJsonString = gson.toJson(tasks);
+        editor.putString(TASK_TAG, newJsonString);
+        editor.apply();
     }
 
-    public String getChildName(int  childIndex){
+    public String getChildName(Context context, int  childIndex){
         if(childIndex == NO_CHILD){
             return "No Child Added Yet";
         }
         else{
-            return childList.get(childIndex).getName();
+            return getChildList(context).get(childIndex).getName();
         }
     }
 
-
-    //Save Task List to Shared Prefs
-    public static void saveTaskListInPrefs(Context context, ArrayList<Task> list) {
-        Gson gson = new Gson();
-        String jsonString = gson.toJson(list);
-
-        SharedPreferences pref  = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
+    public void assignTaskToNextChild(Context context, int taskIndex){
+        SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
-        editor.putString(TASK_TAG, jsonString);
+
+        String jsonString = pref.getString(TASK_TAG, null);
+        Gson gson = new Gson();
+
+        ArrayList<Task> tasks;
+        if (jsonString == null){
+            tasks = new ArrayList<>();
+        }
+        else {
+            tasks = gson.fromJson(jsonString, TYPE_TASK_LIST);
+        }
+
+        tasks.get(taskIndex).incrementNextChildIndex(getChildList(context).size());
+
+        String newJsonString = gson.toJson(tasks);
+        editor.putString(TASK_TAG, newJsonString);
         editor.apply();
+
+
     }
 
     //Get Task List to Shared Prefs
-    public static ArrayList<Task> getTaskListFromPrefs(Context context) {
+    public static ArrayList<Task> getTaskList(Context context) {
         SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
         String jsonString = pref.getString(TASK_TAG, "");
 
         Gson gson = new Gson();
-        Type type = new TypeToken<ArrayList<Task>>() {}.getType();
-        ArrayList<Task> list = gson.fromJson(jsonString, type);
-        if (list == null) {
+        ArrayList<Task> list;
+
+        if (jsonString == null) {
             list = new ArrayList<>();
+        }
+        else{
+            list = gson.fromJson(jsonString, TYPE_TASK_LIST);
         }
 
         return list;
     }
+
 }
