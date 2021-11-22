@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cmpt276.model.Child;
 import com.cmpt276.model.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -35,7 +36,7 @@ public class TaskActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
 
-        options = Options.getInstance(this);
+        options = Options.getInstance();
 
         setUpAddTaskFAB();
         setUpBackBtn();
@@ -44,7 +45,7 @@ public class TaskActivity extends AppCompatActivity {
 
     private void setUpEmptyMessage(){
         TextView emptyTaskMessage = findViewById(R.id.empty_task_message);
-        if (options.getTaskList().size() == 0){
+        if (options.getTaskList(this).size() == 0){
             emptyTaskMessage.setVisibility(View.VISIBLE);
         }
         else{
@@ -92,9 +93,7 @@ public class TaskActivity extends AppCompatActivity {
                     Toast.makeText(TaskActivity.this, "Error! Enter a valid Task Name", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    options.addTask(new Task(nameInput.getText().toString(), options.getChildList().size()));
-
-                    Options.saveTaskListInPrefs(TaskActivity.this, options.getTaskList());
+                    options.addTask(TaskActivity.this, new Task(nameInput.getText().toString(), options.getChildList(TaskActivity.this).size()));
 
                     populateTaskList();
                     setUpListItemClickListener();
@@ -119,7 +118,7 @@ public class TaskActivity extends AppCompatActivity {
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
             EditText nameInput = dialog.findViewById(R.id.edit_task_edit_text);
-            nameInput.setText(options.getTaskList().get(index).getTaskName());
+            nameInput.setText(options.getTaskList(TaskActivity.this).get(index).getTaskName());
 
             FloatingActionButton cancelFab = dialog.findViewById(R.id.cancel_edit_task_fab);
             cancelFab.setOnClickListener(getCancelFabListener(dialog));
@@ -142,8 +141,7 @@ public class TaskActivity extends AppCompatActivity {
                 if (nameInput.getText().toString().isEmpty()) {
                     Toast.makeText(TaskActivity.this, "Error! Enter a valid Task Name", Toast.LENGTH_SHORT).show();
                 } else {
-                    options.editTaskName(nameInput.getText().toString(), index);
-                    Options.saveTaskListInPrefs(TaskActivity.this, options.getTaskList());
+                    options.editTaskName(TaskActivity.this, nameInput.getText().toString(), index);
                     populateTaskList();
                     setUpListItemClickListener();
                     dialog.cancel();
@@ -153,8 +151,7 @@ public class TaskActivity extends AppCompatActivity {
 
         private View.OnClickListener getDeleteFabListener(Dialog dialog, int index) {
             return (view) -> {
-                options.removeTask(index);
-                Options.saveChildListInPrefs(TaskActivity.this, options.getChildList());
+                options.removeTask(TaskActivity.this, index);
                 populateTaskList();
                 setUpListItemClickListener();
                 dialog.cancel();
@@ -176,7 +173,7 @@ public class TaskActivity extends AppCompatActivity {
     private class TaskListAdapter extends ArrayAdapter<Task> {
 
         public TaskListAdapter(){
-            super(TaskActivity.this, R.layout.task_view, options.getTaskList());
+            super(TaskActivity.this, R.layout.task_view, options.getTaskList(TaskActivity.this));
         }
 
         @Override
@@ -187,7 +184,7 @@ public class TaskActivity extends AppCompatActivity {
                 taskView = getLayoutInflater().inflate(R.layout.task_view, parent, false);
             }
 
-            Task currentTask = options.getTaskList().get(position);
+            Task currentTask = options.getTaskList(TaskActivity.this).get(position);
 
             // set up game ListView item
             TextView taskName = taskView.findViewById(R.id.taskName);
@@ -200,17 +197,20 @@ public class TaskActivity extends AppCompatActivity {
             });
 
             ImageView childImage = taskView.findViewById(R.id.child_image_task_list);
-            //TODO setup child image
+            Child currentChild = options.getChildList(TaskActivity.this).get(currentTask.getCurrentChildIndex());
+            if (currentChild.getEncodedImage() != null) {
+                childImage.setImageBitmap(currentChild.getImageBitmap());
+            }
 
             TextView childName = taskView.findViewById(R.id.childNameInTaskList);
-            childName.setText(options.getChildName(currentTask.getCurrentChildIndex()));
+            childName.setText(options.getChildName(TaskActivity.this, currentTask.getCurrentChildIndex()));
             return taskView;
         }
 
     }
 
     private void setUpListItemClickListener(){
-        if (options.getTaskList().size() == 0) {
+        if (options.getTaskList(this).size() == 0) {
             return;
         }
         ListView taskListView = findViewById(R.id.taskListView);
@@ -236,13 +236,16 @@ public class TaskActivity extends AppCompatActivity {
             FloatingActionButton confirmFab = dialog.findViewById(R.id.confirmfab);
             confirmFab.setOnClickListener(getAddFabListener(dialog, index));
 
-            ImageView childImage = dialog.findViewById(R.id.child_image_confirm_dialog);
-            //TODO setup child image
+            Task task = options.getTaskList(TaskActivity.this).get(index);
 
-            Task task = options.getTaskList().get(index);
+            ImageView childImage = dialog.findViewById(R.id.child_image_confirm_dialog);
+            Child currentChild = options.getChildList(TaskActivity.this).get(task.getCurrentChildIndex());
+            if (currentChild.getEncodedImage() != null) {
+                childImage.setImageBitmap(currentChild.getImageBitmap());
+            }
 
             TextView confirmText = dialog.findViewById(R.id.confirm_message);
-            confirmText.setText(getString(R.string.confirm_message, options.getChildName(task.getCurrentChildIndex()), task.getTaskName()));
+            confirmText.setText(getString(R.string.confirm_message, options.getChildName(TaskActivity.this, task.getCurrentChildIndex()), task.getTaskName()));
             dialog.show();
 
         }
@@ -253,11 +256,9 @@ public class TaskActivity extends AppCompatActivity {
 
         private View.OnClickListener getAddFabListener(Dialog dialog, int index) {
             return (view) -> {
-                options.getTaskList().get(index).incrementNextChildIndex(options.getChildList().size());
+                options.assignTaskToNextChild(TaskActivity.this, index);
                 populateTaskList();
                 dialog.dismiss();
-
-
             };
         }
 
