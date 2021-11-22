@@ -13,8 +13,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ParentApp.NoActionBar">
+        <activity
+            android:name=".HelpActivity"
+            android:exported="true" />
 
-        <service android:name=".TimerService"/>
+        <service android:name=".TimerService" />
+
         <activity
             android:name=".TimerOptions"
             android:exported="true"
@@ -25,7 +29,7 @@
         <activity
             android:name=".TimerActivity"
             android:exported="true"
-            android:parentActivityName=".MainActivity"/>
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".CoinFlipActivity"
             android:exported="true" />
