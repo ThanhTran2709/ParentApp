@@ -17,8 +17,6 @@ public class Coin {
 
 	private static final int NUM_RESULTS = 2;
 
-	private static final Child EMPTY_CHILD = new Child("");
-
 	private static final Random rng = new Random();
 
 	private final Child child;
@@ -27,16 +25,9 @@ public class Coin {
 	private final LocalDateTime time;
 
 	//on generating coin flip object, records the time and chooses heads or tails randomly
-	public Coin(Child child, int flipChoice){
+	public Coin(Child child, int flipChoice) {
 		this.child = child;
 		this.flipChoice = flipChoice;
-		this.time = LocalDateTime.now();
-		this.flipResult = randomCoinFlip();
-	}
-
-	public Coin(){
-		this.child = EMPTY_CHILD;
-		this.flipChoice = NO_CHOICE;
 		this.time = LocalDateTime.now();
 		this.flipResult = randomCoinFlip();
 	}

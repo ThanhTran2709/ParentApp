@@ -45,7 +45,7 @@ public class TimerOptions extends AppCompatActivity {
 
     private void setUpBackBtn() {
         Button backBtn = findViewById(R.id.backBtn_timerOptions);
-        backBtn.setText(R.string.backTxt);
+        backBtn.setText(R.string.back);
         backBtn.setOnClickListener((view) -> finish());
     }
 

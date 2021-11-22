@@ -32,10 +32,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-
 /**
  * Activity for adding, editing, and deleting saved children
- * */
+ */
 public class ChildrenActivity extends AppCompatActivity {
 
 	private Options options;
@@ -45,14 +44,14 @@ public class ChildrenActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_children);
-		options = Options.getInstance(this);
+		options = Options.getInstance();
 		imageHandler = new ImageHandler();
 
-		setUpAddBtn();
-		populateList();
-		setUpBackBtn();
-		listItemClick();
-	}
+        setUpAddBtn();
+        populateList();
+        setUpBackBtn();
+        listItemClick();
+    }
 
 	//Handles children's images by encoding Bitmaps into Base64 Strings
 	public class ImageHandler{
@@ -125,7 +124,6 @@ public class ChildrenActivity extends AppCompatActivity {
 							default:
 								throw new IllegalStateException("Invalid photo activity code.");
 						}
-
 						output.setImageBitmap(decodeBitmap(encodedResult));
 					}
 				});
@@ -138,13 +136,13 @@ public class ChildrenActivity extends AppCompatActivity {
 
 	private void setUpBackBtn() {
 		Button backBtn = findViewById(R.id.backBtn_children);
-		backBtn.setText(R.string.backTxt);
+		backBtn.setText(R.string.back);
 		backBtn.setOnClickListener((view) -> finish());
 	}
 
 	private void setUpAddBtn() {
 		Button addBtn = findViewById(R.id.addBtn);
-		addBtn.setText(R.string.addBtnText);
+		addBtn.setText(R.string.add);
 
 		addBtn.setOnClickListener((view) -> {
 			AddChildDialog alert = new AddChildDialog();
@@ -164,8 +162,8 @@ public class ChildrenActivity extends AppCompatActivity {
 	//Custom ArrayListAdapter to display children's names and photos
 	private class ChildrenListViewAdapter extends ArrayAdapter<Child>{
 
-		public ChildrenListViewAdapter(){
-			super(ChildrenActivity.this, R.layout.children_view, options.getChildList());
+		public ChildrenListViewAdapter() {
+			super(ChildrenActivity.this, R.layout.children_view, options.getChildList(ChildrenActivity.this));
 		}
 
 		@Override
@@ -175,7 +173,7 @@ public class ChildrenActivity extends AppCompatActivity {
 				gamesView = getLayoutInflater().inflate(R.layout.children_view, parent, false);
 			}
 
-			Child currentChild = options.getChildList().get(position);
+			Child currentChild = options.getChildList(ChildrenActivity.this).get(position);
 
 			ImageView childImage = gamesView.findViewById(R.id.children_name_list_image);
 			if (currentChild.getEncodedImage() != null) {
@@ -191,8 +189,8 @@ public class ChildrenActivity extends AppCompatActivity {
 	}
 
 	//Click handling for children list view
-	private void listItemClick(){
-		if (options.getChildList().size() == 0) {
+	private void listItemClick() {
+		if (options.getChildList(ChildrenActivity.this).size() == 0) {
 			return;
 		}
 		ListView childrenListView = findViewById(R.id.childrenListView);
@@ -263,16 +261,13 @@ public class ChildrenActivity extends AppCompatActivity {
 				}
 				else {
 					if (hasNewImage) {
-						options.addChild(new Child(nameInput.getText().toString(), imageHandler.encodedResult));
+						options.addChild(ChildrenActivity.this, nameInput.getText().toString(), imageHandler.encodedResult);
 					}
 					else
-						options.addChild(new Child(nameInput.getText().toString()));
+						options.addChild(ChildrenActivity.this, nameInput.getText().toString());
 
-					Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
-					Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
 					populateList();
 					listItemClick();
-
 					dialog.cancel();
 				}
 			};
@@ -294,7 +289,7 @@ public class ChildrenActivity extends AppCompatActivity {
 			dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
 			EditText nameInput = dialog.findViewById(R.id.childNameEditText2);
-			nameInput.setText(options.getChildList().get(index).getName());
+			nameInput.setText(options.getChildList(ChildrenActivity.this).get(index).getName());
 
 			//Similar to add child dialog
 			String[] optionItem = getResources().getStringArray(R.array.add_image_option);
@@ -304,7 +299,7 @@ public class ChildrenActivity extends AppCompatActivity {
 			pickImage.setAdapter(adapter);
 			pickImage.setVisibility(View.INVISIBLE);
 
-			Child currentChild = options.getChildList().get(index);
+			Child currentChild = options.getChildList(ChildrenActivity.this).get(index);
 
 			ImageView editChildImage = dialog.findViewById(R.id.child_image_edit);
 
@@ -337,6 +332,8 @@ public class ChildrenActivity extends AppCompatActivity {
 						break;
 				}
 
+			nameInput.setText(options.getChildList(ChildrenActivity.this).get(index).getName());
+
 			});
 
 			FloatingActionButton cancelFab = dialog.findViewById(R.id.cancelfab2);
@@ -361,11 +358,10 @@ public class ChildrenActivity extends AppCompatActivity {
 					Toast.makeText(ChildrenActivity.this, R.string.error_validate_name, Toast.LENGTH_SHORT).show();
 				} else {
 					if(hasNewImage) {
-						options.editChildImage(index, imageHandler.encodedResult);
+						options.editChildImage(ChildrenActivity.this, index, imageHandler.encodedResult);
 					}
-					options.editChild(index, nameInput.getText().toString());
-					Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
-					Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
+					options.editChildName(ChildrenActivity.this, index, nameInput.getText().toString());
+
 					populateList();
 					listItemClick();
 					dialog.cancel();
@@ -375,9 +371,7 @@ public class ChildrenActivity extends AppCompatActivity {
 
 		private View.OnClickListener getDeleteFabListener(Dialog dialog, int index) {
 			return (view) -> {
-				options.removeChild(index);
-				Options.saveChildListInPrefs(ChildrenActivity.this, options.getChildList());
-				Options.saveStringListInPrefs(ChildrenActivity.this, options.getChildListToString());
+				options.removeChild(ChildrenActivity.this, index);
 				populateList();
 				listItemClick();
 				dialog.cancel();
