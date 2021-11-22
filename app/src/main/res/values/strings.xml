@@ -71,5 +71,15 @@
     <string name="error_enter_time">Cannot start! Please enter a time</string>
     <string name="error_time_negative">Cannot start! Please enter a number greater than 0</string>
     <string name="help_text">Help</string>
+    <string name="about">ABOUT</string>
+    <string name="team_nitrogen">Team NITROGEN</string>
+    <string name="minh_thanh_tran">Minh Thanh Tran</string>
+    <string name="divya_soneji">Divya Soneji</string>
+    <string name="jocelyn_tandrea">Jocelyn Tandrea</string>
+    <string name="martin_tesar">Martin Tesar</string>
+    <string name="sources">Sources</string>
+    <string name="source1">https://www.flaticon.com/free-icon/family_4129957?related_id=4129957</string>
+    <string name="source2"><![CDATA[https://pixabay.com/music/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=9843%22%3EPixabay]]></string>
+    <string name="source3">https://icon-icons.com/icon/avatar-default-user/92824</string>
 
 </resources>

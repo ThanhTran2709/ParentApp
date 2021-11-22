@@ -4,7 +4,11 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/AndroidStudio/ParentApp/app/src/main/res/layout/activity_children.xml" value="0.1109375" />
+        <entry key="..\:/AndroidStudio/ParentApp/app/src/main/res/layout/activity_coin_flip.xml" value="0.121875" />
+        <entry key="..\:/AndroidStudio/ParentApp/app/src/main/res/layout/activity_coin_flip_history.xml" value="0.121875" />
+        <entry key="..\:/AndroidStudio/ParentApp/app/src/main/res/layout/activity_help.xml" value="0.121875" />
         <entry key="..\:/AndroidStudio/ParentApp/app/src/main/res/layout/activity_main.xml" value="0.12395833333333334" />
+        <entry key="..\:/AndroidStudio/ParentApp/app/src/main/res/layout/activity_timer.xml" value="0.121875" />
         <entry key="..\:/AndroidStudio/ParentApp/app/src/main/res/layout/add_child_dialog.xml" value="0.121875" />
         <entry key="..\:/AndroidStudio/ParentApp/app/src/main/res/layout/child_name_view.xml" value="0.121875" />
         <entry key="..\:/AndroidStudio/ParentApp/app/src/main/res/layout/clear_dialog.xml" value="0.1796875" />

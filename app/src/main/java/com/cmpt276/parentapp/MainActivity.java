@@ -43,6 +43,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void setUpHelpBtn() {
         Button helpBtn = findViewById(R.id.helpBtn);
+        helpBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = HelpActivity.getIntent(MainActivity.this);
+                startActivity(i);
+            }
+        });
     }
 
     private void setUpExitBtn() {
