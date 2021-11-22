@@ -70,5 +70,6 @@
     <string name="error_select_time">Cannot start! Please select a time</string>
     <string name="error_enter_time">Cannot start! Please enter a time</string>
     <string name="error_time_negative">Cannot start! Please enter a number greater than 0</string>
+    <string name="help_text">Help</string>
 
 </resources>
