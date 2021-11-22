@@ -72,7 +72,7 @@
         android:background="@drawable/rounded_corner_red"
         android:fontFamily="@font/moon_bold_font"
         android:padding="16dp"
-        android:text="@string/backTxt"
+        android:text="@string/back"
         android:textColor="@color/black"
         android:textSize="32sp"
         app:layout_constraintBottom_toBottomOf="parent"

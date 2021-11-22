@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setUpExitBtn() {
         Button backBtn = findViewById(R.id.exitBtn);
-        backBtn.setText(R.string.exitTxt);
+        backBtn.setText(R.string.exit);
         backBtn.setOnClickListener((view) -> finishAffinity());
     }
 
