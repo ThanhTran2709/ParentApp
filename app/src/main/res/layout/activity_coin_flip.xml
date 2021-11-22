@@ -158,4 +158,13 @@
         app:layout_constraintTop_toBottomOf="@+id/textViewChild"
         app:srcCompat="@drawable/heads" />
 
+    <ImageView
+        android:id="@+id/imageViewFlippingChild"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="@+id/textViewChild"
+        app:layout_constraintTop_toBottomOf="@+id/textViewChild"
+        app:srcCompat="@drawable/default_image" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

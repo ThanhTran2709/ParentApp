@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cmpt276.model.Child;
 import com.cmpt276.model.Coin;
 import com.cmpt276.parentapp.serializer.LocalDateTimeAdapter;
 
@@ -30,6 +31,7 @@ public class FlipHistoryAdapter extends RecyclerView.Adapter<FlipHistoryAdapter.
 		private final TextView textViewChildPicked;
 		private final TextView textViewTime;
 		private final ImageView imageViewAcceptedFlip;
+		private final ImageView imageViewChildIcon;
 
 		public ViewHolder(View view) {
 			super(view);
@@ -37,6 +39,7 @@ public class FlipHistoryAdapter extends RecyclerView.Adapter<FlipHistoryAdapter.
 			textViewChildPicked = view.findViewById(R.id.textViewChildPicked);
 			textViewTime = view.findViewById(R.id.textViewFlipTime);
 			imageViewAcceptedFlip = view.findViewById(R.id.imageViewAcceptedFlip);
+			imageViewChildIcon = view.findViewById(R.id.imageViewCoinHistoryChild);
 		}
 
 		public TextView getTextViewFlipResult() {
@@ -53,6 +56,10 @@ public class FlipHistoryAdapter extends RecyclerView.Adapter<FlipHistoryAdapter.
 
 		public ImageView getImageViewResult() {
 			return imageViewAcceptedFlip;
+		}
+
+		public ImageView getImageViewChildIcon() {
+			return imageViewChildIcon;
 		}
 	}
 
@@ -74,6 +81,7 @@ public class FlipHistoryAdapter extends RecyclerView.Adapter<FlipHistoryAdapter.
 	@Override
 	public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 		Coin coin = flips.get(position);
+		Child child = coin.getChild();
 		String flipResult;
 		switch (coin.getFlipResult()){
 			case Coin.HEADS:
@@ -89,7 +97,7 @@ public class FlipHistoryAdapter extends RecyclerView.Adapter<FlipHistoryAdapter.
 		String flipResultString = context.getString(R.string.coin_flip_result, flipResult);
 		holder.getTextViewFlipResult().setText(flipResultString);
 
-		String childPickedString = context.getString(R.string.coin_flip_picked, coin.getChild().getName());
+		String childPickedString = context.getString(R.string.coin_flip_picked, child.getName());
 		holder.getTextViewChildPicked().setText(childPickedString);
 
 		String timeString = context.getString(R.string.coin_flip_time, LocalDateTimeAdapter.getTimeFormatted(coin.getTime()));
@@ -107,6 +115,13 @@ public class FlipHistoryAdapter extends RecyclerView.Adapter<FlipHistoryAdapter.
 				Drawable cross = AppCompatResources.getDrawable(context, R.drawable.ic_round_cancel_24);
 				holder.getImageViewResult().setImageDrawable(cross);
 			}
+		}
+
+		if (child.getImageBitmap() == null){
+			holder.getImageViewChildIcon().setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.default_image));
+		}
+		else {
+			holder.getImageViewChildIcon().setImageBitmap(child.getImageBitmap());
 		}
 	}
 

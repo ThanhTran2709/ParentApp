@@ -3,7 +3,9 @@ package com.cmpt276.parentapp;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,6 +23,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 
 import com.cmpt276.model.Child;
 import com.cmpt276.model.Coin;
@@ -117,7 +120,6 @@ public class CoinFlipActivity extends AppCompatActivity {
 			}
 			options.addCoinFlip(CoinFlipActivity.this, coin);
 
-			//TODO: find out if changing back to the queue of children is required
 			options.setNoChildFlipping(CoinFlipActivity.this, false);
 
 			int result = coin.getFlipResult();
@@ -183,7 +185,8 @@ public class CoinFlipActivity extends AppCompatActivity {
 		if (currentSide == R.drawable.heads) {
 			coinAnimation = new CoinToss(coinImage, R.drawable.heads, R.drawable.tails,
 					0, 180, 0, 0, 0, 0);
-		} else {
+		}
+		else {
 			coinAnimation = new CoinToss(coinImage, R.drawable.tails, R.drawable.heads,
 					0, 180, 0, 0, 0, 0);
 		}
@@ -217,24 +220,39 @@ public class CoinFlipActivity extends AppCompatActivity {
 	private void updateUI() {
 		TextView textViewChild = findViewById(R.id.textViewChild);
 		LinearLayout flipChoiceLL = findViewById(R.id.linearLayout);
+		ImageView imageViewFlippingChild = findViewById(R.id.imageViewFlippingChild);
 		ArrayList<Child> children = options.getChildList(CoinFlipActivity.this);
 		ArrayList<Integer> queue = options.getQueueOrder(CoinFlipActivity.this);
 		boolean isNoChildFlipping = options.isNoChildFlipping(CoinFlipActivity.this);
 
 		//if there's no children, essentially hide the text view.
 		if (children.size() == 0) {
-			flipChoiceLL.setVisibility(View.INVISIBLE);
 			textViewChild.setText(R.string.flip_a_coin);
+			flipChoiceLL.setVisibility(View.INVISIBLE);
+			imageViewFlippingChild.setVisibility(View.INVISIBLE);
 		}
 		else {
-			flipChoiceLL.setVisibility(View.VISIBLE);
 			if (isNoChildFlipping){
 				textViewChild.setText(R.string.coin_flip_no_child_prompt);
+				imageViewFlippingChild.setVisibility(View.INVISIBLE);
 			}
 			else {
 				int indexOfChildInFront = queue.get(0);
-				textViewChild.setText(getString(R.string.coin_flip_current_child_prompt, children.get(indexOfChildInFront).getName()));
+				Child childInFront = children.get(indexOfChildInFront);
+				textViewChild.setText(getString(R.string.coin_flip_current_child_prompt, childInFront.getName()));
+
+				imageViewFlippingChild.setVisibility(View.VISIBLE);
+				Bitmap childBitmap = childInFront.getImageBitmap();
+				if (childBitmap != null){
+					imageViewFlippingChild.setImageBitmap(childBitmap);
+				}
+				else {
+					Drawable defaultImage = AppCompatResources.getDrawable(this, R.drawable.default_image);
+					imageViewFlippingChild.setImageDrawable(defaultImage);
+				}
 			}
+
+			flipChoiceLL.setVisibility(View.VISIBLE);
 		}
 	}
 
@@ -262,9 +280,17 @@ public class CoinFlipActivity extends AppCompatActivity {
 			// set up game ListView item
 			TextView childName = convertView.findViewById(R.id.change_child_name);
 			childName.setText(currentChild.getName());
+
+			ImageView childIcon = convertView.findViewById(R.id.imageViewChildSelect);
+			if (currentChild.getImageBitmap() == null){
+				childIcon.setImageDrawable(AppCompatResources.getDrawable(CoinFlipActivity.this, R.drawable.default_image));
+			}
+			else {
+				childIcon.setImageBitmap(currentChild.getImageBitmap());
+			}
+
 			return convertView;
 		}
-
 	}
 
 	private AdapterView.OnItemClickListener getListViewClickListener(Dialog dialog) {

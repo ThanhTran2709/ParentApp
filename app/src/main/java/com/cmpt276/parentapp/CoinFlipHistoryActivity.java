@@ -41,11 +41,10 @@ public class CoinFlipHistoryActivity extends AppCompatActivity {
 		rv.setLayoutManager(new LinearLayoutManager(this));
 		FlipHistoryAdapter adapter = new FlipHistoryAdapter(this, coinFlips);
 		rv.setAdapter(adapter);
-		setUpBackBtn();
-		Button buttonClear = findViewById(R.id.buttonClearFlipHistory);
-		buttonClear.setOnClickListener(getClearListener());
-	}
 
+		setUpBackBtn();
+		setUpClearBtn();
+	}
 
 	private void setUpBackBtn() {
 		Button backBtn = findViewById(R.id.backBtn_history);
@@ -53,16 +52,17 @@ public class CoinFlipHistoryActivity extends AppCompatActivity {
 		backBtn.setOnClickListener((view) -> finish());
 	}
 
-	private View.OnClickListener getClearListener() {
-		return view -> {
-			if(options.getFlipHistory(this).size() == 0) {
+	private void setUpClearBtn() {
+		Button buttonClear = findViewById(R.id.buttonClearFlipHistory);
+		buttonClear.setOnClickListener((view) -> {
+			if (options.getFlipHistory(this).size() == 0) {
 				Toast.makeText(this, R.string.error_no_history, Toast.LENGTH_SHORT).show();
 			}
 			else {
 				ClearHistoryDialog alert = new ClearHistoryDialog();
 				alert.showDialog(CoinFlipHistoryActivity.this);
 			}
-		};
+		});
 	}
 
 	public class ClearHistoryDialog {

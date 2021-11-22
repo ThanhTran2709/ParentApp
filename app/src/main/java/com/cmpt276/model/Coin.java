@@ -53,7 +53,7 @@ public class Coin {
 	}
 
 	private static int randomCoinFlip(){
-		//returns number between 0 and 1, which corresponds to heads/tails
+		//returns either 0 and 1, which corresponds to heads/tails
 		int result = rng.nextInt(NUM_RESULTS);
 		return result;
 	}

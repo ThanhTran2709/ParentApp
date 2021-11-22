@@ -11,13 +11,13 @@
         android:id="@+id/imageViewAcceptedFlip"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginBottom="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_check_circle_24" />
+        app:srcCompat="@drawable/ic_round_check_circle_24" />
 
     <TextView
         android:id="@+id/textViewFlipResult"
@@ -35,11 +35,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:textColor="@color/black"
-        android:text="@string/coin_flip_picked"
         android:fontFamily="@font/moon_bold_font"
+        android:text="@string/coin_flip_picked"
+        android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="@+id/imageViewAcceptedFlip"
-        app:layout_constraintStart_toEndOf="@+id/imageViewAcceptedFlip"
+        app:layout_constraintStart_toEndOf="@+id/imageViewCoinHistoryChild"
         app:layout_constraintTop_toTopOf="@+id/imageViewAcceptedFlip" />
 
     <TextView
@@ -52,5 +52,15 @@
         android:fontFamily="@font/moon_bold_font"
         app:layout_constraintStart_toStartOf="@+id/textViewChildPicked"
         app:layout_constraintTop_toBottomOf="@+id/textViewChildPicked" />
+
+    <ImageView
+        android:id="@+id/imageViewCoinHistoryChild"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageViewAcceptedFlip"
+        app:layout_constraintStart_toEndOf="@+id/imageViewAcceptedFlip"
+        app:layout_constraintTop_toTopOf="@+id/imageViewAcceptedFlip"
+        app:srcCompat="@drawable/default_image" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
