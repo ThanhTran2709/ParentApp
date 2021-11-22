@@ -52,12 +52,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void setUpHelpBtn() {
         Button helpBtn = findViewById(R.id.helpBtn);
-        helpBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = HelpActivity.getIntent(MainActivity.this);
-                startActivity(i);
-            }
+        helpBtn.setOnClickListener(view -> {
+            Intent i = HelpActivity.getIntent(MainActivity.this);
+            startActivity(i);
         });
     }
 
@@ -169,15 +166,15 @@ public class MainActivity extends AppCompatActivity {
         handler.postDelayed(() -> {
             taskButton.setVisibility(View.VISIBLE);
             taskButton.startAnimation(slideIn4);
-        }, 800);
+        }, 600);
         handler.postDelayed(() -> {
             helpBtn.setVisibility(View.VISIBLE);
             helpBtn.startAnimation(slideIn5);
-        }, 900);
+        }, 800);
         handler.postDelayed(() -> {
             exitButton.setVisibility(View.VISIBLE);
             exitButton.startAnimation(slideIn6);
-        }, 1200);
+        }, 1000);
     }
 
     /**
