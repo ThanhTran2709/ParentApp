@@ -77,14 +77,12 @@
     <string name="jocelyn_tandrea">Jocelyn Tandrea</string>
     <string name="martin_tesar">Martin Tesar</string>
     <string name="sources">Sources</string>
-    <string name="source1">https://www.flaticon.com/free-icon/family_4129957?related_id=4129957
-    <a href="https://www.flaticon.com/free-icon/family_4129957?related_id=4129957"></a></string>
-    <string name="source2"><![CDATA[https://pixabay.com/music/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=9843%22%3EPixabay]]>
-    <a href="https://pixabay.com/music/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=9843%22%3EPixabay"></a></string>
-    <string name="source3">https://www.flaticon.com/free-icon/image_1500349?term=circle%20image&amp;related_id=1500349
-    <a href="https://www.flaticon.com/free-icon/image_1500349?term=circle%20image&amp;related_id=1500349"></a></string>
-    <string name="source4">https://www.pngrepo.com/svg/230284/nitrogen
-    <a href="https://www.pngrepo.com/svg/230284/nitrogen"></a></string>
+    <string name="source1"><a href="https://www.flaticon.com/free-icon/family_4129957?related_id=4129957">https://www.flaticon.com/free-icon/family_4129957?related_id=4129957</a></string>
+    <string name="source2"><a href="https://pixabay.com/music/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=9843%22%3EPixabay"><![CDATA[https://pixabay.com/music/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=9843%22%3EPixabay]]></a></string>
+    <string name="source3">
+    <a href="https://www.flaticon.com/free-icon/image_1500349?term=circle%20image&amp;related_id=1500349">https://www.flaticon.com/free-icon/image_1500349?term=circle%20image&amp;related_id=1500349</a></string>
+    <string name="source4">
+    <a href="https://www.pngrepo.com/svg/230284/nitrogen">https://www.pngrepo.com/svg/230284/nitrogen</a></string>
     <string name="timer_options_title">Pick a Time!</string>
     <string name="edit_child_txt">Edit child info</string>
     <string name="enter_child_name_txt">Enter child name</string>
