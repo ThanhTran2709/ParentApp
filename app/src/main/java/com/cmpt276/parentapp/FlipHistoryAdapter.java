@@ -26,6 +26,9 @@ public class FlipHistoryAdapter extends RecyclerView.Adapter<FlipHistoryAdapter.
 	//taken more or less from android's recyclerview guide
 	//https://developer.android.com/guide/topics/ui/layout/recyclerview
 
+	/**
+	 * Custom views
+	 * */
 	public static class ViewHolder extends RecyclerView.ViewHolder {
 		private final TextView textViewFlipResult;
 		private final TextView textViewChildPicked;

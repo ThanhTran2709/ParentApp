@@ -51,7 +51,9 @@ public class ChildrenActivity extends AppCompatActivity {
 		listItemClick();
 	}
 
-	//Handles children's images by encoding Bitmaps into Base64 Strings
+	/**
+	 * Handles children's images by converting bitmap into Base-64 strings
+	 * */
 	public class ImageHandler {
 
 		private static final int SELECT_FROM_GALLERY = 1;
@@ -143,7 +145,9 @@ public class ChildrenActivity extends AppCompatActivity {
 		childrenListView.setDividerHeight(16);
 	}
 
-	//Custom ArrayListAdapter to display children's names and photos
+	/**
+	 * Custom adapter for children's names and photos in listview
+	 * */
 	private class ChildrenListViewAdapter extends ArrayAdapter<Child> {
 
 		public ChildrenListViewAdapter() {
@@ -184,6 +188,9 @@ public class ChildrenActivity extends AppCompatActivity {
 		});
 	}
 
+	/**
+	 * Custom dialog to add child
+	 * */
 	public class AddChildDialog {
 		private boolean hasNewImage = false;
 
@@ -263,6 +270,9 @@ public class ChildrenActivity extends AppCompatActivity {
 		}
 	}
 
+	/**
+	 * Custom dialog to edit child
+	 * */
 	public class EditChildDialog {
 		boolean hasNewImage = false;
 

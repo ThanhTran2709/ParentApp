@@ -70,6 +70,9 @@ public class TaskActivity extends AppCompatActivity {
 		});
 	}
 
+	/**
+	 * Custom dialog to add tasks
+	 * */
 	public class AddTaskDialog {
 
 		public void showDialog(Activity activity) {
@@ -111,6 +114,9 @@ public class TaskActivity extends AppCompatActivity {
 		}
 	}
 
+	/**
+	 * Custom dialog to edit task
+	 * */
 	public class EditTaskDialog {
 
 		public void showDialog(Activity activity, int index) {
@@ -174,6 +180,9 @@ public class TaskActivity extends AppCompatActivity {
 		setUpEmptyMessage();
 	}
 
+	/**
+	 * Custom adapter for tasks
+	 * */
 	private class TaskListAdapter extends ArrayAdapter<Task> {
 
 		public TaskListAdapter() {
@@ -225,6 +234,9 @@ public class TaskActivity extends AppCompatActivity {
 		});
 	}
 
+	/**
+	 * Custom dialog to confirm task
+	 * */
 	public class ConfirmTaskDoneDialog {
 
 		public void showDialog(Activity activity, int index) {

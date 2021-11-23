@@ -262,6 +262,10 @@ public class CoinFlipActivity extends AppCompatActivity {
 		return (view) -> dialog.dismiss();
 	}
 
+
+	/**
+	 * Custom adapter for child class
+	 * */
 	private class ChildListAdapter extends ArrayAdapter<Child> {
 
 		ArrayList<Child> children = options.getChildList(CoinFlipActivity.this);

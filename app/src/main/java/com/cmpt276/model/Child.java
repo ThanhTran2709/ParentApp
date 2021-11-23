@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 
+import com.cmpt276.parentapp.serializer.ImageOperations;
+
 /**
  * Container for information about a single child
  */
@@ -44,8 +46,9 @@ public class Child {
 		if (encodedImage == null) {
 			return null;
 		}
-		byte[] decodedByte = Base64.decode(encodedImage, 0);
-		return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
+		else{
+			return ImageOperations.decodeBitmap(encodedImage);
+		}
 	}
 
 	public long getId() {

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+//Display help screen activity
 public class HelpActivity extends AppCompatActivity {
 
 	@Override

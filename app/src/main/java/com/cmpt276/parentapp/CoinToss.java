@@ -6,9 +6,9 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.ImageView;
 
-// This class uses matrix translations on ImageView to give the illusion of the coin flipping
-// Code inspired from StackOverflow answer: https://stackoverflow.com/questions/6135930/showing-both-sides-of-a-coin-being-flipped-using-android-standard-animation
-
+/** This class uses matrix translations on ImageView to give the illusion of the coin flipping
+ 	Code inspired from StackOverflow answer: https://stackoverflow.com/questions/6135930/showing-both-sides-of-a-coin-being-flipped-using-android-standard-animation
+*/
 public class CoinToss extends Animation {
 	private final float fromXDegrees;
 	private final float toXDegrees;

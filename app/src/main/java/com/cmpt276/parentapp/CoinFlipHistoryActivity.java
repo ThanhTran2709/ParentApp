@@ -65,6 +65,9 @@ public class CoinFlipHistoryActivity extends AppCompatActivity {
 		});
 	}
 
+	/**
+	 * Custom dialog to clear history
+	 * */
 	public class ClearHistoryDialog {
 
 		public void showDialog(Activity activity) {

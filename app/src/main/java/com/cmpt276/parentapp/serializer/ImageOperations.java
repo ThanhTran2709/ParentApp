@@ -6,6 +6,9 @@ import android.util.Base64;
 
 import java.io.ByteArrayOutputStream;
 
+/**
+ * Store some helper functions that are useful in dealing with images
+ * */
 public class ImageOperations {
 	//Encodes bitmap into a String
 	public static String encodeBitmap(Bitmap image) {
