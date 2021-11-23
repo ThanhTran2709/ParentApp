@@ -5,12 +5,10 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Base64;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -27,9 +25,9 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.cmpt276.model.Child;
+import com.cmpt276.parentapp.serializer.ImageOperations;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
@@ -86,20 +84,6 @@ public class ChildrenActivity extends AppCompatActivity {
 			openPhotoActivity.launch(intent);
 		}
 
-		//Encodes bitmap into a String
-		private String encodeBitmap(Bitmap image) {
-			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-			image.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-			byte[] bytes = outputStream.toByteArray();
-			return Base64.encodeToString(bytes, Base64.DEFAULT);
-		}
-
-		//Decodes String into bitmap
-		private Bitmap decodeBitmap(String encodedString) {
-			byte[] decodedByte = Base64.decode(encodedString, 0);
-			return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
-		}
-
 		private ActivityResultLauncher<Intent> getPhoneActivity(){
 			return registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
 				result -> {
@@ -111,7 +95,7 @@ public class ChildrenActivity extends AppCompatActivity {
 								if (selectedImageUri != null) {
 									try {
 										Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri);
-										encodedResult = encodeBitmap(bitmap);
+										encodedResult = ImageOperations.encodeBitmap(bitmap);
 									} catch (IOException e) {
 										e.printStackTrace();
 									}
@@ -119,12 +103,12 @@ public class ChildrenActivity extends AppCompatActivity {
 								break;
 							case TAKE_NEW_PHOTO:
 								Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-								encodedResult = encodeBitmap(bitmap);
+								encodedResult = ImageOperations.encodeBitmap(bitmap);
 								break;
 							default:
 								throw new IllegalStateException("Invalid photo activity code.");
 						}
-						output.setImageBitmap(decodeBitmap(encodedResult));
+						output.setImageBitmap(ImageOperations.decodeBitmap(encodedResult));
 					}
 				});
 		}
@@ -177,7 +161,7 @@ public class ChildrenActivity extends AppCompatActivity {
 
 			ImageView childImage = gamesView.findViewById(R.id.children_name_list_image);
 			if (currentChild.getEncodedImage() != null) {
-				childImage.setImageBitmap(imageHandler.decodeBitmap(currentChild.getEncodedImage()));
+				childImage.setImageBitmap(ImageOperations.decodeBitmap(currentChild.getEncodedImage()));
 			}
 
 			// Set up game ListView item
@@ -304,7 +288,7 @@ public class ChildrenActivity extends AppCompatActivity {
 			ImageView editChildImage = dialog.findViewById(R.id.child_image_edit);
 
 			if (currentChild.getEncodedImage() != null) {
-				editChildImage.setImageBitmap(imageHandler.decodeBitmap(currentChild.getEncodedImage()));
+				editChildImage.setImageBitmap(ImageOperations.decodeBitmap(currentChild.getEncodedImage()));
 			}
 
 			editChildImage.setOnClickListener(v -> {
