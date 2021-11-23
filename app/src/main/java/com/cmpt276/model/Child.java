@@ -40,6 +40,9 @@ public class Child {
 
     //Use this to quickly return an image bitmap
     public Bitmap getImageBitmap(){
+    	if (encodedImage == null){
+    		return null;
+		}
         byte[] decodedByte = Base64.decode(encodedImage, 0);
         return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
     }

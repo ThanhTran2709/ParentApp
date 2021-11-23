@@ -80,13 +80,13 @@ public class Options {
 
 		Gson gson = new Gson();
 
-		ArrayList<Child> children;
-		if (jsonString == null){
-			children = new ArrayList<>();
-		}
-		else {
-			children = gson.fromJson(jsonString, TYPE_CHILD_LIST);
-		}
+        ArrayList<Child> children;
+        if (jsonString == null){
+            children = new ArrayList<>();
+        }
+        else {
+            children = gson.fromJson(jsonString, TYPE_CHILD_LIST);
+        }
 
 		Child child = new Child(newChildName, encodedImage, generateID(children));
 		children.add(child);
