@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.cardview.widget.CardView;
 
 import com.cmpt276.model.Child;
 import com.cmpt276.model.Coin;
@@ -220,6 +221,7 @@ public class CoinFlipActivity extends AppCompatActivity {
 	private void updateUI() {
 		TextView textViewChild = findViewById(R.id.textViewChild);
 		LinearLayout flipChoiceLL = findViewById(R.id.linearLayout);
+		CardView cardViewFlippingChild = findViewById(R.id.cardViewFlippingChild);
 		ImageView imageViewFlippingChild = findViewById(R.id.imageViewFlippingChild);
 		ArrayList<Child> children = options.getChildList(CoinFlipActivity.this);
 		ArrayList<Integer> queue = options.getQueueOrder(CoinFlipActivity.this);
@@ -229,19 +231,19 @@ public class CoinFlipActivity extends AppCompatActivity {
 		if (children.size() == 0) {
 			textViewChild.setText(R.string.flip_a_coin);
 			flipChoiceLL.setVisibility(View.INVISIBLE);
-			imageViewFlippingChild.setVisibility(View.INVISIBLE);
+			cardViewFlippingChild.setVisibility(View.INVISIBLE);
 		}
 		else {
 			if (isNoChildFlipping){
 				textViewChild.setText(R.string.coin_flip_no_child_prompt);
-				imageViewFlippingChild.setVisibility(View.INVISIBLE);
+				cardViewFlippingChild.setVisibility(View.INVISIBLE);
 			}
 			else {
 				int indexOfChildInFront = queue.get(0);
 				Child childInFront = children.get(indexOfChildInFront);
 				textViewChild.setText(getString(R.string.coin_flip_current_child_prompt, childInFront.getName()));
 
-				imageViewFlippingChild.setVisibility(View.VISIBLE);
+				cardViewFlippingChild.setVisibility(View.VISIBLE);
 				Bitmap childBitmap = childInFront.getImageBitmap();
 				if (childBitmap != null){
 					imageViewFlippingChild.setImageBitmap(childBitmap);
