@@ -4,6 +4,7 @@
 
     <string name="main_menu_text">Main Menu</string>
     <string name="my_children">My Children</string>
+    <string name="help_text">Help</string>
 
     <!-- General strings -->
     <string name="add">Add</string>
@@ -23,6 +24,8 @@
     <string name="name_hint">Enter name here</string>
     <string name="age_hint">Enter age here</string>
     <string name="start_button_text">Start!</string>
+    <string name="image_hint">Tap image to edit</string>
+    <string name="add_image_hint">Tap to add new image</string>
 
     <!-- Main menu strings -->
     <string name="good_morning">Good Morning!</string>
@@ -69,7 +72,10 @@
     <string name="error_select_time">Cannot start! Please select a time</string>
     <string name="error_enter_time">Cannot start! Please enter a time</string>
     <string name="error_time_negative">Cannot start! Please enter a number greater than 0</string>
-    <string name="help_text">Help</string>
+    <string name="minute">minute</string>
+    <string name="minutes">minutes</string>
+
+    <!-- Help/About us strings -->
     <string name="about">ABOUT</string>
     <string name="team_nitrogen">Team NITROGEN</string>
     <string name="minh_thanh_tran">Minh Thanh Tran</string>
@@ -84,12 +90,11 @@
     <string name="source4">
     <a href="https://www.pngrepo.com/svg/230284/nitrogen">https://www.pngrepo.com/svg/230284/nitrogen</a></string>
     <string name="timer_options_title">Pick a Time!</string>
+
+    <!-- Task strings -->
     <string name="edit_child_txt">Edit child info</string>
     <string name="enter_child_name_txt">Enter child name</string>
     <string name="add_a_new_child_txt">Add a new child</string>
-    <string name="image_hint">Tap image to edit</string>
-    <string name="add_image_hint">Tap to add new image</string>
-
     <string name="task_list_button_text">Task List</string>
     <string name="enter_child_name">Enter child name</string>
     <string name="add_a_new_child">Add a new child</string>
@@ -100,10 +105,11 @@
     <string name="task_list_title">Task List</string>
     <string name="edit">EDIT</string>
     <string name="no_child_yet">No Child Yet</string>
+    <string name="no_child_added_yet">"No Child Added Yet"</string>
     <string name="blank">-</string>
     <string name="confirm_message">Is %1$s done with %2$s?</string>
     <string name="confirm_task_done">Confirm Task Done</string>
     <string name="no_task_created_yet">No Task\nCreated Yet</string>
-    <string name="task_name_error_toast_message">Error! Enter a valid Task Name</string>
+    <string name="task_name_error_toast_message">Error! Enter a valid task name</string>
 
 </resources>

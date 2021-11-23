@@ -45,14 +45,14 @@ public class ChildrenActivity extends AppCompatActivity {
 		options = Options.getInstance();
 		imageHandler = new ImageHandler();
 
-        setUpAddBtn();
-        populateList();
-        setUpBackBtn();
-        listItemClick();
-    }
+		setUpAddBtn();
+		populateList();
+		setUpBackBtn();
+		listItemClick();
+	}
 
 	//Handles children's images by encoding Bitmaps into Base64 Strings
-	public class ImageHandler{
+	public class ImageHandler {
 
 		private static final int SELECT_FROM_GALLERY = 1;
 		private static final int TAKE_NEW_PHOTO = 2;
@@ -65,7 +65,7 @@ public class ChildrenActivity extends AppCompatActivity {
 		public ImageHandler() {
 			//ActivityResultLaunchers can only be initialized in OnCreate, hence
 			//the weird way to pass things into the ActivityResultLauncher
-			openPhotoActivity = getPhoneActivity();
+			openPhotoActivity = getPhotoActivity();
 		}
 
 		private void selectFromPhotos(ImageView showImage) {
@@ -84,37 +84,37 @@ public class ChildrenActivity extends AppCompatActivity {
 			openPhotoActivity.launch(intent);
 		}
 
-		private ActivityResultLauncher<Intent> getPhoneActivity(){
+		private ActivityResultLauncher<Intent> getPhotoActivity() {
 			return registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-				result -> {
-					if (result.getResultCode() == Activity.RESULT_OK) {
-						Intent data = result.getData();
-						switch(photoActivityCode) {
-							case SELECT_FROM_GALLERY:
-								Uri selectedImageUri = data.getData();
-								if (selectedImageUri != null) {
-									try {
-										Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri);
-										encodedResult = ImageOperations.encodeBitmap(bitmap);
-									} catch (IOException e) {
-										e.printStackTrace();
+					result -> {
+						if (result.getResultCode() == Activity.RESULT_OK) {
+							Intent data = result.getData();
+							switch (photoActivityCode) {
+								case SELECT_FROM_GALLERY:
+									Uri selectedImageUri = data.getData();
+									if (selectedImageUri != null) {
+										try {
+											Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri);
+											encodedResult = ImageOperations.encodeBitmap(bitmap);
+										} catch (IOException e) {
+											e.printStackTrace();
+										}
 									}
-								}
-								break;
-							case TAKE_NEW_PHOTO:
-								Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-								encodedResult = ImageOperations.encodeBitmap(bitmap);
-								break;
-							default:
-								throw new IllegalStateException("Invalid photo activity code.");
+									break;
+								case TAKE_NEW_PHOTO:
+									Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+									encodedResult = ImageOperations.encodeBitmap(bitmap);
+									break;
+								default:
+									throw new IllegalStateException("Invalid photo activity code.");
+							}
+							output.setImageBitmap(ImageOperations.decodeBitmap(encodedResult));
 						}
-						output.setImageBitmap(ImageOperations.decodeBitmap(encodedResult));
-					}
-				});
+					});
 		}
 	}
 
-	public static Intent getIntent(Context context){
+	public static Intent getIntent(Context context) {
 		return new Intent(context, ChildrenActivity.class);
 	}
 
@@ -135,7 +135,7 @@ public class ChildrenActivity extends AppCompatActivity {
 	}
 
 	//Populate list view with name and age of children
-	private void populateList(){
+	private void populateList() {
 		ArrayAdapter<Child> adapter = new ChildrenListViewAdapter();
 		ListView childrenListView = findViewById(R.id.childrenListView);
 		childrenListView.setAdapter(adapter);
@@ -144,7 +144,7 @@ public class ChildrenActivity extends AppCompatActivity {
 	}
 
 	//Custom ArrayListAdapter to display children's names and photos
-	private class ChildrenListViewAdapter extends ArrayAdapter<Child>{
+	private class ChildrenListViewAdapter extends ArrayAdapter<Child> {
 
 		public ChildrenListViewAdapter() {
 			super(ChildrenActivity.this, R.layout.children_view, options.getChildList(ChildrenActivity.this));
@@ -153,7 +153,7 @@ public class ChildrenActivity extends AppCompatActivity {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View gamesView = convertView;
-			if (gamesView == null){
+			if (gamesView == null) {
 				gamesView = getLayoutInflater().inflate(R.layout.children_view, parent, false);
 			}
 
@@ -208,7 +208,7 @@ public class ChildrenActivity extends AppCompatActivity {
 			addChildImage.setOnClickListener(v -> pickImage.setVisibility(View.VISIBLE));
 
 			pickImage.setOnItemClickListener((parent, view, position, id) -> {
-				switch (position){
+				switch (position) {
 					case 0:
 						// Select from gallery
 						imageHandler.selectFromPhotos(addChildImage);
@@ -247,8 +247,9 @@ public class ChildrenActivity extends AppCompatActivity {
 					if (hasNewImage) {
 						options.addChild(ChildrenActivity.this, nameInput.getText().toString(), imageHandler.encodedResult);
 					}
-					else
+					else {
 						options.addChild(ChildrenActivity.this, nameInput.getText().toString());
+					}
 
 					populateList();
 					listItemClick();
@@ -296,7 +297,7 @@ public class ChildrenActivity extends AppCompatActivity {
 			});
 
 			pickImage.setOnItemClickListener((parent, view, position, id) -> {
-				switch (position){
+				switch (position) {
 					case 0:
 						// Select from gallery
 						imageHandler.selectFromPhotos(editChildImage);
@@ -316,7 +317,7 @@ public class ChildrenActivity extends AppCompatActivity {
 						break;
 				}
 
-			nameInput.setText(options.getChildList(ChildrenActivity.this).get(index).getName());
+				nameInput.setText(options.getChildList(ChildrenActivity.this).get(index).getName());
 
 			});
 
@@ -340,8 +341,9 @@ public class ChildrenActivity extends AppCompatActivity {
 			return (view) -> {
 				if (nameInput.getText().toString().isEmpty()) {
 					Toast.makeText(ChildrenActivity.this, R.string.error_validate_name, Toast.LENGTH_SHORT).show();
-				} else {
-					if(hasNewImage) {
+				}
+				else {
+					if (hasNewImage) {
 						options.editChildImage(ChildrenActivity.this, index, imageHandler.encodedResult);
 					}
 					options.editChildName(ChildrenActivity.this, index, nameInput.getText().toString());

@@ -23,7 +23,7 @@ import java.util.ArrayList;
 /**
  * Activity for viewing all previous results of coin flips, including who picked,
  * the result of the flip, and the time it happened.
- * */
+ */
 public class CoinFlipHistoryActivity extends AppCompatActivity {
 
 	Options options;
@@ -33,7 +33,7 @@ public class CoinFlipHistoryActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_coin_flip_history);
 
-		 options = Options.getInstance();
+		options = Options.getInstance();
 
 		ArrayList<Coin> coinFlips = options.getFlipHistory(this);
 
@@ -95,7 +95,7 @@ public class CoinFlipHistoryActivity extends AppCompatActivity {
 		}
 	}
 
-	public static Intent getIntent(Context context){
+	public static Intent getIntent(Context context) {
 		return new Intent(context, CoinFlipHistoryActivity.class);
 	}
 }

@@ -11,14 +11,14 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * Allows LocalDateTime to be serialized and deserialized with com.google.gson library.
- *
- * */
+ */
 public class LocalDateTimeAdapter extends TypeAdapter<LocalDateTime> {
 	@Override
 	public void write(final JsonWriter jsonWriter, final LocalDateTime localDate) throws IOException {
 		if (localDate == null) {
 			jsonWriter.nullValue();
-		} else {
+		}
+		else {
 			jsonWriter.value(localDate.toString());
 		}
 	}
@@ -28,12 +28,13 @@ public class LocalDateTimeAdapter extends TypeAdapter<LocalDateTime> {
 		if (jsonReader.peek() == JsonToken.NULL) {
 			jsonReader.nextNull();
 			return null;
-		} else {
+		}
+		else {
 			return LocalDateTime.parse(jsonReader.nextString());
 		}
 	}
 
-	public static String getTimeFormatted(LocalDateTime time){
+	public static String getTimeFormatted(LocalDateTime time) {
 		String pattern = "uuuu-MMM-dd hh:mm a";
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
 		return time.format(formatter);
