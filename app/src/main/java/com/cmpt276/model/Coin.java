@@ -9,7 +9,7 @@ import java.util.Random;
  * - what the child chose
  * - the outcome of the flip
  * - the date and time the flip occurred
- * */
+ */
 public class Coin {
 	public static final int NO_CHOICE = -1;
 	public static final int HEADS = 0;
@@ -48,11 +48,11 @@ public class Coin {
 		return time;
 	}
 
-	public boolean hasNoChoice(){
+	public boolean hasNoChoice() {
 		return flipChoice == NO_CHOICE;
 	}
 
-	private static int randomCoinFlip(){
+	private static int randomCoinFlip() {
 		//returns either 0 and 1, which corresponds to heads/tails
 		int result = rng.nextInt(NUM_RESULTS);
 		return result;

@@ -6,18 +6,19 @@ import android.util.Base64;
 
 /**
  * Container for information about a single child
- * */
+ */
 public class Child {
-    private String name;
-    private String encodedImage;
+	private String name;
+	private String encodedImage;
 	private final long id;
 
-    public Child(String name, String encodedImage, long id){
-        this.name = name;
-        this.encodedImage = encodedImage;
-        this.id = id;
-    }
-	public Child(String name, long id){
+	public Child(String name, String encodedImage, long id) {
+		this.name = name;
+		this.encodedImage = encodedImage;
+		this.id = id;
+	}
+
+	public Child(String name, long id) {
 		this.name = name;
 		this.id = id;
 	}
@@ -30,24 +31,24 @@ public class Child {
 		return this.name;
 	}
 
-    public String getEncodedImage() {
-        return encodedImage;
-    }
+	public String getEncodedImage() {
+		return encodedImage;
+	}
 
-    public void setEncodedImage(String encodedImage) {
-        this.encodedImage = encodedImage;
-    }
+	public void setEncodedImage(String encodedImage) {
+		this.encodedImage = encodedImage;
+	}
 
-    //Use this to quickly return an image bitmap
-    public Bitmap getImageBitmap(){
-    	if (encodedImage == null){
-    		return null;
+	//Use this to quickly return an image bitmap
+	public Bitmap getImageBitmap() {
+		if (encodedImage == null) {
+			return null;
 		}
-        byte[] decodedByte = Base64.decode(encodedImage, 0);
-        return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
-    }
+		byte[] decodedByte = Base64.decode(encodedImage, 0);
+		return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
+	}
 
-	public long getId(){
+	public long getId() {
 		return id;
 	}
 

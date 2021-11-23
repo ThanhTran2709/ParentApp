@@ -23,204 +23,204 @@ import java.util.concurrent.TimeUnit;
  */
 public class TimerService extends Service {
 
-    private static final String ORIGINAL_TIME_IN_MILLI_SECONDS_TAG = "original_time_in_milli_seconds_tag";
-    private static final long DEFAULT_MINUTES_IN_MILLI_SECONDS = 0L;
-    private static final String TIMER_SERVICE_BROADCAST = "timer_service_broadcast";
-    private static final String CHANNEL_LOW_NAME = "channel_low";
-    private static final String CHANNEL_HIGH_NAME = "channel_high";
+	private static final String ORIGINAL_TIME_IN_MILLI_SECONDS_TAG = "original_time_in_milli_seconds_tag";
+	private static final long DEFAULT_MINUTES_IN_MILLI_SECONDS = 0L;
+	private static final String TIMER_SERVICE_BROADCAST = "timer_service_broadcast";
+	private static final String CHANNEL_LOW_NAME = "channel_low";
+	private static final String CHANNEL_HIGH_NAME = "channel_high";
 
-    private static final String CHANNEL_LOW_PRIORITY_ID = "low_priority_channel";
-    private static final String CHANNEL_HIGH_PRIORITY_ID = "high_priority_channel";
-    private static final int NOTIFICATION_ID = 1;
-    private static final int REPEAT_ONCE = 1;
-    private static final String STOP_ALARM_BROADCAST = "stop_alarm_broadcast";
+	private static final String CHANNEL_LOW_PRIORITY_ID = "low_priority_channel";
+	private static final String CHANNEL_HIGH_PRIORITY_ID = "high_priority_channel";
+	private static final int NOTIFICATION_ID = 1;
+	private static final int REPEAT_ONCE = 1;
+	private static final String STOP_ALARM_BROADCAST = "stop_alarm_broadcast";
 
-    private CountDownTimer timer;
-    private long remainingMilliSeconds;
-    private long originalTimeInMilliSeconds;
-    private boolean isPaused;
-    private boolean isFinish;
-    private Vibrator vibrator;
-    private MediaPlayer mp;
+	private CountDownTimer timer;
+	private long remainingMilliSeconds;
+	private long originalTimeInMilliSeconds;
+	private boolean isPaused;
+	private boolean isFinish;
+	private Vibrator vibrator;
+	private MediaPlayer mp;
 
-    /**
-     * https://developer.android.com/guide/components/bound-services#Binder
-     */
-    private final IBinder binder = new LocalBinder();
+	/**
+	 * https://developer.android.com/guide/components/bound-services#Binder
+	 */
+	private final IBinder binder = new LocalBinder();
 
-    public static Intent getIntent(Context context, long originalTimeInMilliSeconds) {
-        Intent i = new Intent(context, TimerService.class);
-        i.putExtra(ORIGINAL_TIME_IN_MILLI_SECONDS_TAG, originalTimeInMilliSeconds);
-        return i;
-    }
+	public static Intent getIntent(Context context, long originalTimeInMilliSeconds) {
+		Intent i = new Intent(context, TimerService.class);
+		i.putExtra(ORIGINAL_TIME_IN_MILLI_SECONDS_TAG, originalTimeInMilliSeconds);
+		return i;
+	}
 
-    public static Intent getIntent(Context context) {
-        return new Intent(context, TimerService.class);
-    }
-
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-
-        setUpNotificationChannel(CHANNEL_LOW_NAME, CHANNEL_LOW_PRIORITY_ID, NotificationManager.IMPORTANCE_DEFAULT);
-        setUpNotificationChannel(CHANNEL_HIGH_NAME, CHANNEL_HIGH_PRIORITY_ID, NotificationManager.IMPORTANCE_HIGH);
-
-        originalTimeInMilliSeconds = intent.getLongExtra(ORIGINAL_TIME_IN_MILLI_SECONDS_TAG, DEFAULT_MINUTES_IN_MILLI_SECONDS);
-        remainingMilliSeconds = originalTimeInMilliSeconds;
-
-        setUpTimerBroadcast(originalTimeInMilliSeconds);
-
-        return START_STICKY;
-    }
+	public static Intent getIntent(Context context) {
+		return new Intent(context, TimerService.class);
+	}
 
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        timer.cancel();
-    }
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
 
-    private void setUpTimerBroadcast(long milliSeconds) {
-        isPaused = false;
-        isFinish = false;
-        timer = new CountDownTimer(milliSeconds, 1000) {
+		setUpNotificationChannel(CHANNEL_LOW_NAME, CHANNEL_LOW_PRIORITY_ID, NotificationManager.IMPORTANCE_DEFAULT);
+		setUpNotificationChannel(CHANNEL_HIGH_NAME, CHANNEL_HIGH_PRIORITY_ID, NotificationManager.IMPORTANCE_HIGH);
 
-            @Override
-            public void onTick(long l) {
+		originalTimeInMilliSeconds = intent.getLongExtra(ORIGINAL_TIME_IN_MILLI_SECONDS_TAG, DEFAULT_MINUTES_IN_MILLI_SECONDS);
+		remainingMilliSeconds = originalTimeInMilliSeconds;
 
-                remainingMilliSeconds = l;
+		setUpTimerBroadcast(originalTimeInMilliSeconds);
 
-                setUpNotification(getTimeString(), CHANNEL_LOW_PRIORITY_ID);
-
-                Intent broadcastIntent = new Intent();
-                broadcastIntent.setAction(TIMER_SERVICE_BROADCAST);
-                sendBroadcast(broadcastIntent);
-
-            }
-
-            @Override
-            public void onFinish() {
-                isFinish = true;
-                isPaused = true;
-                setUpAlarmNotification();
-
-            }
-        };
-        timer.start();
-    }
-
-    public String getTimeString() {
-        int remainingMinutes = (int) TimeUnit.MILLISECONDS.toMinutes(remainingMilliSeconds);
-        int remainingSeconds = (int) TimeUnit.MILLISECONDS.toSeconds(remainingMilliSeconds) -
-                (int) TimeUnit.MINUTES.toSeconds(remainingMinutes);
-
-        return String.format(getString(R.string.time_label_format), remainingMinutes, remainingSeconds);
-    }
-
-    /**
-     * https://developer.android.com/training/notify-user/build-notification
-     */
-    private void setUpNotification(String timeString, String channelId) {
-
-        Intent notificationIntent = TimerActivity.getIntent(this, originalTimeInMilliSeconds, true);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,
-                0,
-                notificationIntent,
-                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-
-        Notification notification = new NotificationCompat.Builder(this, channelId)
-                .setContentTitle(getString(R.string.timeout_timer_title))
-                .setContentText(timeString)
-                .setSmallIcon(R.drawable.timer_icon)
-                .setContentIntent(pendingIntent)
-                .setOnlyAlertOnce(true)
-                .build();
-
-        startForeground(NOTIFICATION_ID, notification);
-
-    }
-
-    private void setUpAlarmNotification() {
-        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-        long[] pattern = {0, 100, 100, 100};
-        vibrator.vibrate(VibrationEffect.createWaveform(pattern, REPEAT_ONCE));
-
-        mp = MediaPlayer.create(TimerService.this, R.raw.alarm_sound);
-        mp.setLooping(true);
-        mp.start();
+		return START_STICKY;
+	}
 
 
-        Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction(STOP_ALARM_BROADCAST);
-        sendBroadcast(broadcastIntent);
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		timer.cancel();
+	}
+
+	private void setUpTimerBroadcast(long milliSeconds) {
+		isPaused = false;
+		isFinish = false;
+		timer = new CountDownTimer(milliSeconds, 1000) {
+
+			@Override
+			public void onTick(long l) {
+
+				remainingMilliSeconds = l;
+
+				setUpNotification(getTimeString(), CHANNEL_LOW_PRIORITY_ID);
+
+				Intent broadcastIntent = new Intent();
+				broadcastIntent.setAction(TIMER_SERVICE_BROADCAST);
+				sendBroadcast(broadcastIntent);
+
+			}
+
+			@Override
+			public void onFinish() {
+				isFinish = true;
+				isPaused = true;
+				setUpAlarmNotification();
+
+			}
+		};
+		timer.start();
+	}
+
+	public String getTimeString() {
+		int remainingMinutes = (int) TimeUnit.MILLISECONDS.toMinutes(remainingMilliSeconds);
+		int remainingSeconds = (int) TimeUnit.MILLISECONDS.toSeconds(remainingMilliSeconds) -
+				(int) TimeUnit.MINUTES.toSeconds(remainingMinutes);
+
+		return String.format(getString(R.string.time_label_format), remainingMinutes, remainingSeconds);
+	}
+
+	/**
+	 * https://developer.android.com/training/notify-user/build-notification
+	 */
+	private void setUpNotification(String timeString, String channelId) {
+
+		Intent notificationIntent = TimerActivity.getIntent(this, originalTimeInMilliSeconds, true);
+		PendingIntent pendingIntent = PendingIntent.getActivity(this,
+				0,
+				notificationIntent,
+				PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+
+		Notification notification = new NotificationCompat.Builder(this, channelId)
+				.setContentTitle(getString(R.string.timeout_timer_title))
+				.setContentText(timeString)
+				.setSmallIcon(R.drawable.timer_icon)
+				.setContentIntent(pendingIntent)
+				.setOnlyAlertOnce(true)
+				.build();
+
+		startForeground(NOTIFICATION_ID, notification);
+
+	}
+
+	private void setUpAlarmNotification() {
+		vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+		long[] pattern = {0, 100, 100, 100};
+		vibrator.vibrate(VibrationEffect.createWaveform(pattern, REPEAT_ONCE));
+
+		mp = MediaPlayer.create(TimerService.this, R.raw.alarm_sound);
+		mp.setLooping(true);
+		mp.start();
 
 
-        setUpNotification(getString(R.string.timer_stop_message), CHANNEL_HIGH_PRIORITY_ID);
-    }
+		Intent broadcastIntent = new Intent();
+		broadcastIntent.setAction(STOP_ALARM_BROADCAST);
+		sendBroadcast(broadcastIntent);
 
-    public void stopSoundAndVibration() {
-        if (vibrator != null) {
-            vibrator.cancel();
-        }
-        if (mp != null) {
-            mp.stop();
-        }
-    }
 
-    /**
-     * https://developer.android.com/training/notify-user/build-notification
-     */
-    private void setUpNotificationChannel(String channelName, String channelId, int importance) {
+		setUpNotification(getString(R.string.timer_stop_message), CHANNEL_HIGH_PRIORITY_ID);
+	}
 
-        NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, importance);
-        NotificationManager notificationManager = getSystemService(NotificationManager.class);
-        notificationManager.createNotificationChannel(notificationChannel);
+	public void stopSoundAndVibration() {
+		if (vibrator != null) {
+			vibrator.cancel();
+		}
+		if (mp != null) {
+			mp.stop();
+		}
+	}
 
-    }
+	/**
+	 * https://developer.android.com/training/notify-user/build-notification
+	 */
+	private void setUpNotificationChannel(String channelName, String channelId, int importance) {
 
-    public boolean isPaused() {
-        return isPaused;
-    }
+		NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, importance);
+		NotificationManager notificationManager = getSystemService(NotificationManager.class);
+		notificationManager.createNotificationChannel(notificationChannel);
 
-    public boolean isFinish() {
-        return isFinish;
-    }
+	}
 
-    public void pauseTimer() {
-        timer.cancel();
-        isPaused = true;
-    }
+	public boolean isPaused() {
+		return isPaused;
+	}
 
-    public void playTimer() {
-        setUpTimerBroadcast(remainingMilliSeconds);
-    }
+	public boolean isFinish() {
+		return isFinish;
+	}
 
-    public String getOriginalTimeString() {
-        long remainingMinutes = TimeUnit.MILLISECONDS.toMinutes(originalTimeInMilliSeconds);
-        long remainingSeconds = TimeUnit.MILLISECONDS.toSeconds(originalTimeInMilliSeconds) -
-                TimeUnit.MINUTES.toSeconds(remainingMinutes);
+	public void pauseTimer() {
+		timer.cancel();
+		isPaused = true;
+	}
 
-        return String.format(getString(R.string.time_label_format), remainingMinutes, remainingSeconds);
-    }
+	public void playTimer() {
+		setUpTimerBroadcast(remainingMilliSeconds);
+	}
 
-    public long getOriginalMilliSeconds() {
-        return originalTimeInMilliSeconds;
-    }
+	public String getOriginalTimeString() {
+		long remainingMinutes = TimeUnit.MILLISECONDS.toMinutes(originalTimeInMilliSeconds);
+		long remainingSeconds = TimeUnit.MILLISECONDS.toSeconds(originalTimeInMilliSeconds) -
+				TimeUnit.MINUTES.toSeconds(remainingMinutes);
 
-    /**
-     * https://developer.android.com/guide/components/bound-services#Binder
-     */
-    public class LocalBinder extends Binder {
-        TimerService getService() {
-            return TimerService.this;
-        }
-    }
+		return String.format(getString(R.string.time_label_format), remainingMinutes, remainingSeconds);
+	}
 
-    /**
-     * https://developer.android.com/guide/components/bound-services#Binder
-     */
-    @Override
-    public IBinder onBind(Intent intent) {
-        return binder;
-    }
+	public long getOriginalMilliSeconds() {
+		return originalTimeInMilliSeconds;
+	}
+
+	/**
+	 * https://developer.android.com/guide/components/bound-services#Binder
+	 */
+	public class LocalBinder extends Binder {
+		TimerService getService() {
+			return TimerService.this;
+		}
+	}
+
+	/**
+	 * https://developer.android.com/guide/components/bound-services#Binder
+	 */
+	@Override
+	public IBinder onBind(Intent intent) {
+		return binder;
+	}
 }

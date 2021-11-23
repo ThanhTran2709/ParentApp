@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 /**
  * Adapter for recyclerview in viewing history of flips.
- * */
+ */
 public class FlipHistoryAdapter extends RecyclerView.Adapter<FlipHistoryAdapter.ViewHolder> {
 
 	//taken more or less from android's recyclerview guide
@@ -66,7 +66,7 @@ public class FlipHistoryAdapter extends RecyclerView.Adapter<FlipHistoryAdapter.
 	private Context context;
 	private ArrayList<Coin> flips;
 
-	public FlipHistoryAdapter(Context context, ArrayList<Coin> flips){
+	public FlipHistoryAdapter(Context context, ArrayList<Coin> flips) {
 		this.context = context;
 		this.flips = flips;
 	}
@@ -83,7 +83,7 @@ public class FlipHistoryAdapter extends RecyclerView.Adapter<FlipHistoryAdapter.
 		Coin coin = flips.get(position);
 		Child child = coin.getChild();
 		String flipResult;
-		switch (coin.getFlipResult()){
+		switch (coin.getFlipResult()) {
 			case Coin.HEADS:
 				flipResult = context.getString(R.string.heads);
 				break;
@@ -103,7 +103,7 @@ public class FlipHistoryAdapter extends RecyclerView.Adapter<FlipHistoryAdapter.
 		String timeString = context.getString(R.string.coin_flip_time, LocalDateTimeAdapter.getTimeFormatted(coin.getTime()));
 		holder.getTextViewTime().setText(timeString);
 
-		if (coin.hasNoChoice()){
+		if (coin.hasNoChoice()) {
 			Drawable heart = AppCompatResources.getDrawable(context, R.drawable.ic_round_favorite_24);
 			holder.getImageViewResult().setImageDrawable(heart);
 		}
@@ -111,13 +111,14 @@ public class FlipHistoryAdapter extends RecyclerView.Adapter<FlipHistoryAdapter.
 			if (coin.getFlipChoice() == coin.getFlipResult()) {
 				Drawable checkmark = AppCompatResources.getDrawable(context, R.drawable.ic_round_check_circle_24);
 				holder.getImageViewResult().setImageDrawable(checkmark);
-			} else {
+			}
+			else {
 				Drawable cross = AppCompatResources.getDrawable(context, R.drawable.ic_round_cancel_24);
 				holder.getImageViewResult().setImageDrawable(cross);
 			}
 		}
 
-		if (child.getImageBitmap() == null){
+		if (child.getImageBitmap() == null) {
 			holder.getImageViewChildIcon().setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.default_image));
 		}
 		else {
