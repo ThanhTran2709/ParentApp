@@ -158,13 +158,21 @@
         app:layout_constraintTop_toBottomOf="@+id/textViewChild"
         app:srcCompat="@drawable/heads" />
 
-    <ImageView
-        android:id="@+id/imageViewFlippingChild"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+    <androidx.cardview.widget.CardView
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="@+id/textViewChild"
-        app:layout_constraintTop_toBottomOf="@+id/textViewChild"
-        app:srcCompat="@drawable/default_image" />
+        app:cardCornerRadius="35dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewChild">
+
+        <ImageView
+            android:id="@+id/imageViewFlippingChild"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/default_image" />
+    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
