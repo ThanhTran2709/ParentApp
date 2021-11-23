@@ -37,7 +37,25 @@ public class MainActivity extends AppCompatActivity {
         setUpMyChildrenButton();
         setUpCoinFlipButton();
         setUpTimerButton();
+        setUpTaskListButton();
+        setUpHelpBtn();
         setUpExitBtn();
+    }
+
+    private void setUpTaskListButton() {
+        Button taskListButton = findViewById(R.id.task_list_button);
+        taskListButton.setOnClickListener(view -> {
+            Intent i = TaskActivity.getIntent(MainActivity.this);
+            startActivity(i);
+        });
+    }
+
+    private void setUpHelpBtn() {
+        Button helpBtn = findViewById(R.id.helpBtn);
+        helpBtn.setOnClickListener(view -> {
+            Intent i = HelpActivity.getIntent(MainActivity.this);
+            startActivity(i);
+        });
     }
 
     private void setUpExitBtn() {
@@ -117,15 +135,22 @@ public class MainActivity extends AppCompatActivity {
         Animation slideIn2 = AnimationUtils.loadAnimation(this, R.anim.slide_in);
         Animation slideIn3 = AnimationUtils.loadAnimation(this, R.anim.slide_in);
         Animation slideIn4 = AnimationUtils.loadAnimation(this, R.anim.slide_in);
+        Animation slideIn5 = AnimationUtils.loadAnimation(this, R.anim.slide_in);
+        Animation slideIn6 = AnimationUtils.loadAnimation(this, R.anim.slide_in);
+
 
         Button timerButton = findViewById(R.id.timer_button);
         Button coinFlipButton = findViewById(R.id.flip_a_coin_button);
         Button myChildrenButton = findViewById(R.id.my_children_button);
+        Button helpBtn = findViewById(R.id.helpBtn);
         Button exitButton = findViewById(R.id.exitBtn);
+        Button taskButton = findViewById(R.id.task_list_button);
 
         coinFlipButton.setVisibility(View.INVISIBLE);
         timerButton.setVisibility(View.INVISIBLE);
+        helpBtn.setVisibility(View.INVISIBLE);
         exitButton.setVisibility(View.INVISIBLE);
+        taskButton.setVisibility(View.INVISIBLE);
 
         myChildrenButton.startAnimation(slideIn);
 
@@ -133,15 +158,23 @@ public class MainActivity extends AppCompatActivity {
         handler.postDelayed(() -> {
             coinFlipButton.setVisibility(View.VISIBLE);
             coinFlipButton.startAnimation(slideIn2);
-        }, 300);
+        }, 200);
         handler.postDelayed(() -> {
             timerButton.setVisibility(View.VISIBLE);
             timerButton.startAnimation(slideIn3);
+        }, 400);
+        handler.postDelayed(() -> {
+            taskButton.setVisibility(View.VISIBLE);
+            taskButton.startAnimation(slideIn4);
         }, 600);
         handler.postDelayed(() -> {
+            helpBtn.setVisibility(View.VISIBLE);
+            helpBtn.startAnimation(slideIn5);
+        }, 800);
+        handler.postDelayed(() -> {
             exitButton.setVisibility(View.VISIBLE);
-            exitButton.startAnimation(slideIn4);
-        }, 900);
+            exitButton.startAnimation(slideIn6);
+        }, 1000);
     }
 
     /**
