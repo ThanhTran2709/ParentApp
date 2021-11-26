@@ -1,5 +1,6 @@
 package com.cmpt276.model;
 
+import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -10,6 +11,7 @@ public class Task {
 	private static final int NO_CHILD = -1;
 	private String taskName;
 	private int currentChildIndex;
+	private ArrayList<TaskHistory> taskHistoryList;
 
 	public Task(String taskName, int numberOfChildren) {
 		this.taskName = taskName;
@@ -58,5 +60,9 @@ public class Task {
 				currentChildIndex = 0;
 			}
 		}
+	}
+
+	public void addTaskHistory(TaskHistory taskHistory){
+		taskHistoryList.add(taskHistory);
 	}
 }
