@@ -144,7 +144,7 @@ public class TimerActivity extends AppCompatActivity {
 		timeText.setText(originalTime);
 
 		ProgressBar progressBar = findViewById(R.id.progressBar);
-		progressBar.setProgress(100);
+		progressBar.setProgress((int)(originalTimeInMilliSeconds / 1000.0));
 	}
 
 	private void setUpNewTimerButton() {
