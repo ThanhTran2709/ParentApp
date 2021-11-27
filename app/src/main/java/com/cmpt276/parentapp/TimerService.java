@@ -118,7 +118,7 @@ public class TimerService extends Service {
 	}
 
 	public double getProgress(){
-		return ((remainingMilliSeconds * 1.0)/originalTimeInMilliSeconds)*100 ;
+		return remainingMilliSeconds/ 1000.0 ;
 	}
 
 	/**

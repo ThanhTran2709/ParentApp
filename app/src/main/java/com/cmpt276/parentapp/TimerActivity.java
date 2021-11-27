@@ -63,11 +63,17 @@ public class TimerActivity extends AppCompatActivity {
 
 		originalTimeInMilliSeconds = this.getIntent().getLongExtra(ORIGINAL_TIME_IN_MILLI_SECONDS_TAG, DEFAULT_MINUTES_IN_MILLI_SECONDS);
 		isServiceRunning = this.getIntent().getBooleanExtra(SERVICE_RUNNING_FLAG, false);
+		setUpPieChart();
 		setUpPausePlayButton();
 		setUpResetButton();
 		setUpNewTimerButton();
 		setUpBackBtn();
 
+	}
+
+	private void setUpPieChart() {
+		ProgressBar progressBar = findViewById(R.id.progressBar);
+		progressBar.setMax((int)(originalTimeInMilliSeconds /1000.0));
 	}
 
 	private void setUpBackBtn() {
