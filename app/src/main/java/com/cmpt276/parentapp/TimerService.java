@@ -117,8 +117,8 @@ public class TimerService extends Service {
 		return String.format(getString(R.string.time_label_format), remainingMinutes, remainingSeconds);
 	}
 
-	public int getProgress(){
-		return (int)((remainingMilliSeconds * 100 )/originalTimeInMilliSeconds) ;
+	public double getProgress(){
+		return ((remainingMilliSeconds * 1.0)/originalTimeInMilliSeconds)*100 ;
 	}
 
 	/**

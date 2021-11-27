@@ -123,8 +123,8 @@ public class TimerActivity extends AppCompatActivity {
 		timeText.setText(timerService.getTimeString());
 
 		ProgressBar progressBar = findViewById(R.id.progressBar);
-		progressBar.setProgress(timerService.getProgress());
-		Log.i("progress" ,timerService.getProgress() + " ");
+		progressBar.setProgress((int)timerService.getProgress());
+		Log.i("progress" ,progressBar.getProgress() + " ");
 	}
 
 	private void resetTimer() {
@@ -138,7 +138,7 @@ public class TimerActivity extends AppCompatActivity {
 		timeText.setText(originalTime);
 
 		ProgressBar progressBar = findViewById(R.id.progressBar);
-		progressBar.setProgress(0);
+		progressBar.setProgress(100);
 	}
 
 	private void setUpNewTimerButton() {
@@ -217,6 +217,9 @@ public class TimerActivity extends AppCompatActivity {
 	private void setUpStopAlarmButton() {
 
 		if (timerService.isFinish()) {
+			ProgressBar progressBar = findViewById(R.id.progressBar);
+			progressBar.setProgress(0);
+
 			Button stopAlarmButton = findViewById(R.id.stop_alarm_button);
 			Button pausePlayButton = findViewById(R.id.pause_play);
 			Button resetButton = findViewById(R.id.reset_button);
