@@ -10,8 +10,10 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 /**
@@ -107,7 +109,7 @@ public class TimerActivity extends AppCompatActivity {
 		timerReceiver = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) {
-				updateTimerLabel();
+				updateTimerLabelAndChart();
 			}
 		};
 
@@ -116,9 +118,13 @@ public class TimerActivity extends AppCompatActivity {
 		registerReceiver(timerReceiver, filter);
 	}
 
-	private void updateTimerLabel() {
+	private void updateTimerLabelAndChart() {
 		TextView timeText = findViewById(R.id.time_text);
 		timeText.setText(timerService.getTimeString());
+
+		ProgressBar progressBar = findViewById(R.id.progressBar);
+		progressBar.setProgress(timerService.getProgress());
+		Log.i("progress" ,timerService.getProgress() + " ");
 	}
 
 	private void resetTimer() {
@@ -130,6 +136,9 @@ public class TimerActivity extends AppCompatActivity {
 
 		TextView timeText = findViewById(R.id.time_text);
 		timeText.setText(originalTime);
+
+		ProgressBar progressBar = findViewById(R.id.progressBar);
+		progressBar.setProgress(0);
 	}
 
 	private void setUpNewTimerButton() {
@@ -184,7 +193,7 @@ public class TimerActivity extends AppCompatActivity {
 				}
 				else {
 					timerService.pauseTimer();
-					updateTimerLabel();
+					updateTimerLabelAndChart();
 				}
 			}
 			updatePausePlayButtonText();
@@ -245,7 +254,7 @@ public class TimerActivity extends AppCompatActivity {
 			timerService = binder.getService();
 			timerServiceBound = true;
 
-			updateTimerLabel();
+			updateTimerLabelAndChart();
 			updatePausePlayButtonText();
 			setUpStopAlarmButton();
 

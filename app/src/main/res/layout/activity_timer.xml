@@ -3,8 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/white"
     android:layout_height="match_parent"
+    android:background="@color/white"
+    android:elevation="100dp"
     tools:context=".TimerActivity">
 
     <androidx.appcompat.widget.AppCompatButton
@@ -13,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="16dp"
-        android:background="@drawable/rounded_corner_red"
+        android:background="@drawable/rounded_corner_blue"
         android:fontFamily="@font/moon_bold_font"
         android:padding="16sp"
         android:text="@string/back"
@@ -25,32 +26,15 @@
         app:layout_constraintVertical_bias="0.744" />
 
     <TextView
-        android:id="@+id/time_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/children_list_shape"
-        android:fontFamily="@font/moon_bold_font"
-        android:padding="16dp"
-        android:text="@string/minutes_text"
-        android:textColor="@color/black"
-        android:textSize="60sp"
-        app:layout_constraintBottom_toTopOf="@+id/guideline2"
-        app:layout_constraintEnd_toEndOf="@+id/timer_title"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="@+id/timer_title"
-        app:layout_constraintTop_toBottomOf="@+id/timer_title"
-        app:layout_constraintVertical_bias="0.216" />
-
-    <TextView
         android:id="@+id/timer_title"
-        android:gravity="center_horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:fontFamily="@font/moon_bold_font"
+        android:gravity="center_horizontal"
         android:text="@string/timeout_timer_title"
         android:textColor="@color/black"
-        android:textSize="64sp"
+        android:textSize="48sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -59,13 +43,15 @@
         android:id="@+id/pause_play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/rounded_corner_pink"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/rounded_corner_red"
         android:fontFamily="@font/moon_bold_font"
         android:padding="16dp"
         android:text="@string/pause_button_text"
         android:textColor="@color/black"
-        android:textSize="34sp"
+        android:textSize="24sp"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintHorizontal_bias="0.53"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline2" />
 
@@ -73,12 +59,13 @@
         android:id="@+id/reset_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/rounded_corner_purple"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/rounded_corner_gold"
         android:fontFamily="@font/moon_bold_font"
         android:padding="16dp"
         android:text="@string/reset_button_text"
         android:textColor="@color/black"
-        android:textSize="34sp"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline3"
         app:layout_constraintTop_toTopOf="@+id/guideline2" />
@@ -87,15 +74,15 @@
         android:id="@+id/new_timer_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/rounded_corner_orange"
         android:fontFamily="@font/moon_bold_font"
         android:padding="16dp"
         android:text="@string/new_timer"
         android:textColor="@color/black"
-        android:textSize="34sp"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pause_play" />
 
@@ -104,7 +91,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.59" />
+        app:layout_constraintGuide_percent="0.65" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/stop_alarm_button"
@@ -115,14 +102,13 @@
         android:padding="16dp"
         android:text="@string/stop_alarm"
         android:textColor="@color/black"
-        android:textSize="34sp"
+        android:textSize="24sp"
         android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/time_text"
-        app:layout_constraintVertical_bias="0.415" />
+        app:layout_constraintVertical_bias="0.481" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline3"
@@ -130,5 +116,54 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.5" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="24dp"
+        android:elevation="50dp"
+        android:indeterminate="false"
+        android:indeterminateBehavior="repeat"
+        android:indeterminateOnly="false"
+        android:max="100"
+        android:min="0"
+        android:progress="100"
+        android:progressDrawable="@drawable/circle"
+        android:visibility="visible"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toStartOf="@+id/guideline8"
+        app:layout_constraintStart_toStartOf="@+id/guideline7"
+        app:layout_constraintTop_toBottomOf="@+id/timer_title" />
+
+    <TextView
+        android:id="@+id/time_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/children_list_shape"
+        android:fontFamily="@font/moon_bold_font"
+        android:padding="16dp"
+        android:text="@string/minutes_text"
+        android:textColor="@color/black"
+        android:textSize="34sp"
+        app:layout_constraintEnd_toEndOf="@+id/progressBar"
+        app:layout_constraintStart_toStartOf="@+id/progressBar"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.25" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.75" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

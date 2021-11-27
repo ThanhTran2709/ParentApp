@@ -117,6 +117,10 @@ public class TimerService extends Service {
 		return String.format(getString(R.string.time_label_format), remainingMinutes, remainingSeconds);
 	}
 
+	public int getProgress(){
+		return (int)((remainingMilliSeconds * 100 )/originalTimeInMilliSeconds) ;
+	}
+
 	/**
 	 * https://developer.android.com/training/notify-user/build-notification
 	 */
