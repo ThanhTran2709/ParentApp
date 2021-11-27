@@ -23,6 +23,8 @@ import java.util.Calendar;
  */
 public class MainActivity extends AppCompatActivity {
 
+    private static final long SLIDE_ENTRY_DELAY = 200;
+
 	private ActivityMainBinding binding;
 	TimerService timerService;
 	private boolean timerServiceBound = false;
@@ -39,9 +41,18 @@ public class MainActivity extends AppCompatActivity {
 		setUpCoinFlipButton();
 		setUpTimerButton();
 		setUpTaskListButton();
+		setUpTakeBreathButton();
 		setUpHelpBtn();
 		setUpExitBtn();
 	}
+
+    private void setUpTakeBreathButton() {
+        Button takeBreathButton = findViewById(R.id.take_breath_button);
+        takeBreathButton.setOnClickListener(view -> {
+            Intent i = TakeBreathActivity.getIntent(MainActivity.this);
+            startActivity(i);
+        });
+    }
 
 	private void setUpTaskListButton() {
 		Button taskListButton = findViewById(R.id.task_list_button);
@@ -132,36 +143,42 @@ public class MainActivity extends AppCompatActivity {
 
 	private void setUpAnimation() {
 
-		Animation slideIn = AnimationUtils.loadAnimation(this, R.anim.slide_in);
-		Animation slideIn2 = AnimationUtils.loadAnimation(this, R.anim.slide_in);
-		Animation slideIn3 = AnimationUtils.loadAnimation(this, R.anim.slide_in);
-		Animation slideIn4 = AnimationUtils.loadAnimation(this, R.anim.slide_in);
+        Animation slideIn = AnimationUtils.loadAnimation(this, R.anim.slide_in);
+        Animation slideIn2 = AnimationUtils.loadAnimation(this, R.anim.slide_in);
+        Animation slideIn3 = AnimationUtils.loadAnimation(this, R.anim.slide_in);
+        Animation slideIn4 = AnimationUtils.loadAnimation(this, R.anim.slide_in);
+        Animation slideIn5 = AnimationUtils.loadAnimation(this, R.anim.slide_in);
 
+        Button timerButton = findViewById(R.id.timer_button);
+        Button coinFlipButton = findViewById(R.id.flip_a_coin_button);
+        Button myChildrenButton = findViewById(R.id.my_children_button);
+        Button taskButton = findViewById(R.id.task_list_button);
+        Button takeBreathButton = findViewById(R.id.take_breath_button);
 
-		Button timerButton = findViewById(R.id.timer_button);
-		Button coinFlipButton = findViewById(R.id.flip_a_coin_button);
-		Button myChildrenButton = findViewById(R.id.my_children_button);
-		Button taskButton = findViewById(R.id.task_list_button);
-
-		coinFlipButton.setVisibility(View.INVISIBLE);
-		timerButton.setVisibility(View.INVISIBLE);
-		taskButton.setVisibility(View.INVISIBLE);
+        coinFlipButton.setVisibility(View.INVISIBLE);
+        timerButton.setVisibility(View.INVISIBLE);
+        taskButton.setVisibility(View.INVISIBLE);
+        takeBreathButton.setVisibility(View.INVISIBLE);
 
 		myChildrenButton.startAnimation(slideIn);
 
-		Handler handler = new Handler();
-		handler.postDelayed(() -> {
-			coinFlipButton.setVisibility(View.VISIBLE);
-			coinFlipButton.startAnimation(slideIn2);
-		}, 200);
-		handler.postDelayed(() -> {
-			timerButton.setVisibility(View.VISIBLE);
-			timerButton.startAnimation(slideIn3);
-		}, 400);
-		handler.postDelayed(() -> {
-			taskButton.setVisibility(View.VISIBLE);
-			taskButton.startAnimation(slideIn4);
-		}, 600);
+        Handler handler = new Handler();
+        handler.postDelayed(() -> {
+            coinFlipButton.setVisibility(View.VISIBLE);
+            coinFlipButton.startAnimation(slideIn2);
+        }, SLIDE_ENTRY_DELAY);
+        handler.postDelayed(() -> {
+            timerButton.setVisibility(View.VISIBLE);
+            timerButton.startAnimation(slideIn3);
+        }, 2 * SLIDE_ENTRY_DELAY);
+        handler.postDelayed(() -> {
+            taskButton.setVisibility(View.VISIBLE);
+            taskButton.startAnimation(slideIn4);
+        }, 3 * SLIDE_ENTRY_DELAY);
+        handler.postDelayed(() -> {
+            takeBreathButton.setVisibility(View.VISIBLE);
+            takeBreathButton.startAnimation(slideIn5);
+        }, 4 * SLIDE_ENTRY_DELAY);
 
 	}
 

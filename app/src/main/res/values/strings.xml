@@ -112,4 +112,7 @@
     <string name="no_task_created_yet">No Task\nCreated Yet</string>
     <string name="task_name_error_toast_message">Error! Enter a valid task name</string>
 
+    <!-- Take Breath strings -->
+    <string name="take_breath">Take a breath</string>
+
 </resources>
