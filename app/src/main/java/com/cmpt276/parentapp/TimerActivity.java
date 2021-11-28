@@ -1,5 +1,6 @@
 package com.cmpt276.parentapp;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.BroadcastReceiver;
@@ -11,10 +12,12 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toolbar;
 
 /**
  * Contains the UI for the timer
@@ -63,11 +66,20 @@ public class TimerActivity extends AppCompatActivity {
 
 		originalTimeInMilliSeconds = this.getIntent().getLongExtra(ORIGINAL_TIME_IN_MILLI_SECONDS_TAG, DEFAULT_MINUTES_IN_MILLI_SECONDS);
 		isServiceRunning = this.getIntent().getBooleanExtra(SERVICE_RUNNING_FLAG, false);
+		setUpToolBar();
 		setUpPieChart();
 		setUpPausePlayButton();
 		setUpResetButton();
 		setUpNewTimerButton();
-		setUpBackBtn();
+		//setUpBackBtn();
+
+	}
+
+	private void setUpToolBar() {
+		setSupportActionBar(findViewById(R.id.timer_toolbar));
+
+		ActionBar actionBar = getSupportActionBar();
+		actionBar.setDisplayHomeAsUpEnabled(true);
 
 	}
 
@@ -76,10 +88,16 @@ public class TimerActivity extends AppCompatActivity {
 		progressBar.setMax((int)(originalTimeInMilliSeconds /1000.0));
 	}
 
-	private void setUpBackBtn() {
-		Button backBtn = findViewById(R.id.backBtn_timer);
-		backBtn.setOnClickListener(view -> finish());
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.timer_menu, menu);
+		return true;
 	}
+
+	//	private void setUpBackBtn() {
+//		Button backBtn = findViewById(R.id.backBtn_timer);
+//		backBtn.setOnClickListener(view -> finish());
+//	}
 
 	@Override
 	protected void onStart() {
