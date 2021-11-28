@@ -24,9 +24,9 @@ public class BreatheButton extends androidx.appcompat.widget.AppCompatButton {
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		super.onTouchEvent(event);
-		System.out.println("Clicking");
 		switch (event.getAction()) {
 			case MotionEvent.ACTION_DOWN:
+				performClick();
 				return true;
 
 			case MotionEvent.ACTION_UP:
