@@ -1,27 +1,33 @@
 package com.cmpt276.model;
 
-import com.cmpt276.parentapp.serializer.LocalDateTimeAdapter;
-
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class TaskHistory {
-    LocalDateTime dateTaskDone;
+    String dateTaskDone;
     int childIndex;
 
     public TaskHistory(int childIndex){
         this.childIndex = childIndex;
-        dateTaskDone = LocalDateTime.now();
+        LocalDateTime localDateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy hh:mm a");
+        dateTaskDone = localDateTime.format(formatter);
+
+    }
+     public void setChildIndex(int newIndex){
+        childIndex = newIndex;
+     }
+
+    public void decrementChildIndex(){
+        childIndex = childIndex - 1;
     }
 
-    public void setChildIndex(int newChildIndex){
-        childIndex = newChildIndex;
-    }
-
-    public LocalDateTime getDateTaskDone() {
+    public String getDateTaskDone() {
         return dateTaskDone;
     }
 
     public int getChildIndex() {
         return childIndex;
     }
+
 }
