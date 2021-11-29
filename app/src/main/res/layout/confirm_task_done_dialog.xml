@@ -139,7 +139,7 @@
             android:id="@+id/showHistoryButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/rounded_corner_pink"
+            android:background="@drawable/rounded_corner_blue"
             android:fontFamily="@font/moon_bold_font"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
