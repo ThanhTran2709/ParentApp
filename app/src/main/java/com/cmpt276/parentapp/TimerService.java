@@ -223,6 +223,10 @@ public class TimerService extends Service {
 		return originalTimeInMilliSeconds;
 	}
 
+	public void resetFinish(){
+		isFinish = false;
+	}
+
 	public void setSpeed(int newSpeed){
 		speed = newSpeed;
 	}

@@ -5,6 +5,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -97,6 +98,7 @@ public class TimerActivity extends AppCompatActivity {
 
     }
 
+    @SuppressLint("StringFormatInvalid")
     private void setUpSpeedText() {
         TextView speedText = findViewById(R.id.speed_text);
         speedText.setText(getString(R.string.speed_text, speed));
@@ -117,6 +119,7 @@ public class TimerActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         this.menu = menu;
         getMenuInflater().inflate(R.menu.timer_menu, menu);
+        updateSpeedButtonVisibility();
         return true;
     }
 
@@ -125,7 +128,6 @@ public class TimerActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_speed: {
                 displaySpeedSelectionDialog();
-
                 return true;
             }
             default:
@@ -139,7 +141,8 @@ public class TimerActivity extends AppCompatActivity {
         } else {
             if (timerService.isPaused()) {
                 timerService.setSpeed(speed);
-            } else {
+            }
+            else {
                 timerService.pauseTimer();
                 timerService.setSpeed(speed);
                 timerService.playTimer();
@@ -251,6 +254,7 @@ public class TimerActivity extends AppCompatActivity {
     private void resetTimer() {
 
         String originalTime = timerService.getOriginalTimeString();
+        timerService.resetFinish();
 
         stopService(serviceIntent);
         isServiceRunning = false;
@@ -282,7 +286,6 @@ public class TimerActivity extends AppCompatActivity {
     }
 
     private void setUpResetButton() {
-
         Button resetButton = findViewById(R.id.reset_button);
         resetButton.setOnClickListener(view -> resetTimer());
     }
@@ -331,6 +334,15 @@ public class TimerActivity extends AppCompatActivity {
         registerReceiver(stopAlarmReceiver, filter);
     }
 
+    private void updateSpeedButtonVisibility(){
+        if(menu == null || timerService == null){
+            return;
+        }
+
+        MenuItem item = menu.findItem(R.id.action_speed);
+        item.setVisible(!timerService.isFinish());
+    }
+
     private void setUpStopAlarmButton() {
 
         if (timerService.isFinish()) {
@@ -342,14 +354,13 @@ public class TimerActivity extends AppCompatActivity {
             Button resetButton = findViewById(R.id.reset_button);
             Button newTimerButton = findViewById(R.id.new_timer_button);
             TextView speedText = findViewById(R.id.speed_text);
-            MenuItem item = menu.findItem(R.id.action_speed);
 
             stopAlarmButton.setVisibility(View.VISIBLE);
             pausePlayButton.setVisibility(View.INVISIBLE);
             resetButton.setVisibility(View.INVISIBLE);
             newTimerButton.setVisibility(View.INVISIBLE);
             speedText.setVisibility(View.INVISIBLE);
-            item.setVisible(false);
+            updateSpeedButtonVisibility();
 
             stopAlarmButton.setOnClickListener(view -> {
                 timerService.stopSoundAndVibration();
@@ -360,7 +371,7 @@ public class TimerActivity extends AppCompatActivity {
                 resetButton.setVisibility(View.VISIBLE);
                 newTimerButton.setVisibility(View.VISIBLE);
                 speedText.setVisibility(View.VISIBLE);
-                item.setVisible(true);
+                updateSpeedButtonVisibility();
             });
         }
 
@@ -382,7 +393,6 @@ public class TimerActivity extends AppCompatActivity {
             updateTimerLabelAndChart();
             updatePausePlayButtonText();
             setUpStopAlarmButton();
-
         }
 
         @Override
