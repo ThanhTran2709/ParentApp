@@ -2,10 +2,10 @@ package com.cmpt276.parentapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -14,9 +14,9 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,8 +25,11 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -39,6 +42,7 @@ public class TimerActivity extends AppCompatActivity {
     private static final String TIMER_SERVICE_BROADCAST = "timer_service_broadcast";
     private static final String STOP_ALARM_BROADCAST = "stop_alarm_broadcast";
     private static final String SERVICE_RUNNING_FLAG = "service_running_flag";
+    private static final String SPEED_TAG = "speed_flag";
     private static final long DEFAULT_MINUTES_IN_MILLI_SECONDS = 0L;
     private static final int DEFAULT_SPEED = 100;
 
@@ -46,7 +50,7 @@ public class TimerActivity extends AppCompatActivity {
     private Intent serviceIntent;
     private long originalTimeInMilliSeconds;
     private boolean isServiceRunning;
-    int speed = DEFAULT_SPEED;
+    int speed;
 
     BroadcastReceiver timerReceiver;
     BroadcastReceiver stopAlarmReceiver;
@@ -56,16 +60,18 @@ public class TimerActivity extends AppCompatActivity {
 
 
     public static Intent getIntent(Context context, long minutesInMilliSeconds) {
-        return TimerActivity.getIntent(context, minutesInMilliSeconds, false);
+        return TimerActivity.getIntent(context, minutesInMilliSeconds, false, DEFAULT_SPEED);
     }
 
     public static Intent getIntent(Context context,
                                    long originalTimeInMilliSeconds,
-                                   boolean isServiceRunning) {
+                                   boolean isServiceRunning,
+                                   int speed) {
 
         Intent intent = new Intent(context, TimerActivity.class);
         intent.putExtra(ORIGINAL_TIME_IN_MILLI_SECONDS_TAG, originalTimeInMilliSeconds);
         intent.putExtra(SERVICE_RUNNING_FLAG, isServiceRunning);
+        intent.putExtra(SPEED_TAG, speed);
 
         return intent;
 
@@ -79,6 +85,7 @@ public class TimerActivity extends AppCompatActivity {
 
         originalTimeInMilliSeconds = this.getIntent().getLongExtra(ORIGINAL_TIME_IN_MILLI_SECONDS_TAG, DEFAULT_MINUTES_IN_MILLI_SECONDS);
         isServiceRunning = this.getIntent().getBooleanExtra(SERVICE_RUNNING_FLAG, false);
+        speed = this.getIntent().getIntExtra(SPEED_TAG, DEFAULT_SPEED);
         setUpToolBar();
         setUpPieChart();
         setUpPausePlayButton();
@@ -95,8 +102,6 @@ public class TimerActivity extends AppCompatActivity {
 
     private void setUpToolBar() {
         setSupportActionBar(findViewById(R.id.timer_toolbar));
-
-
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
@@ -125,31 +130,70 @@ public class TimerActivity extends AppCompatActivity {
     }
 
     private void displaySpeedSelectionDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
+        Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.change_speed_dialog);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        AtomicInteger selected = new AtomicInteger(speed);
+
+        RadioGroup speedGroup = dialog.findViewById(R.id.change_speed_radio_group);
         int[] speeds = getResources().getIntArray(R.array.timer_speeds_array);
-        String[] speed_options = getResources().getStringArray(R.array.speed_string_options_array);
 
-        AtomicInteger selected = new AtomicInteger();
+        for (int speed_option : speeds) {
+            RadioButton speedButton = new RadioButton(speedGroup.getContext());
+            setButtonGraphics(speedButton, speed_option + "%");
+            speedGroup.addView(speedButton);
 
-        for(int i = 0; i < speeds.length; i++){
-            if(speeds[i] == speed){
-                selected.set(i);
+            if(speed_option == speed){
+                speedButton.setChecked(true);
             }
+
+            speedButton.setOnClickListener(view -> {
+                selected.set(speed_option);
+            });
         }
 
-        builder.setTitle(R.string.change_speed);
-        builder.setSingleChoiceItems(speed_options,
-                selected.get(), (dialogInterface, i) -> selected.set(i));
-        builder.setPositiveButton("SELECT", (dialogInterface, i) -> {
-            speed = speeds[selected.get()];
+        FloatingActionButton selectFab = dialog.findViewById(R.id.select_speed_fab);
+        selectFab.setOnClickListener(view -> {
+            speed = selected.get();
+            updateSpeed();
             setUpSpeedText();
-            dialogInterface.dismiss();
+            dialog.dismiss();
         });
 
-        builder.setNeutralButton("CANCEL", (dialogInterface, i) -> dialogInterface.dismiss());
-        builder.show();
+        FloatingActionButton confirmFab = dialog.findViewById(R.id.cancel_change_speed_fab);
+        confirmFab.setOnClickListener(view -> dialog.dismiss());
+        dialog.show();
+    }
 
+    private void setButtonGraphics(RadioButton button, String text) {
+        Typeface font = getResources().getFont(R.font.moon_bold_font);
+
+        button.setText(text);
+        button.setTypeface(font);
+        button.setTextColor(Color.BLACK);
+        button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+        button.setHighlightColor(getColor(R.color.mid_blue));
+    }
+
+
+    private void updateSpeed() {
+        if (!timerServiceBound) {
+            setUpStartService();
+        } else {
+            if(timerService.isPaused()){
+                timerService.setSpeed(speed);
+            }
+            else{
+                timerService.pauseTimer();
+                timerService.setSpeed(speed);
+                timerService.playTimer();
+            }
+        }
+        updatePausePlayButtonText();
     }
 
 
@@ -171,7 +215,7 @@ public class TimerActivity extends AppCompatActivity {
     }
 
     private void setUpStartService() {
-        serviceIntent = TimerService.getIntent(this, originalTimeInMilliSeconds);
+        serviceIntent = TimerService.getIntent(this, originalTimeInMilliSeconds, speed);
 
         if (!isServiceRunning) {
             startService(serviceIntent);
@@ -202,7 +246,6 @@ public class TimerActivity extends AppCompatActivity {
 
         ProgressBar progressBar = findViewById(R.id.progressBar);
         progressBar.setProgress((int) timerService.getProgress());
-        Log.i("progress", progressBar.getProgress() + " ");
     }
 
     private void resetTimer() {

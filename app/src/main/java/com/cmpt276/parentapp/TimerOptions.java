@@ -136,7 +136,7 @@ public class TimerOptions extends AppCompatActivity {
 		button.setTypeface(font);
 		button.setTextColor(Color.BLACK);
 		button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
-		button.setHighlightColor(Color.RED);
+		button.setHighlightColor(getColor(R.color.mid_blue));
 	}
 
 }

@@ -24,20 +24,24 @@ import java.util.concurrent.TimeUnit;
 public class TimerService extends Service {
 
 	private static final String ORIGINAL_TIME_IN_MILLI_SECONDS_TAG = "original_time_in_milli_seconds_tag";
-	private static final long DEFAULT_MINUTES_IN_MILLI_SECONDS = 0L;
+	private static final String SPEED_TAG = "speed_flag";
 	private static final String TIMER_SERVICE_BROADCAST = "timer_service_broadcast";
 	private static final String CHANNEL_LOW_NAME = "channel_low";
 	private static final String CHANNEL_HIGH_NAME = "channel_high";
-
 	private static final String CHANNEL_LOW_PRIORITY_ID = "low_priority_channel";
 	private static final String CHANNEL_HIGH_PRIORITY_ID = "high_priority_channel";
+	private static final String STOP_ALARM_BROADCAST = "stop_alarm_broadcast";
+
 	private static final int NOTIFICATION_ID = 1;
 	private static final int REPEAT_ONCE = 1;
-	private static final String STOP_ALARM_BROADCAST = "stop_alarm_broadcast";
+	private static final long DEFAULT_MINUTES_IN_MILLI_SECONDS = 0L;
+	private static final int DEFAULT_SPEED = 100;
+
 
 	private CountDownTimer timer;
 	private long remainingMilliSeconds;
 	private long originalTimeInMilliSeconds;
+	private int speed;
 	private boolean isPaused;
 	private boolean isFinish;
 	private Vibrator vibrator;
@@ -48,9 +52,10 @@ public class TimerService extends Service {
 	 */
 	private final IBinder binder = new LocalBinder();
 
-	public static Intent getIntent(Context context, long originalTimeInMilliSeconds) {
+	public static Intent getIntent(Context context, long originalTimeInMilliSeconds, int speed) {
 		Intent i = new Intent(context, TimerService.class);
 		i.putExtra(ORIGINAL_TIME_IN_MILLI_SECONDS_TAG, originalTimeInMilliSeconds);
+		i.putExtra(SPEED_TAG, speed);
 		return i;
 	}
 
@@ -67,12 +72,17 @@ public class TimerService extends Service {
 
 		originalTimeInMilliSeconds = intent.getLongExtra(ORIGINAL_TIME_IN_MILLI_SECONDS_TAG, DEFAULT_MINUTES_IN_MILLI_SECONDS);
 		remainingMilliSeconds = originalTimeInMilliSeconds;
+		speed = intent.getIntExtra(SPEED_TAG, DEFAULT_SPEED);
+
 
 		setUpTimerBroadcast(originalTimeInMilliSeconds);
 
 		return START_STICKY;
 	}
 
+	private long getMilliSecondsAccordingToSpeed(long milliseconds){
+		return (long)(milliseconds / (speed / 100.0));
+	}
 
 	@Override
 	public void onDestroy() {
@@ -83,19 +93,19 @@ public class TimerService extends Service {
 	private void setUpTimerBroadcast(long milliSeconds) {
 		isPaused = false;
 		isFinish = false;
-		timer = new CountDownTimer(milliSeconds, 1000) {
+		long millisecondsAccordingToSpeed = getMilliSecondsAccordingToSpeed(milliSeconds);
+		double intervalFraction = speed / 100.0;
+		timer = new CountDownTimer(millisecondsAccordingToSpeed, (long)(1000 / intervalFraction)) {
 
 			@Override
-			public void onTick(long l) {
-
-				remainingMilliSeconds = l;
+			public void onTick(long l ) {
+				remainingMilliSeconds = (long)(l * intervalFraction);
 
 				setUpNotification(getTimeString(), CHANNEL_LOW_PRIORITY_ID);
 
 				Intent broadcastIntent = new Intent();
 				broadcastIntent.setAction(TIMER_SERVICE_BROADCAST);
 				sendBroadcast(broadcastIntent);
-
 			}
 
 			@Override
@@ -103,7 +113,6 @@ public class TimerService extends Service {
 				isFinish = true;
 				isPaused = true;
 				setUpAlarmNotification();
-
 			}
 		};
 		timer.start();
@@ -118,7 +127,7 @@ public class TimerService extends Service {
 	}
 
 	public double getProgress(){
-		return remainingMilliSeconds/ 1000.0 ;
+		return (long)(remainingMilliSeconds/ 1000.0);
 	}
 
 	/**
@@ -126,7 +135,7 @@ public class TimerService extends Service {
 	 */
 	private void setUpNotification(String timeString, String channelId) {
 
-		Intent notificationIntent = TimerActivity.getIntent(this, originalTimeInMilliSeconds, true);
+		Intent notificationIntent = TimerActivity.getIntent(this, originalTimeInMilliSeconds, true, speed);
 		PendingIntent pendingIntent = PendingIntent.getActivity(this,
 				0,
 				notificationIntent,
@@ -209,6 +218,14 @@ public class TimerService extends Service {
 
 	public long getOriginalMilliSeconds() {
 		return originalTimeInMilliSeconds;
+	}
+
+	public void setSpeed(int newSpeed){
+		speed = newSpeed;
+	}
+
+	public int getSpeed() {
+		return speed;
 	}
 
 	/**
