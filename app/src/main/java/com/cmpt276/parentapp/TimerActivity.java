@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.TypedValue;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -50,6 +51,7 @@ public class TimerActivity extends AppCompatActivity {
     private Intent serviceIntent;
     private long originalTimeInMilliSeconds;
     private boolean isServiceRunning;
+    private Menu menu;
     int speed;
 
     BroadcastReceiver timerReceiver;
@@ -104,7 +106,6 @@ public class TimerActivity extends AppCompatActivity {
         setSupportActionBar(findViewById(R.id.timer_toolbar));
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-
     }
 
     private void setUpPieChart() {
@@ -114,6 +115,7 @@ public class TimerActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
         getMenuInflater().inflate(R.menu.timer_menu, menu);
         return true;
     }
@@ -121,73 +123,23 @@ public class TimerActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_speed:
+            case R.id.action_speed: {
                 displaySpeedSelectionDialog();
+
                 return true;
+            }
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    private void displaySpeedSelectionDialog() {
-
-        Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setCancelable(false);
-        dialog.setContentView(R.layout.change_speed_dialog);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-
-        AtomicInteger selected = new AtomicInteger(speed);
-
-        RadioGroup speedGroup = dialog.findViewById(R.id.change_speed_radio_group);
-        int[] speeds = getResources().getIntArray(R.array.timer_speeds_array);
-
-        for (int speed_option : speeds) {
-            RadioButton speedButton = new RadioButton(speedGroup.getContext());
-            setButtonGraphics(speedButton, speed_option + "%");
-            speedGroup.addView(speedButton);
-
-            if(speed_option == speed){
-                speedButton.setChecked(true);
-            }
-
-            speedButton.setOnClickListener(view -> {
-                selected.set(speed_option);
-            });
-        }
-
-        FloatingActionButton selectFab = dialog.findViewById(R.id.select_speed_fab);
-        selectFab.setOnClickListener(view -> {
-            speed = selected.get();
-            updateSpeed();
-            setUpSpeedText();
-            dialog.dismiss();
-        });
-
-        FloatingActionButton confirmFab = dialog.findViewById(R.id.cancel_change_speed_fab);
-        confirmFab.setOnClickListener(view -> dialog.dismiss());
-        dialog.show();
-    }
-
-    private void setButtonGraphics(RadioButton button, String text) {
-        Typeface font = getResources().getFont(R.font.moon_bold_font);
-
-        button.setText(text);
-        button.setTypeface(font);
-        button.setTextColor(Color.BLACK);
-        button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
-        button.setHighlightColor(getColor(R.color.mid_blue));
-    }
-
-
     private void updateSpeed() {
         if (!timerServiceBound) {
             setUpStartService();
         } else {
-            if(timerService.isPaused()){
+            if (timerService.isPaused()) {
                 timerService.setSpeed(speed);
-            }
-            else{
+            } else {
                 timerService.pauseTimer();
                 timerService.setSpeed(speed);
                 timerService.playTimer();
@@ -240,6 +192,54 @@ public class TimerActivity extends AppCompatActivity {
         registerReceiver(timerReceiver, filter);
     }
 
+    private void displaySpeedSelectionDialog() {
+
+        Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.change_speed_dialog);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        AtomicInteger selected = new AtomicInteger(speed);
+
+        RadioGroup speedGroup = dialog.findViewById(R.id.change_speed_radio_group);
+        int[] speeds = getResources().getIntArray(R.array.timer_speeds_array);
+
+        for (int speed_option : speeds) {
+            RadioButton speedButton = new RadioButton(speedGroup.getContext());
+            setButtonGraphics(speedButton, speed_option + "%");
+            speedGroup.addView(speedButton);
+
+            if (speed_option == speed) {
+                speedButton.setChecked(true);
+            }
+
+            speedButton.setOnClickListener(view -> selected.set(speed_option));
+        }
+
+        FloatingActionButton selectFab = dialog.findViewById(R.id.select_speed_fab);
+        selectFab.setOnClickListener(view -> {
+            speed = selected.get();
+            updateSpeed();
+            setUpSpeedText();
+            dialog.dismiss();
+        });
+
+        FloatingActionButton confirmFab = dialog.findViewById(R.id.cancel_change_speed_fab);
+        confirmFab.setOnClickListener(view -> dialog.dismiss());
+        dialog.show();
+    }
+
+    private void setButtonGraphics(RadioButton button, String text) {
+        Typeface font = getResources().getFont(R.font.moon_bold_font);
+
+        button.setText(text);
+        button.setTypeface(font);
+        button.setTextColor(Color.BLACK);
+        button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+        button.setHighlightColor(getColor(R.color.mid_blue));
+    }
+
     private void updateTimerLabelAndChart() {
         TextView timeText = findViewById(R.id.time_text);
         timeText.setText(timerService.getTimeString());
@@ -284,7 +284,6 @@ public class TimerActivity extends AppCompatActivity {
     private void setUpResetButton() {
 
         Button resetButton = findViewById(R.id.reset_button);
-
         resetButton.setOnClickListener(view -> resetTimer());
     }
 
@@ -342,12 +341,13 @@ public class TimerActivity extends AppCompatActivity {
             Button pausePlayButton = findViewById(R.id.pause_play);
             Button resetButton = findViewById(R.id.reset_button);
             Button newTimerButton = findViewById(R.id.new_timer_button);
-
+            MenuItem item = menu.findItem(R.id.action_speed);
 
             stopAlarmButton.setVisibility(View.VISIBLE);
             pausePlayButton.setVisibility(View.INVISIBLE);
             resetButton.setVisibility(View.INVISIBLE);
             newTimerButton.setVisibility(View.INVISIBLE);
+            item.setVisible(false);
 
             stopAlarmButton.setOnClickListener(view -> {
                 timerService.stopSoundAndVibration();
@@ -357,6 +357,7 @@ public class TimerActivity extends AppCompatActivity {
                 pausePlayButton.setVisibility(View.VISIBLE);
                 resetButton.setVisibility(View.VISIBLE);
                 newTimerButton.setVisibility(View.VISIBLE);
+                item.setVisible(true);
             });
         }
 
