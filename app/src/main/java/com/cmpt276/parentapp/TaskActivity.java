@@ -210,9 +210,11 @@ public class TaskActivity extends AppCompatActivity {
 			});
 
 			ImageView childImage = taskView.findViewById(R.id.child_image_task_list);
-			Child currentChild = options.getChildList(TaskActivity.this).get(currentTask.getCurrentChildIndex());
-			if (currentChild.getEncodedImage() != null) {
-				childImage.setImageBitmap(currentChild.getImageBitmap());
+			if (currentTask.getCurrentChildIndex() >= 0) {
+				Child currentChild = options.getChildList(TaskActivity.this).get(currentTask.getCurrentChildIndex());
+				if (currentChild.getEncodedImage() != null) {
+					childImage.setImageBitmap(currentChild.getImageBitmap());
+				}
 			}
 
 			TextView childName = taskView.findViewById(R.id.childNameInTaskList);
@@ -228,9 +230,10 @@ public class TaskActivity extends AppCompatActivity {
 		}
 		ListView taskListView = findViewById(R.id.taskListView);
 		taskListView.setOnItemClickListener((adapterView, taskClicked, position, id) -> {
-			ConfirmTaskDoneDialog dialog = new ConfirmTaskDoneDialog();
-			dialog.showDialog(TaskActivity.this, position);
-
+			if (options.getTaskList(TaskActivity.this).get(position).getCurrentChildIndex() != -1) {
+				ConfirmTaskDoneDialog dialog = new ConfirmTaskDoneDialog();
+				dialog.showDialog(TaskActivity.this, position);
+			}
 		});
 	}
 
@@ -255,15 +258,19 @@ public class TaskActivity extends AppCompatActivity {
 			Task task = options.getTaskList(TaskActivity.this).get(index);
 
 			ImageView childImage = dialog.findViewById(R.id.child_image_confirm_dialog);
-			Child currentChild = options.getChildList(TaskActivity.this).get(task.getCurrentChildIndex());
-			if (currentChild.getEncodedImage() != null) {
-				childImage.setImageBitmap(currentChild.getImageBitmap());
+			if (task.getCurrentChildIndex() >= 0) {
+				Child currentChild = options.getChildList(TaskActivity.this).get(task.getCurrentChildIndex());
+				if (currentChild.getEncodedImage() != null) {
+					childImage.setImageBitmap(currentChild.getImageBitmap());
+				}
 			}
 
 			TextView confirmText = dialog.findViewById(R.id.confirm_message);
 			confirmText.setText(getString(R.string.confirm_message, options.getChildName(TaskActivity.this, task.getCurrentChildIndex()), task.getTaskName()));
 			dialog.show();
 
+			Button showHistoryButton = dialog.findViewById(R.id.showHistoryButton);
+			showHistoryButton.setOnClickListener(getShowHistoryListener(index));
 		}
 
 		private View.OnClickListener getCancelFabListener(Dialog dialog) {
@@ -275,6 +282,13 @@ public class TaskActivity extends AppCompatActivity {
 				options.assignTaskToNextChild(TaskActivity.this, index);
 				populateTaskList();
 				dialog.dismiss();
+			};
+		}
+
+		private View.OnClickListener getShowHistoryListener(int index){
+			return (view) -> {
+				Intent intent = TaskHistoryActivity.makeIntent(TaskActivity.this, index);
+				startActivity(intent);
 			};
 		}
 
