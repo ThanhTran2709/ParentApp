@@ -6,6 +6,19 @@
     android:layout_height="match_parent"
     tools:context=".TakeBreathActivity">
 
+    <SeekBar
+        android:id="@+id/seekbar_num_breaths"
+        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:layout_width="340dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:max="9"
+        android:min="0"
+        android:progress="0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonBackTakeBreath"
         android:layout_width="wrap_content"
@@ -40,4 +53,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewBreatheHelp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/release_breath_help"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/button_breathe"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/seekbar_num_breaths"
+        app:layout_constraintVertical_bias="0.4" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

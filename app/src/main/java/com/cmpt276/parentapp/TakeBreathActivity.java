@@ -7,6 +7,8 @@ import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -23,8 +25,13 @@ public class TakeBreathActivity extends AppCompatActivity {
 	private static final long TIME_BREATHE_OUT_STOP_ANIMATION = 10000L;
 	private static final long TIME_BREATHING_DELAY = 1000L; //subject to change depending on needs
 
+	private Options options = Options.getInstance();
 	private State currentState = new IdleState();
-	private int numberOfBreaths;
+
+	//numberBreathSetting is zero indexed, while breathsRemaining is a positive integer
+	//the slider must be zero indexed for it to look normal.
+	private int breathsRemaining;
+	private int numberBreathSetting;
 
 	public void setState(State newState) {
 		currentState.handleExit();
@@ -37,18 +44,27 @@ public class TakeBreathActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_take_breath);
 
+		numberBreathSetting = options.getNumberOfBreaths(this);
+		breathsRemaining = numberBreathSetting + 1;
+
 		setUpBackButton();
 		setUpStartButton();
 		setUpBreatheButton();
+		//TODO: label seekbar with numbers 1 to 10
+		setUpSeekBar();
 
 		setState(new ReadyState());
-
-		//TODO: add way to change number of breaths, and pull this number from options
-		numberOfBreaths = 10; //hardcoded
 	}
 
 	public static Intent getIntent(Context context) {
 		return new Intent(context, TakeBreathActivity.class);
+	}
+
+	private void setUpBackButton() {
+		Button backButton = findViewById(R.id.buttonBackTakeBreath);
+		backButton.setOnClickListener(view -> {
+			TakeBreathActivity.this.finish();
+		});
 	}
 
 	private void setUpStartButton() {
@@ -79,14 +95,27 @@ public class TakeBreathActivity extends AppCompatActivity {
 		});
 	}
 
-	private void setUpBackButton() {
-		Button backButton = findViewById(R.id.buttonBackTakeBreath);
-		backButton.setOnClickListener(view -> {
-			TakeBreathActivity.this.finish();
+	private void setUpSeekBar() {
+		SeekBar seekBarNumBreaths = findViewById(R.id.seekbar_num_breaths);
+		seekBarNumBreaths.setProgress(numberBreathSetting);
+		seekBarNumBreaths.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+				numberBreathSetting = i; //i is zero indexed, we want the number of breaths to be nonzero
+			}
+
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {
+				//do nothing
+			}
+
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {
+				breathsRemaining = numberBreathSetting + 1;
+				options.setNumberOfBreaths(TakeBreathActivity.this, numberBreathSetting);
+			}
 		});
 	}
-
-
 
 	//////////////////////////////////
 	//            STATES            //
@@ -111,12 +140,18 @@ public class TakeBreathActivity extends AppCompatActivity {
 		void handleEnter() {
 			Button startButton = findViewById(R.id.button_start_breathing);
 			startButton.setVisibility(View.VISIBLE);
+
+			SeekBar numBreathSetting = findViewById(R.id.seekbar_num_breaths);
+			numBreathSetting.setVisibility(View.VISIBLE);
 		}
 
 		@Override
 		void handleExit() {
 			Button startButton = findViewById(R.id.button_start_breathing);
 			startButton.setVisibility(View.GONE);
+
+			SeekBar numBreathSetting = findViewById(R.id.seekbar_num_breaths);
+			numBreathSetting.setVisibility(View.GONE);
 		}
 
 		@Override
@@ -223,22 +258,27 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 		@Override
 		void handleEnter() {
-
+			TextView textViewPrompt = findViewById(R.id.textViewBreatheHelp);
+			textViewPrompt.setText(R.string.release_breath_help);
+			textViewPrompt.setVisibility(View.VISIBLE);
 		}
 
 		@Override
 		void handleExit() {
-
+			TextView textViewPrompt = findViewById(R.id.textViewBreatheHelp);
+			textViewPrompt.setVisibility(View.GONE);
 		}
 
 		@Override
 		void onHoldButton() {
-
+			//do nothing
+			System.out.println("INVALID ACTION IN INHALE RELEASE HELP STATE");
 		}
 
 		@Override
 		void onReleaseButton() {
-
+			State inhaleDoneState = new InhaleDoneState();
+			setState(inhaleDoneState);
 		}
 	}
 
@@ -305,11 +345,11 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 		@Override
 		void handleEnter() {
-			numberOfBreaths--;
+			breathsRemaining--;
 			//update display of number of breaths remaining
 
 			Button breatheButton = findViewById(R.id.button_breathe);
-			if (numberOfBreaths > 0){
+			if (breathsRemaining > 0){
 				breatheButton.setText(R.string.breathe_in);
 			}
 			else {
@@ -357,6 +397,12 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 		@Override
 		void handleEnter() {
+			if (breathsRemaining <= 0){
+				State promptMoreState = new PromptMoreState();
+				setState(promptMoreState);
+				return;
+			}
+
 			//change either to InhaleState or InhalingState depending on whether the button is currently being held or not.
 			State buttonHeldState;
 			switch (transition){
@@ -393,11 +439,21 @@ public class TakeBreathActivity extends AppCompatActivity {
 		@Override
 		void handleEnter() {
 			//prompt the user to set the number of breaths needed
+			Button startButton = findViewById(R.id.button_start_breathing);
+			startButton.setText(R.string.set_more_breaths);
+			startButton.setVisibility(View.VISIBLE);
+
+			SeekBar numBreathSetting = findViewById(R.id.seekbar_num_breaths);
+			numBreathSetting.setVisibility(View.VISIBLE);
 		}
 
 		@Override
 		void handleExit() {
+			Button startButton = findViewById(R.id.button_start_breathing);
+			startButton.setVisibility(View.GONE);
 
+			SeekBar numBreathSetting = findViewById(R.id.seekbar_num_breaths);
+			numBreathSetting.setVisibility(View.GONE);
 		}
 
 		@Override
