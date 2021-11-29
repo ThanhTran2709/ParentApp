@@ -60,7 +60,10 @@ public class TimerService extends Service {
 	}
 
 	public static Intent getIntent(Context context) {
-		return new Intent(context, TimerService.class);
+		Intent i = new Intent(context, TimerService.class);
+		i.putExtra(ORIGINAL_TIME_IN_MILLI_SECONDS_TAG, DEFAULT_MINUTES_IN_MILLI_SECONDS);
+		i.putExtra(SPEED_TAG, DEFAULT_SPEED);
+		return i;
 	}
 
 

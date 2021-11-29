@@ -341,12 +341,14 @@ public class TimerActivity extends AppCompatActivity {
             Button pausePlayButton = findViewById(R.id.pause_play);
             Button resetButton = findViewById(R.id.reset_button);
             Button newTimerButton = findViewById(R.id.new_timer_button);
+            TextView speedText = findViewById(R.id.speed_text);
             MenuItem item = menu.findItem(R.id.action_speed);
 
             stopAlarmButton.setVisibility(View.VISIBLE);
             pausePlayButton.setVisibility(View.INVISIBLE);
             resetButton.setVisibility(View.INVISIBLE);
             newTimerButton.setVisibility(View.INVISIBLE);
+            speedText.setVisibility(View.INVISIBLE);
             item.setVisible(false);
 
             stopAlarmButton.setOnClickListener(view -> {
@@ -357,6 +359,7 @@ public class TimerActivity extends AppCompatActivity {
                 pausePlayButton.setVisibility(View.VISIBLE);
                 resetButton.setVisibility(View.VISIBLE);
                 newTimerButton.setVisibility(View.VISIBLE);
+                speedText.setVisibility(View.VISIBLE);
                 item.setVisible(true);
             });
         }
