@@ -54,7 +54,7 @@
         android:id="@+id/timer_start_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/rounded_corner_blue"
+        android:background="@drawable/rounded_corner_orange"
         android:fontFamily="@font/moon_bold_font"
         android:padding="16dp"
         android:text="@string/start_button_text"
