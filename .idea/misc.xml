@@ -5,11 +5,21 @@
       <map>
         <entry key="app/src/main/res/layout/activity_help.xml" value="0.11979166666666667" />
         <entry key="app/src/main/res/layout/add_child_dialog.xml" value="0.13645833333333332" />
+        <entry key="app/src/main/res/drawable/children_list_shape.xml" value="0.18703703703703703" />
         <entry key="app/src/main/res/drawable/circle.xml" value="0.13854166666666667" />
         <entry key="app/src/main/res/drawable/ic_favorite_black_48dp.xml" value="0.18703703703703703" />
+        <entry key="app/src/main/res/drawable/ic_round_add_24.xml" value="0.18703703703703703" />
+        <entry key="app/src/main/res/drawable/ic_round_cancel_24.xml" value="0.18703703703703703" />
+        <entry key="app/src/main/res/drawable/ic_round_check_24.xml" value="0.18703703703703703" />
+        <entry key="app/src/main/res/drawable/ic_round_check_circle_24.xml" value="0.18703703703703703" />
+        <entry key="app/src/main/res/layout/activity_task.xml" value="0.24166666666666667" />
         <entry key="app/src/main/res/layout/activity_timer.xml" value="0.24166666666666667" />
         <entry key="app/src/main/res/layout/clear_dialog.xml" value="0.12239583333333333" />
+        <entry key="app/src/main/res/layout/flip_history_list_item.xml" value="0.24166666666666667" />
+        <entry key="app/src/main/res/layout/pick_image_text_view.xml" value="0.12318840579710146" />
+        <entry key="app/src/main/res/layout/speed_select_dialog.xml" value="0.24139492753623187" />
         <entry key="app/src/main/res/layout/timer_toolbar_menu.xml" value="0.11752786220871327" />
+        <entry key="app/src/main/res/menu/menu_main.xml" value="0.23794871794871794" />
         <entry key="app/src/main/res/menu/timer_menu.xml" value="0.23794871794871794" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.13854166666666667" />
         <entry key="app/src/main/res/drawable-anydpi/timer_icon.xml" value="0.23333333333333334" />
