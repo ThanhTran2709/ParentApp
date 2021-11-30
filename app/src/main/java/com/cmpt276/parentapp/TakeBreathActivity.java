@@ -2,6 +2,7 @@ package com.cmpt276.parentapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
@@ -11,6 +12,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.io.IOException;
 
 /**
  * Activity for the deep breathing exercise as described in User Stories.
@@ -25,10 +28,13 @@ public class TakeBreathActivity extends AppCompatActivity {
 	private static final long TIME_BREATHE_OUT_STOP_ANIMATION = 10000L;
 	private static final long TIME_BREATHING_DELAY = 1000L; //subject to change depending on needs
 
+	private static final float BREATHING_VOLUME = 200.0f;
+
 	private Options options = Options.getInstance();
 	private State currentState = new IdleState();
+	private MediaPlayer musicPlayer, breatheInPlayer, breatheOutPlayer;
 
-	//numberBreathSetting is zero indexed, while breathsRemaining is a positive integer
+	//numberBreathSetting is zero indexed, while breathsRemaining is (usually) a positive integer
 	//the slider must be zero indexed for it to look normal.
 	private int breathsRemaining;
 	private int numberBreathSetting;
@@ -47,11 +53,17 @@ public class TakeBreathActivity extends AppCompatActivity {
 		numberBreathSetting = options.getNumberOfBreaths(this);
 		breathsRemaining = numberBreathSetting + 1;
 
+		musicPlayer = MediaPlayer.create(this, R.raw.just_relax_11157);
+		musicPlayer.setLooping(true);
+
 		setUpBackButton();
 		setUpStartButton();
 		setUpBreatheButton();
 		//TODO: label seekbar with numbers 1 to 10
 		setUpSeekBar();
+
+		TextView textViewBreathsRemaining = findViewById(R.id.textViewBreathsRemaining);
+		textViewBreathsRemaining.setText(getString(R.string.breaths_remaining, breathsRemaining));
 
 		setState(new ReadyState());
 	}
@@ -63,6 +75,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 	private void setUpBackButton() {
 		Button backButton = findViewById(R.id.buttonBackTakeBreath);
 		backButton.setOnClickListener(view -> {
+			musicPlayer.stop();
 			TakeBreathActivity.this.finish();
 		});
 	}
@@ -113,6 +126,9 @@ public class TakeBreathActivity extends AppCompatActivity {
 			public void onStopTrackingTouch(SeekBar seekBar) {
 				breathsRemaining = numberBreathSetting + 1;
 				options.setNumberOfBreaths(TakeBreathActivity.this, numberBreathSetting);
+
+				TextView textViewBreathsRemaining = findViewById(R.id.textViewBreathsRemaining);
+				textViewBreathsRemaining.setText(getString(R.string.breaths_remaining, breathsRemaining));
 			}
 		});
 	}
@@ -171,6 +187,8 @@ public class TakeBreathActivity extends AppCompatActivity {
 		void handleEnter() {
 			Button breatheButton = findViewById(R.id.button_breathe);
 			breatheButton.setText(R.string.breathe_in);
+
+			musicPlayer.start();
 		}
 
 		@Override
@@ -196,6 +214,10 @@ public class TakeBreathActivity extends AppCompatActivity {
 		@Override
 		void handleEnter() {
 			//start animation and sound
+			breatheInPlayer = MediaPlayer.create(TakeBreathActivity.this, R.raw.breathe_in);
+			breatheInPlayer.setVolume(BREATHING_VOLUME, BREATHING_VOLUME);
+			breatheInPlayer.start();
+
 			Handler handler = new Handler();
 			handler.postDelayed(() -> {
 				//Check if we're still in the same instance of the state after the allotted time.
@@ -233,6 +255,17 @@ public class TakeBreathActivity extends AppCompatActivity {
 			//TODO: ask Brian what exactly he means by "state 'out'" in the flowchart
 			Button breatheButton = findViewById(R.id.button_breathe);
 			breatheButton.setText(R.string.breathe_out);
+
+			Handler handler = new Handler();
+			handler.postDelayed(() -> {
+				//Check if we're still in the same instance of the state after the allotted time.
+				//This prevents situations such as the user pressing the button, releasing after one
+				//second, then holding it, which results in the state changing too early.
+				if (currentState == InhaleReleaseState.this){
+					State inhaleReleaseHelpState = new InhaleReleaseHelpState();
+					setState(inhaleReleaseHelpState);
+				}
+			}, TIME_BREATHE_IN_HELP - TIME_BREATHE_IN);
 		}
 
 		@Override
@@ -254,7 +287,6 @@ public class TakeBreathActivity extends AppCompatActivity {
 	}
 
 	private class InhaleReleaseHelpState extends State {
-		//TODO: add help message telling user to release the button.
 
 		@Override
 		void handleEnter() {
@@ -286,9 +318,9 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 		@Override
 		void handleEnter() {
-			//TODO: ask Brian if this state is necessary, and if so for how long should we pause between breathing in and out
 
 			//stop animation and sound
+			breatheInPlayer.stop();
 
 			Handler handler = new Handler();
 			handler.postDelayed(() -> {
@@ -318,6 +350,10 @@ public class TakeBreathActivity extends AppCompatActivity {
 		@Override
 		void handleEnter() {
 			//play exhaling animation/sound
+			breatheOutPlayer = MediaPlayer.create(TakeBreathActivity.this, R.raw.breathe_out);
+			breatheOutPlayer.setVolume(BREATHING_VOLUME, BREATHING_VOLUME);
+			breatheOutPlayer.start();
+
 			Handler handler = new Handler();
 			handler.postDelayed(() -> {
 				State exhaleReleaseState = new ExhaleReleaseState();
@@ -346,7 +382,9 @@ public class TakeBreathActivity extends AppCompatActivity {
 		@Override
 		void handleEnter() {
 			breathsRemaining--;
-			//update display of number of breaths remaining
+
+			TextView textViewBreathsRemaining = findViewById(R.id.textViewBreathsRemaining);
+			textViewBreathsRemaining.setText(getString(R.string.breaths_remaining, breathsRemaining));
 
 			Button breatheButton = findViewById(R.id.button_breathe);
 			if (breathsRemaining > 0){
@@ -397,6 +435,8 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 		@Override
 		void handleEnter() {
+			breatheOutPlayer.stop();
+
 			if (breathsRemaining <= 0){
 				State promptMoreState = new PromptMoreState();
 				setState(promptMoreState);
@@ -438,13 +478,14 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 		@Override
 		void handleEnter() {
-			//prompt the user to set the number of breaths needed
 			Button startButton = findViewById(R.id.button_start_breathing);
 			startButton.setText(R.string.set_more_breaths);
 			startButton.setVisibility(View.VISIBLE);
 
 			SeekBar numBreathSetting = findViewById(R.id.seekbar_num_breaths);
 			numBreathSetting.setVisibility(View.VISIBLE);
+
+			musicPlayer.stop();
 		}
 
 		@Override
