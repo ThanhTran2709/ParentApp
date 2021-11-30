@@ -20,7 +20,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.TypedValue;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -44,7 +43,7 @@ public class TimerActivity extends AppCompatActivity {
     private static final String TIMER_SERVICE_BROADCAST = "timer_service_broadcast";
     private static final String STOP_ALARM_BROADCAST = "stop_alarm_broadcast";
     private static final String SERVICE_RUNNING_FLAG = "service_running_flag";
-    private static final String SPEED_TAG = "speed_flag";
+    private static final String SPEED_TAG = "speed_tag";
     private static final long DEFAULT_MINUTES_IN_MILLI_SECONDS = 0L;
     private static final int DEFAULT_SPEED = 100;
 
@@ -53,12 +52,13 @@ public class TimerActivity extends AppCompatActivity {
     private long originalTimeInMilliSeconds;
     private boolean isServiceRunning;
     private Menu menu;
+    private Dialog selectSpeedDialog;
     int speed;
 
-    BroadcastReceiver timerReceiver;
-    BroadcastReceiver stopAlarmReceiver;
+    private BroadcastReceiver timerReceiver;
+    private BroadcastReceiver stopAlarmReceiver;
 
-    TimerService timerService;
+    private TimerService timerService;
     private boolean timerServiceBound = false;
 
 
@@ -95,13 +95,12 @@ public class TimerActivity extends AppCompatActivity {
         setUpResetButton();
         setUpNewTimerButton();
         setUpSpeedText();
-
     }
 
-    @SuppressLint("StringFormatInvalid")
+
     private void setUpSpeedText() {
         TextView speedText = findViewById(R.id.speed_text);
-        speedText.setText(getString(R.string.speed_text, speed));
+        speedText.setText(String.format(getString(R.string.speed_text), speed));
     }
 
     private void setUpToolBar() {
@@ -140,11 +139,11 @@ public class TimerActivity extends AppCompatActivity {
             setUpStartService();
         } else {
             if (timerService.isPaused()) {
-                timerService.setSpeed(speed);
+                timerService.changeSpeed(speed);
             }
             else {
                 timerService.pauseTimer();
-                timerService.setSpeed(speed);
+                timerService.changeSpeed(speed);
                 timerService.playTimer();
             }
         }
@@ -197,15 +196,15 @@ public class TimerActivity extends AppCompatActivity {
 
     private void displaySpeedSelectionDialog() {
 
-        Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setCancelable(false);
-        dialog.setContentView(R.layout.change_speed_dialog);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        selectSpeedDialog = new Dialog(this);
+        selectSpeedDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        selectSpeedDialog.setCancelable(false);
+        selectSpeedDialog.setContentView(R.layout.change_speed_dialog);
+        selectSpeedDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
         AtomicInteger selected = new AtomicInteger(speed);
 
-        RadioGroup speedGroup = dialog.findViewById(R.id.change_speed_radio_group);
+        RadioGroup speedGroup = selectSpeedDialog.findViewById(R.id.change_speed_radio_group);
         int[] speeds = getResources().getIntArray(R.array.timer_speeds_array);
 
         for (int speed_option : speeds) {
@@ -220,17 +219,17 @@ public class TimerActivity extends AppCompatActivity {
             speedButton.setOnClickListener(view -> selected.set(speed_option));
         }
 
-        FloatingActionButton selectFab = dialog.findViewById(R.id.select_speed_fab);
+        FloatingActionButton selectFab = selectSpeedDialog.findViewById(R.id.select_speed_fab);
         selectFab.setOnClickListener(view -> {
             speed = selected.get();
             updateSpeed();
             setUpSpeedText();
-            dialog.dismiss();
+            selectSpeedDialog.dismiss();
         });
 
-        FloatingActionButton confirmFab = dialog.findViewById(R.id.cancel_change_speed_fab);
-        confirmFab.setOnClickListener(view -> dialog.dismiss());
-        dialog.show();
+        FloatingActionButton confirmFab = selectSpeedDialog.findViewById(R.id.cancel_change_speed_fab);
+        confirmFab.setOnClickListener(view -> selectSpeedDialog.dismiss());
+        selectSpeedDialog.show();
     }
 
     private void setButtonGraphics(RadioButton button, String text) {
@@ -361,6 +360,7 @@ public class TimerActivity extends AppCompatActivity {
             newTimerButton.setVisibility(View.INVISIBLE);
             speedText.setVisibility(View.INVISIBLE);
             updateSpeedButtonVisibility();
+            selectSpeedDialog.dismiss();
 
             stopAlarmButton.setOnClickListener(view -> {
                 timerService.stopSoundAndVibration();

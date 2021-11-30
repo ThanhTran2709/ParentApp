@@ -24,7 +24,7 @@ import java.util.Calendar;
 public class MainActivity extends AppCompatActivity {
 
 	private ActivityMainBinding binding;
-	TimerService timerService;
+	private TimerService timerService;
 	private boolean timerServiceBound = false;
 
 	@Override

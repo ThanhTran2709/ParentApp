@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 public class TimerService extends Service {
 
 	private static final String ORIGINAL_TIME_IN_MILLI_SECONDS_TAG = "original_time_in_milli_seconds_tag";
-	private static final String SPEED_TAG = "speed_flag";
+	private static final String SPEED_TAG = "speed_tag";
 	private static final String TIMER_SERVICE_BROADCAST = "timer_service_broadcast";
 	private static final String CHANNEL_LOW_NAME = "channel_low";
 	private static final String CHANNEL_HIGH_NAME = "channel_high";
@@ -60,10 +60,7 @@ public class TimerService extends Service {
 	}
 
 	public static Intent getIntent(Context context) {
-		Intent i = new Intent(context, TimerService.class);
-		i.putExtra(ORIGINAL_TIME_IN_MILLI_SECONDS_TAG, DEFAULT_MINUTES_IN_MILLI_SECONDS);
-		i.putExtra(SPEED_TAG, DEFAULT_SPEED);
-		return i;
+		return TimerService.getIntent(context, DEFAULT_MINUTES_IN_MILLI_SECONDS, DEFAULT_SPEED);
 	}
 
 
@@ -227,8 +224,9 @@ public class TimerService extends Service {
 		isFinish = false;
 	}
 
-	public void setSpeed(int newSpeed){
+	public void changeSpeed(int newSpeed){
 		speed = newSpeed;
+		setUpNotification(getTimeString(), CHANNEL_LOW_PRIORITY_ID);
 	}
 
 	public int getSpeed() {
