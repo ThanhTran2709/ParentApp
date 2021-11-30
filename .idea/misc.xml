@@ -5,11 +5,14 @@
       <map>
         <entry key="..\:/AndroidStudio/ParentApp/app/src/main/res/layout/activity_help.xml" value="0.11979166666666667" />
         <entry key="..\:/AndroidStudio/ParentApp/app/src/main/res/layout/add_child_dialog.xml" value="0.13645833333333332" />
+        <entry key="..\:/Users/jocel/ParentApp/app/src/main/res/drawable/rounded_corner_blue.xml" value="0.162109375" />
         <entry key="..\:/Users/jocel/ParentApp/app/src/main/res/layout/activity_coin_flip.xml" value="0.14765625" />
         <entry key="..\:/Users/jocel/ParentApp/app/src/main/res/layout/activity_task.xml" value="0.15" />
         <entry key="..\:/Users/jocel/ParentApp/app/src/main/res/layout/activity_task_history.xml" value="0.15" />
         <entry key="..\:/Users/jocel/ParentApp/app/src/main/res/layout/clear_dialog.xml" value="0.15" />
-        <entry key="..\:/Users/jocel/ParentApp/app/src/main/res/layout/confirm_task_done_dialog.xml" value="0.22333333333333336" />
+        <entry key="..\:/Users/jocel/ParentApp/app/src/main/res/layout/confirm_task_done_dialog.xml" value="0.16666666666666666" />
+        <entry key="..\:/Users/jocel/ParentApp/app/src/main/res/layout/edit_child_dialog.xml" value="0.15" />
+        <entry key="..\:/Users/jocel/ParentApp/app/src/main/res/layout/edit_task_dialog.xml" value="0.14826254826254825" />
         <entry key="..\:/Users/jocel/ParentApp/app/src/main/res/layout/task_history_view.xml" value="0.16666666666666666" />
         <entry key="..\:/Users/jocel/ParentApp/app/src/main/res/layout/task_view.xml" value="0.15" />
         <entry key="app/src/main/res/drawable-anydpi/timer_icon.xml" value="0.23333333333333334" />

@@ -96,7 +96,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginStart="45dp"
+        android:layout_marginStart="75dp"
         android:layout_marginTop="112dp">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -104,7 +104,7 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:src="@drawable/ic_round_check_24"
-            android:tint="@color/white"
+            android:tint="@color/black"
             app:backgroundTint="@android:color/holo_green_light"
             app:fabCustomSize="60dp" />
 
@@ -116,35 +116,36 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="112dp"
-        android:layout_marginEnd="45dp">
+        android:layout_marginEnd="75dp">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/cancelfab6"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:src="@drawable/ic_round_close_24"
-            android:tint="@color/white"
+            android:tint="@color/black"
             app:backgroundTint="@android:color/holo_red_light"
             app:fabCustomSize="60dp" />
 
     </FrameLayout>
 
     <FrameLayout
+        android:id="@+id/frmHistory"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_gravity="center|bottom"
-        android:layout_marginTop="112dp">
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="127dp">
 
-        <androidx.appcompat.widget.AppCompatButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/showHistoryButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/rounded_corner_blue"
-            android:fontFamily="@font/moon_bold_font"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:text="Show History"
-            android:textColor="@color/black" />
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_round_history_24"
+            android:tint="@color/black"
+            app:backgroundTint="@android:color/darker_gray"
+            app:fabCustomSize="60dp" />
+
     </FrameLayout>
+
 
 </FrameLayout>

@@ -269,7 +269,7 @@ public class TaskActivity extends AppCompatActivity {
 			confirmText.setText(getString(R.string.confirm_message, options.getChildName(TaskActivity.this, task.getCurrentChildIndex()), task.getTaskName()));
 			dialog.show();
 
-			Button showHistoryButton = dialog.findViewById(R.id.showHistoryButton);
+			FloatingActionButton showHistoryButton = dialog.findViewById(R.id.showHistoryButton);
 			showHistoryButton.setOnClickListener(getShowHistoryListener(index));
 		}
 
