@@ -1,5 +1,7 @@
 package com.cmpt276.parentapp;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
@@ -7,13 +9,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
 
-import java.io.IOException;
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * Activity for the deep breathing exercise as described in User Stories.
@@ -39,6 +42,9 @@ public class TakeBreathActivity extends AppCompatActivity {
 	private int breathsRemaining;
 	private int numberBreathSetting;
 
+	private View circle;
+	private Animation inhaleAnimation, exhaleAnimation;
+
 	public void setState(State newState) {
 		currentState.handleExit();
 		currentState = newState;
@@ -56,17 +62,37 @@ public class TakeBreathActivity extends AppCompatActivity {
 		musicPlayer = MediaPlayer.create(this, R.raw.just_relax_11157);
 		musicPlayer.setLooping(true);
 
+		circle = findViewById(R.id.circleView);
+
 		setUpBackButton();
 		setUpStartButton();
 		setUpBreatheButton();
 		//TODO: label seekbar with numbers 1 to 10
 		setUpSeekBar();
+		setUpAnimations();
 
 		TextView textViewBreathsRemaining = findViewById(R.id.textViewBreathsRemaining);
 		textViewBreathsRemaining.setText(getString(R.string.breaths_remaining, breathsRemaining));
 
 		setState(new ReadyState());
 	}
+
+	private void setUpAnimations(){
+		int colorFrom = getResources().getColor(R.color.light_green);
+		int colorTo = getResources().getColor(R.color.dark_green);
+		ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+
+		inhaleAnimation = AnimationUtils.loadAnimation(this, R.anim.circle_enlarge);
+		inhaleAnimation.setDuration(TIME_BREATHE_IN_HELP);
+		inhaleAnimation.setFillAfter(true);
+
+		
+
+		exhaleAnimation = AnimationUtils.loadAnimation(this, R.anim.circle_deflate);
+		exhaleAnimation.setDuration(TIME_BREATHE_OUT_STOP_ANIMATION);
+		exhaleAnimation.setFillAfter(true);
+	}
+
 
 	public static Intent getIntent(Context context) {
 		return new Intent(context, TakeBreathActivity.class);
@@ -90,6 +116,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 	private void setUpBreatheButton() {
 		BreatheButton breatheButton = findViewById(R.id.button_breathe);
+
 		breatheButton.setOnTouchListener((view, motionEvent) -> {
 			//OnTouchListener's onTouch method returns true if the event was handled and false if not.
 			//ACTION_DOWN is when the user initially presses on the view, and ACTION_UP is when the user
@@ -218,6 +245,8 @@ public class TakeBreathActivity extends AppCompatActivity {
 			breatheInPlayer.setVolume(BREATHING_VOLUME, BREATHING_VOLUME);
 			breatheInPlayer.start();
 
+			circle.startAnimation(inhaleAnimation);
+
 			Handler handler = new Handler();
 			handler.postDelayed(() -> {
 				//Check if we're still in the same instance of the state after the allotted time.
@@ -244,6 +273,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 		@Override
 		void onReleaseButton() {
 			State inhaleState = new InhaleState();
+			circle.clearAnimation();
 			setState(inhaleState);
 		}
 	}
@@ -353,6 +383,8 @@ public class TakeBreathActivity extends AppCompatActivity {
 			breatheOutPlayer = MediaPlayer.create(TakeBreathActivity.this, R.raw.breathe_out);
 			breatheOutPlayer.setVolume(BREATHING_VOLUME, BREATHING_VOLUME);
 			breatheOutPlayer.start();
+
+			circle.startAnimation(exhaleAnimation);
 
 			Handler handler = new Handler();
 			handler.postDelayed(() -> {
