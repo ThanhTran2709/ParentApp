@@ -4,13 +4,11 @@ import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BlendMode;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -21,6 +19,7 @@ import android.widget.TextView;
 
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 /**
  * Activity for the deep breathing exercise as described in User Stories.
@@ -81,8 +80,8 @@ public class TakeBreathActivity extends AppCompatActivity {
 	}
 
 	private void setUpAnimations(){
-		int colorFrom = getResources().getColor(R.color.light_green);
-		int colorTo = getResources().getColor(R.color.dark_green);
+		int colorFrom = ContextCompat.getColor(this, R.color.light_green);
+		int colorTo = ContextCompat.getColor(this, R.color.dark_green);
 
 		//Transition color from colorFrom to colorTo
 		ValueAnimator colorAnimationStart = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
