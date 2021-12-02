@@ -121,5 +121,6 @@
     <string name="set_more_breaths">Set the number of breaths needed to continue</string>
     <string name="release_breath_help">Release button and breathe out</string>
     <string name="breaths_remaining">Breaths remaining: %1$d</string>
+    <string name="beginTxt">Begin</string>
 
 </resources>

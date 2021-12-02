@@ -48,7 +48,6 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 	private View circle;
 	private Animation inhaleAnimation, exhaleAnimation;
-	private ValueAnimator colorAnimation;
 
 	public void setState(State newState) {
 		currentState.handleExit();
@@ -70,7 +69,6 @@ public class TakeBreathActivity extends AppCompatActivity {
 		circle = findViewById(R.id.circleView);
 
 		setUpBackButton();
-		setUpStartButton();
 		setUpBreatheButton();
 		//TODO: label seekbar with numbers 1 to 10
 		setUpSeekBar();
@@ -86,6 +84,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 		int colorFrom = getResources().getColor(R.color.light_green);
 		int colorTo = getResources().getColor(R.color.dark_green);
 
+		//Transition color from colorFrom to colorTo
 		ValueAnimator colorAnimationStart = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
 		colorAnimationStart.setDuration(TIME_BREATHE_IN_HELP);
 		colorAnimationStart.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -97,6 +96,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 			}
 		});
 
+		//Transition color from colorTo to colorFrom
 		ValueAnimator colorAnimationEnd = ValueAnimator.ofObject(new ArgbEvaluator(), colorTo, colorFrom);
 		colorAnimationEnd.setDuration(TIME_BREATHE_OUT_STOP_ANIMATION);
 		colorAnimationEnd.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -158,16 +158,20 @@ public class TakeBreathActivity extends AppCompatActivity {
 		});
 	}
 
-	private void setUpStartButton() {
-		Button startButton = findViewById(R.id.button_start_breathing);
-		startButton.setOnClickListener(view -> {
-			State inhaleState = new InhaleState();
-			setState(inhaleState);
-		});
-	}
 
 	private void setUpBreatheButton() {
 		BreatheButton breatheButton = findViewById(R.id.button_breathe);
+
+		breatheButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				if (currentState.getClass().equals(ReadyState.class)) {
+					State inhaleState = new InhaleState();
+					setState(inhaleState);
+				}
+			}
+		});
+
 
 		breatheButton.setOnTouchListener((view, motionEvent) -> {
 			//OnTouchListener's onTouch method returns true if the event was handled and false if not.
@@ -233,8 +237,6 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 		@Override
 		void handleEnter() {
-			Button startButton = findViewById(R.id.button_start_breathing);
-			startButton.setVisibility(View.VISIBLE);
 
 			SeekBar numBreathSetting = findViewById(R.id.seekbar_num_breaths);
 			numBreathSetting.setVisibility(View.VISIBLE);
@@ -242,8 +244,6 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 		@Override
 		void handleExit() {
-			Button startButton = findViewById(R.id.button_start_breathing);
-			startButton.setVisibility(View.GONE);
 
 			SeekBar numBreathSetting = findViewById(R.id.seekbar_num_breaths);
 			numBreathSetting.setVisibility(View.GONE);
@@ -563,10 +563,6 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 		@Override
 		void handleEnter() {
-			Button startButton = findViewById(R.id.button_start_breathing);
-			startButton.setText(R.string.set_more_breaths);
-			startButton.setVisibility(View.VISIBLE);
-
 			SeekBar numBreathSetting = findViewById(R.id.seekbar_num_breaths);
 			numBreathSetting.setVisibility(View.VISIBLE);
 
@@ -575,9 +571,6 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 		@Override
 		void handleExit() {
-			Button startButton = findViewById(R.id.button_start_breathing);
-			startButton.setVisibility(View.GONE);
-
 			SeekBar numBreathSetting = findViewById(R.id.seekbar_num_breaths);
 			numBreathSetting.setVisibility(View.GONE);
 		}
