@@ -8,37 +8,33 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/taskName"
+        android:id="@+id/childNameTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
         android:fontFamily="@font/moon_bold_font"
-        android:text="@string/blank"
+        android:text="@string/name"
         android:textColor="@color/black"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@+id/edit_task_button"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/child_image_card_view_task"
-        app:layout_constraintTop_toTopOf="@+id/child_image_card_view_task" />
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/child_image_card_view_task_history"
+        app:layout_constraintTop_toTopOf="@+id/child_image_card_view_task_history" />
 
     <TextView
-        android:id="@+id/childNameInTaskList"
+        android:id="@+id/dateTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:fontFamily="@font/moon_bold_font"
-        android:text="@string/no_child_yet"
+        android:text="@string/date"
         android:textColor="@color/black"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/child_image_card_view_task"
-        app:layout_constraintEnd_toStartOf="@+id/edit_task_button"
-        app:layout_constraintStart_toEndOf="@+id/child_image_card_view_task"
-        app:layout_constraintTop_toBottomOf="@+id/taskName" />
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/child_image_card_view_task_history"
+        app:layout_constraintStart_toEndOf="@+id/child_image_card_view_task_history"
+        app:layout_constraintTop_toBottomOf="@+id/childNameTextView" />
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/child_image_card_view_task"
+        android:id="@+id/child_image_card_view_task_history"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_centerHorizontal="true"
@@ -49,23 +45,13 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/child_image_task_list"
+            android:id="@+id/child_image_task_history_list"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/select_image" />
+            android:src="@drawable/select_image"
+            android:contentDescription="Task History Child Image" />
     </androidx.cardview.widget.CardView>
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/edit_task_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/rounded_corner_gold"
-        android:focusable="false"
-        android:fontFamily="@font/moon_bold_font"
-        android:text="@string/edit"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
