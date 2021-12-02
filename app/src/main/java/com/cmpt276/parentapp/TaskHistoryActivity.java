@@ -19,14 +19,19 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.cmpt276.model.Child;
+import com.cmpt276.model.Task;
 import com.cmpt276.model.TaskHistory;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
 
 public class TaskHistoryActivity extends AppCompatActivity {
 
     public static final String TASK_INDEX = "com.cmpt276.parentapp - taskIndex";
     Options options;
     int taskIndex;
+    Task currentTask;
+    ArrayList<TaskHistory> taskHistoryArrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,17 +39,20 @@ public class TaskHistoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_task_history);
         options = Options.getInstance();
         extractDataFromIntent();
+        currentTask = options.getTaskList(TaskHistoryActivity.this).get(taskIndex);
+        taskHistoryArrayList = currentTask.getTaskHistory();
         setUpTaskTitle();
         setUpEmptyMessage();
         populateTaskHistoryList();
 
         setUpBackBtn();
         setUpClearBtn();
+
     }
 
     private void setUpTaskTitle(){
         TextView title = findViewById(R.id.taskHistoryTitle);
-        title.setText(options.getTaskList(TaskHistoryActivity.this).get(taskIndex).getTaskName());
+        title.setText(currentTask.getTaskName());
     }
 
     private void populateTaskHistoryList() {
@@ -57,7 +65,7 @@ public class TaskHistoryActivity extends AppCompatActivity {
 
     public void setUpEmptyMessage(){
         TextView emptyMessage = findViewById(R.id.emptyHistoryMessage);
-        if (options.getTaskList(TaskHistoryActivity.this).get(taskIndex).getTaskHistory().isEmpty()){
+        if (taskHistoryArrayList.isEmpty()){
             emptyMessage.setVisibility(View.VISIBLE);
         }
         else {
@@ -71,7 +79,7 @@ public class TaskHistoryActivity extends AppCompatActivity {
     private class TaskHistoryListViewAdapter extends ArrayAdapter<TaskHistory> {
 
         public TaskHistoryListViewAdapter() {
-            super(TaskHistoryActivity.this, R.layout.task_history_view, options.getTaskHistoryList(TaskHistoryActivity.this, taskIndex));
+            super(TaskHistoryActivity.this, R.layout.task_history_view, taskHistoryArrayList);
         }
 
         @Override
@@ -81,7 +89,7 @@ public class TaskHistoryActivity extends AppCompatActivity {
                 taskHistoryView = getLayoutInflater().inflate(R.layout.task_history_view, parent, false);
             }
 
-            TaskHistory currentTaskHistory = options.getTaskHistoryList(TaskHistoryActivity.this, taskIndex).get(position);
+            TaskHistory currentTaskHistory = taskHistoryArrayList.get(position);
 
             // set up game ListView item
             TextView childName = taskHistoryView.findViewById(R.id.childNameTextView);
@@ -110,8 +118,8 @@ public class TaskHistoryActivity extends AppCompatActivity {
     private void setUpClearBtn() {
         Button buttonClear = findViewById(R.id.buttonClearTaskHistory);
         buttonClear.setOnClickListener((view) -> {
-            if (options.getTaskHistoryList(this, taskIndex).size() == 0) {
-                Toast.makeText(this, "No history to delete", Toast.LENGTH_SHORT).show();
+            if (taskHistoryArrayList.size() == 0) {
+                Toast.makeText(this, getString(R.string.no_history_to_delete), Toast.LENGTH_SHORT).show();
             }
             else {
                 CLearTaskHistoryDialog alert = new CLearTaskHistoryDialog();
@@ -139,7 +147,7 @@ public class TaskHistoryActivity extends AppCompatActivity {
             cancelFab.setOnClickListener(getCancelFabListener(dialog));
 
             FloatingActionButton addFab = dialog.findViewById(R.id.okFab);
-            addFab.setOnClickListener(getAddFabListener());
+            addFab.setOnClickListener(getAddFabListener(dialog));
 
             dialog.show();
         }
@@ -148,9 +156,10 @@ public class TaskHistoryActivity extends AppCompatActivity {
             return (view) -> dialog.dismiss();
         }
 
-        private View.OnClickListener getAddFabListener() {
+        private View.OnClickListener getAddFabListener(Dialog dialog) {
             return (view) -> {
                 options.clearTaskHistory(TaskHistoryActivity.this, taskIndex);
+                dialog.dismiss();
                 TaskHistoryActivity.this.finish();
             };
         }

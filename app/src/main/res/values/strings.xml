@@ -117,5 +117,6 @@
     <!-- Task History strings -->
     <string name="clear_task_history_message">Are you sure you want to clear the task history?</string>
     <string name="empty_task_history_message">no task history created</string>
+    <string name="no_history_to_delete">No history to delete</string>
 
 </resources>
