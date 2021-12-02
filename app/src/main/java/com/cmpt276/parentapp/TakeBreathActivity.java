@@ -4,9 +4,13 @@ import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BlendMode;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -44,6 +48,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 	private View circle;
 	private Animation inhaleAnimation, exhaleAnimation;
+	private ValueAnimator colorAnimation;
 
 	public void setState(State newState) {
 		currentState.handleExit();
@@ -80,19 +85,66 @@ public class TakeBreathActivity extends AppCompatActivity {
 	private void setUpAnimations(){
 		int colorFrom = getResources().getColor(R.color.light_green);
 		int colorTo = getResources().getColor(R.color.dark_green);
-		ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+
+		ValueAnimator colorAnimationStart = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+		colorAnimationStart.setDuration(TIME_BREATHE_IN_HELP);
+		colorAnimationStart.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+			@Override
+			public void onAnimationUpdate(ValueAnimator animator) {
+				//Apply bit mask to color int to convert to color hex
+				String hexColor = String.format("#%06X", (0xFFFFFF & (int)animator.getAnimatedValue()));
+				circle.getBackground().setColorFilter(Color.parseColor(hexColor), PorterDuff.Mode.SRC_ATOP);
+			}
+		});
+
+		ValueAnimator colorAnimationEnd = ValueAnimator.ofObject(new ArgbEvaluator(), colorTo, colorFrom);
+		colorAnimationEnd.setDuration(TIME_BREATHE_OUT_STOP_ANIMATION);
+		colorAnimationEnd.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+			@Override
+			public void onAnimationUpdate(ValueAnimator animator) {
+				//Apply bit mask to color int to convert to color hex
+				String hexColor = String.format("#%06X", (0xFFFFFF & (int)animator.getAnimatedValue()));
+				circle.getBackground().setColorFilter(Color.parseColor(hexColor), PorterDuff.Mode.SRC_ATOP);
+			}
+		});
 
 		inhaleAnimation = AnimationUtils.loadAnimation(this, R.anim.circle_enlarge);
 		inhaleAnimation.setDuration(TIME_BREATHE_IN_HELP);
 		inhaleAnimation.setFillAfter(true);
+		inhaleAnimation.setAnimationListener(new Animation.AnimationListener() {
+			@Override
+			public void onAnimationStart(Animation animation) {
+				colorAnimationStart.start();
+			}
 
-		
+			@Override
+			public void onAnimationEnd(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+			}
+		});
+
 
 		exhaleAnimation = AnimationUtils.loadAnimation(this, R.anim.circle_deflate);
 		exhaleAnimation.setDuration(TIME_BREATHE_OUT_STOP_ANIMATION);
 		exhaleAnimation.setFillAfter(true);
-	}
+		exhaleAnimation.setAnimationListener(new Animation.AnimationListener() {
+			@Override
+			public void onAnimationStart(Animation animation) {
+				colorAnimationEnd.start();
+			}
 
+			@Override
+			public void onAnimationEnd(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+			}
+		});
+	}
 
 	public static Intent getIntent(Context context) {
 		return new Intent(context, TakeBreathActivity.class);
@@ -246,6 +298,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 			breatheInPlayer.start();
 
 			circle.startAnimation(inhaleAnimation);
+
 
 			Handler handler = new Handler();
 			handler.postDelayed(() -> {
