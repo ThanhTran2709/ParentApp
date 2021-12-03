@@ -135,7 +135,11 @@ public class TimerService extends Service {
 	 */
 	private void setUpNotification(String timeString, String channelId) {
 
-		Intent notificationIntent = TimerActivity.getIntent(this, originalTimeInMilliSeconds, true, speed);
+		Intent notificationIntent = TimerActivity.getIntent(this,
+				originalTimeInMilliSeconds,
+				true,
+				speed);
+
 		PendingIntent pendingIntent = PendingIntent.getActivity(this,
 				0,
 				notificationIntent,

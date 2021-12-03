@@ -23,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
@@ -140,8 +141,7 @@ public class TimerActivity extends AppCompatActivity {
         } else {
             if (timerService.isPaused()) {
                 timerService.changeSpeed(speed);
-            }
-            else {
+            } else {
                 timerService.pauseTimer();
                 timerService.changeSpeed(speed);
                 timerService.playTimer();
@@ -157,6 +157,7 @@ public class TimerActivity extends AppCompatActivity {
         setUpStartService();
         setupTimerBroadCastReceiver();
         setUpStopAlarmReceiver();
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     @Override
@@ -333,8 +334,8 @@ public class TimerActivity extends AppCompatActivity {
         registerReceiver(stopAlarmReceiver, filter);
     }
 
-    private void updateSpeedButtonVisibility(){
-        if(menu == null || timerService == null){
+    private void updateSpeedButtonVisibility() {
+        if (menu == null || timerService == null) {
             return;
         }
 
@@ -360,7 +361,9 @@ public class TimerActivity extends AppCompatActivity {
             newTimerButton.setVisibility(View.INVISIBLE);
             speedText.setVisibility(View.INVISIBLE);
             updateSpeedButtonVisibility();
-            selectSpeedDialog.dismiss();
+            if(selectSpeedDialog != null){
+                selectSpeedDialog.dismiss();
+            }
 
             stopAlarmButton.setOnClickListener(view -> {
                 timerService.stopSoundAndVibration();
