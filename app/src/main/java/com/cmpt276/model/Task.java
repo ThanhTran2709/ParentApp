@@ -1,5 +1,6 @@
 package com.cmpt276.model;
 
+import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -8,12 +9,16 @@ import java.util.concurrent.ThreadLocalRandom;
  * */
 public class Task {
 	private static final int NO_CHILD = -1;
+	private static final int DELETED_CHILD = -2;
+
 	private String taskName;
 	private int currentChildIndex;
+	private ArrayList<TaskHistory> taskHistoryList;
 
 	public Task(String taskName, int numberOfChildren) {
 		this.taskName = taskName;
 		setChildIndex(numberOfChildren);
+		taskHistoryList =  new ArrayList<>();
 	}
 
 	private void setChildIndex(int numberOfChildren) {
@@ -24,10 +29,6 @@ public class Task {
 			currentChildIndex = ThreadLocalRandom.current().nextInt(0, numberOfChildren);
 		}
 
-	}
-
-	public void assignNextChild(int index) {
-		currentChildIndex = index;
 	}
 
 	public void editTaskName(String newTaskName) {
@@ -58,5 +59,30 @@ public class Task {
 				currentChildIndex = 0;
 			}
 		}
+	}
+
+	public void updateHistoryIndexOnChildDelete(int deletedChildIndex) {
+		for (TaskHistory taskHistory : taskHistoryList) {
+			if (taskHistory.getChildIndex() == deletedChildIndex) {
+				taskHistory.setChildIndex(DELETED_CHILD);
+			}
+			else if (deletedChildIndex < taskHistory.getChildIndex()){
+				taskHistory.decrementChildIndex();
+			}
+		}
+
+	}
+
+	public void addTaskHistory(int childIndex){
+		TaskHistory taskHistory = new TaskHistory(childIndex);
+		taskHistoryList.add(taskHistory);
+	}
+
+	public ArrayList<TaskHistory> getTaskHistory(){
+		return taskHistoryList;
+	}
+
+	public void clearHistory(){
+		taskHistoryList.clear();
 	}
 }
