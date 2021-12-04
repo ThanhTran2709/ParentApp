@@ -47,6 +47,9 @@ public class TakeBreathActivity extends AppCompatActivity {
 	private View circleLight;
 	private View circleDark;
 
+	private Button breatheNumBtn;
+	private SeekBar seekBarNumBreaths;
+
 	public void setState(State newState) {
 		currentState.handleExit();
 		currentState = newState;
@@ -67,15 +70,40 @@ public class TakeBreathActivity extends AppCompatActivity {
 		circleLight = findViewById(R.id.circleViewLight);
 		circleDark = findViewById(R.id.circleViewDark);
 
+		setUpBreatheNumBtn();
 		setUpBackButton();
 		setUpBreatheButton();
 		//TODO: label seekbar with numbers 1 to 10
 		setUpSeekBar();
+		setUpHeading();
+
 
 		TextView textViewBreathsRemaining = findViewById(R.id.textViewBreathsRemaining);
 		textViewBreathsRemaining.setText(getString(R.string.breaths_remaining, breathsRemaining));
 
 		setState(new ReadyState());
+	}
+
+	private void setUpBreatheNumBtn() {
+		breatheNumBtn = (Button) findViewById(R.id.breathNumBtn);
+		seekBarNumBreaths = findViewById(R.id.seekbar_num_breaths);
+		seekBarNumBreaths.setVisibility(View.GONE);
+		breatheNumBtn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				if (seekBarNumBreaths.getVisibility() == View.VISIBLE) {
+					seekBarNumBreaths.setVisibility(View.GONE);
+				}
+				else {
+					seekBarNumBreaths.setVisibility(View.VISIBLE);
+				}
+			}
+		});
+	}
+
+	private void setUpHeading() {
+		TextView heading = (TextView) findViewById(R.id.heading);
+		heading.setText(getString(R.string.heading, breathsRemaining));
 	}
 
 	public static Intent getIntent(Context context) {
@@ -120,7 +148,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 	}
 
 	private void setUpSeekBar() {
-		SeekBar seekBarNumBreaths = findViewById(R.id.seekbar_num_breaths);
+		seekBarNumBreaths = findViewById(R.id.seekbar_num_breaths);
 		seekBarNumBreaths.setProgress(numberBreathSetting);
 		seekBarNumBreaths.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 			@Override
@@ -138,6 +166,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 				breathsRemaining = numberBreathSetting + 1;
 				options.setNumberOfBreaths(TakeBreathActivity.this, numberBreathSetting);
 
+				setUpHeading();
 				TextView textViewBreathsRemaining = findViewById(R.id.textViewBreathsRemaining);
 				textViewBreathsRemaining.setText(getString(R.string.breaths_remaining, breathsRemaining));
 			}
@@ -165,16 +194,13 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 		@Override
 		void handleEnter() {
-
-			SeekBar numBreathSetting = findViewById(R.id.seekbar_num_breaths);
-			numBreathSetting.setVisibility(View.VISIBLE);
+			breatheNumBtn.setVisibility(View.VISIBLE);
 		}
 
 		@Override
 		void handleExit() {
-
-			SeekBar numBreathSetting = findViewById(R.id.seekbar_num_breaths);
-			numBreathSetting.setVisibility(View.GONE);
+			breatheNumBtn.setVisibility(View.INVISIBLE);
+			seekBarNumBreaths.setVisibility(View.GONE);
 		}
 
 		@Override
@@ -463,12 +489,10 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
-
 				}
 
 				@Override
 				public void onAnimationRepeat(Animation animation) {
-
 				}
 			});
 
@@ -526,6 +550,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 			TextView textViewBreathsRemaining = findViewById(R.id.textViewBreathsRemaining);
 			textViewBreathsRemaining.setText(getString(R.string.breaths_remaining, breathsRemaining));
+			setUpHeading();
 
 			Button breatheButton = findViewById(R.id.button_breathe);
 			if (breathsRemaining > 0){
@@ -576,6 +601,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 		@Override
 		void handleEnter() {
 			breatheOutPlayer.stop();
+			setUpHeading();
 
 			if (breathsRemaining <= 0){
 				State promptMoreState = new PromptMoreState();
@@ -618,8 +644,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 		@Override
 		void handleEnter() {
-			SeekBar numBreathSetting = findViewById(R.id.seekbar_num_breaths);
-			numBreathSetting.setVisibility(View.VISIBLE);
+			breatheNumBtn.setVisibility(View.VISIBLE);
 
 			TextView breathCount = findViewById(R.id.textViewBreathsRemaining);
 			breathCount.setText(getString(R.string.breaths_remaining, numberBreathSetting + 1));
@@ -632,8 +657,8 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 		@Override
 		void handleExit() {
-			SeekBar numBreathSetting = findViewById(R.id.seekbar_num_breaths);
-			numBreathSetting.setVisibility(View.GONE);
+			breatheNumBtn.setVisibility(View.INVISIBLE);
+			seekBarNumBreaths.setVisibility(View.GONE);
 		}
 
 		@Override

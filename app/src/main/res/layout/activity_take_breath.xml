@@ -16,8 +16,9 @@
         android:min="0"
         android:progress="0"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/heading" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonBackTakeBreath"
@@ -35,10 +36,15 @@
 
     <com.cmpt276.parentapp.BreatheButton
         android:id="@+id/button_breathe"
-        android:layout_width="wrap_content"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
+        android:background="@drawable/rounded_corner_blue"
         android:clickable="true"
         android:text="@string/begin"
+        android:textColor="@color/white"
+        android:fontFamily="@font/moon_bold_font"
+        android:textStyle="bold"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -56,21 +62,24 @@
         app:layout_constraintTop_toBottomOf="@+id/seekbar_num_breaths"
         app:layout_constraintVertical_bias="0.4" />
 
+
     <TextView
         android:id="@+id/textViewBreathsRemaining"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
         android:text="@string/breaths_remaining"
+        android:textColor="@color/black"
+        android:textSize="16dp"
+        android:fontFamily="@font/moon_light_font"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/seekbar_num_breaths" />
-
+        app:layout_constraintTop_toBottomOf="@+id/circleViewLight" />
 
     <View
         android:id="@+id/circleViewLight"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="165dp"
+        android:layout_height="165dp"
         android:alpha="1.0"
         android:background="@drawable/bg_circle_light"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -82,8 +91,8 @@
 
     <View
         android:id="@+id/circleViewDark"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="165dp"
+        android:layout_height="165dp"
         android:alpha="0.0"
         android:background="@drawable/bg_circle_dark"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -92,5 +101,37 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.5" />
+
+    <TextView
+        android:id="@+id/heading"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/moon_bold_font"
+        android:text="TextView"
+        android:textColor="@color/black"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/breathNumBtn"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/rounded_corner_gold"
+        android:fontFamily="@font/moon_light_font"
+        android:text="@string/show_breath_number_settings"
+        android:textColor="@color/black"
+        android:padding="2dp"
+        android:textStyle="bold"
+        android:textSize="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/heading"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
