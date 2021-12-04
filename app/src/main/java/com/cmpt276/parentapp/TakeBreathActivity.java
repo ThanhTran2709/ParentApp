@@ -1,6 +1,5 @@
 package com.cmpt276.parentapp;
 
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
@@ -94,13 +93,10 @@ public class TakeBreathActivity extends AppCompatActivity {
 	private void setUpBreatheButton() {
 		BreatheButton breatheButton = findViewById(R.id.button_breathe);
 
-		breatheButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				if (currentState.getClass().equals(ReadyState.class)) {
-					State inhaleState = new InhaleState();
-					setState(inhaleState);
-				}
+		breatheButton.setOnClickListener((view) -> {
+			if (currentState.getClass().equals(ReadyState.class)) {
+				State inhaleState = new InhaleState();
+				setState(inhaleState);
 			}
 		});
 
@@ -146,15 +142,6 @@ public class TakeBreathActivity extends AppCompatActivity {
 				textViewBreathsRemaining.setText(getString(R.string.breaths_remaining, breathsRemaining));
 			}
 		});
-	}
-
-	private ValueAnimator getAlphaAnimator(float toAlpha, float fromAlpha, View view, long duration) {
-		ValueAnimator alphaAnimator = ValueAnimator.ofFloat(fromAlpha, toAlpha);
-		alphaAnimator.addUpdateListener(valueAnimator -> {
-			view.setAlpha((float) alphaAnimator.getAnimatedValue());
-		});
-		alphaAnimator.setDuration(duration);
-		return alphaAnimator;
 	}
 
 	//////////////////////////////////
@@ -208,12 +195,17 @@ public class TakeBreathActivity extends AppCompatActivity {
 			Button breatheButton = findViewById(R.id.button_breathe);
 			breatheButton.setText(R.string.breathe_in);
 
+			TextView textViewHelp = findViewById(R.id.textViewBreatheHelp);
+			textViewHelp.setVisibility(View.VISIBLE);
+			textViewHelp.setText(R.string.breathe_in_help);
+
 			musicPlayer.start();
 		}
 
 		@Override
 		void handleExit() {
-			//do nothing
+			TextView textViewHelp = findViewById(R.id.textViewBreatheHelp);
+			textViewHelp.setVisibility(View.GONE);
 		}
 
 		@Override
@@ -225,7 +217,6 @@ public class TakeBreathActivity extends AppCompatActivity {
 		@Override
 		void onReleaseButton() {
 			//do nothing
-			System.out.println("INVALID ACTION IN INHALE STATE");
 		}
 	}
 
@@ -241,16 +232,13 @@ public class TakeBreathActivity extends AppCompatActivity {
 			breatheInPlayer.setVolume(BREATHING_VOLUME, BREATHING_VOLUME);
 			breatheInPlayer.start();
 
-			ValueAnimator fadeOut = getAlphaAnimator(0.0f, 1.0f, circleLight, TIME_BREATHE_IN_HELP);
-			ValueAnimator fadeIn = getAlphaAnimator(1.0f, 0.0f, circleDark, TIME_BREATHE_IN_HELP);
-
 			Animation inflateCircleAnimationLight = new InflateAnimation(INFLATE_SCALE, ORIGINAL_SCALE);
 			inflateCircleAnimationLight.setDuration(TIME_BREATHE_IN_HELP);
 			inflateCircleAnimationLight.setFillAfter(true);
 			inflateCircleAnimationLight.setAnimationListener(new Animation.AnimationListener() {
 				@Override
 				public void onAnimationStart(Animation animation) {
-					fadeOut.start();
+					circleLight.animate().alpha(0.0f).setDuration(TIME_BREATHE_IN_HELP);
 				}
 
 				@Override
@@ -270,7 +258,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 			inflateCircleAnimationDark.setAnimationListener(new Animation.AnimationListener() {
 				@Override
 				public void onAnimationStart(Animation animation) {
-					fadeIn.start();
+					circleDark.animate().alpha(1.0f).setDuration(TIME_BREATHE_IN_HELP);
 				}
 
 				@Override
@@ -307,7 +295,6 @@ public class TakeBreathActivity extends AppCompatActivity {
 		@Override
 		void onHoldButton() {
 			//do nothing
-			System.out.println("INVALID ACTION IN INHALING STATE");
 		}
 
 		@Override
@@ -328,7 +315,6 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 		@Override
 		void handleEnter() {
-			//TODO: ask Brian what exactly he means by "state 'out'" in the flowchart
 			Button breatheButton = findViewById(R.id.button_breathe);
 			breatheButton.setText(R.string.breathe_out);
 
@@ -465,10 +451,6 @@ public class TakeBreathActivity extends AppCompatActivity {
 			breatheOutPlayer.start();
 
 			float currentScale = ORIGINAL_SCALE + ((INFLATE_SCALE - ORIGINAL_SCALE) / TIME_BREATHE_IN_HELP) * deltaTime;
-			float currentAlpha = 1.0f / TIME_BREATHE_IN_HELP * deltaTime;
-
-			ValueAnimator fadeIn = getAlphaAnimator(1.0f, 1.0f - currentAlpha, circleLight, TIME_BREATHE_OUT);
-			ValueAnimator fadeOut = getAlphaAnimator(0.0f, currentAlpha, circleDark, TIME_BREATHE_OUT);
 
 			Animation deflateCircleAnimationLight = new InflateAnimation(ORIGINAL_SCALE, currentScale);
 			deflateCircleAnimationLight.setDuration(TIME_BREATHE_OUT);
@@ -476,7 +458,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 			deflateCircleAnimationLight.setAnimationListener(new Animation.AnimationListener() {
 				@Override
 				public void onAnimationStart(Animation animation) {
-					fadeIn.start();
+					circleLight.animate().alpha(1.0f).setDuration(TIME_BREATHE_OUT);
 				}
 
 				@Override
@@ -496,7 +478,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 			deflateCircleAnimationDark.setAnimationListener(new Animation.AnimationListener() {
 				@Override
 				public void onAnimationStart(Animation animation) {
-					fadeOut.start();
+					circleDark.animate().alpha(0.0f).setDuration(TIME_BREATHE_OUT);
 				}
 
 				@Override
