@@ -113,10 +113,14 @@
     <string name="confirm_task_done">Confirm Task Done</string>
     <string name="no_task_created_yet">No Task\nCreated Yet</string>
     <string name="task_name_error_toast_message">Error! Enter a valid task name</string>
+    <string name="speed_text">Speed at %1$d\%%</string>
+    <string name="percentage">Percentage</string>
+    <string name="change_speed">Change Speed</string>
 
     <!-- Task History strings -->
     <string name="clear_task_history_message">Are you sure you want to clear the task history?</string>
     <string name="empty_task_history_message">no task history created</string>
     <string name="no_history_to_delete">No history to delete</string>
+    <string name="percent_symbol">%</string>
 
 </resources>

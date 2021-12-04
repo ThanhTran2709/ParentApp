@@ -24,7 +24,7 @@ import java.util.Calendar;
 public class MainActivity extends AppCompatActivity {
 
 	private ActivityMainBinding binding;
-	TimerService timerService;
+	private TimerService timerService;
 	private boolean timerServiceBound = false;
 
 	@Override
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
 		timerButton.setOnClickListener(view -> {
 			Intent intent;
 			if (timerServiceBound) {
-				intent = TimerActivity.getIntent(MainActivity.this, timerService.getOriginalMilliSeconds(), true);
+				intent = TimerActivity.getIntent(MainActivity.this, timerService.getOriginalMilliSeconds(), true, timerService.getSpeedPercentage());
 			}
 			else {
 				intent = TimerOptions.getIntent(MainActivity.this);
