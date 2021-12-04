@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
 		timerButton.setOnClickListener(view -> {
 			Intent intent;
 			if (timerServiceBound) {
-				intent = TimerActivity.getIntent(MainActivity.this, timerService.getOriginalMilliSeconds(), true, timerService.getSpeed());
+				intent = TimerActivity.getIntent(MainActivity.this, timerService.getOriginalMilliSeconds(), true, timerService.getSpeedPercentage());
 			}
 			else {
 				intent = TimerOptions.getIntent(MainActivity.this);

@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 public class TimerService extends Service {
 
 	private static final String ORIGINAL_TIME_IN_MILLI_SECONDS_TAG = "original_time_in_milli_seconds_tag";
-	private static final String SPEED_TAG = "speed_tag";
+	private static final String SPEED_PERCENTAGE_TAG = "speed_percentage_tag";
 	private static final String TIMER_SERVICE_BROADCAST = "timer_service_broadcast";
 	private static final String CHANNEL_LOW_NAME = "channel_low";
 	private static final String CHANNEL_HIGH_NAME = "channel_high";
@@ -35,13 +35,15 @@ public class TimerService extends Service {
 	private static final int NOTIFICATION_ID = 1;
 	private static final int REPEAT_ONCE = 1;
 	private static final long DEFAULT_MINUTES_IN_MILLI_SECONDS = 0L;
-	private static final int DEFAULT_SPEED = 100;
+	private static final int DEFAULT_SPEED_PERCENTAGE = 100;
+	private static final double HUNDRED_PERCENT = 100.0;
+	private static final double SECONDS_CONVERSION = 1 / 1000.0;
 
 
 	private CountDownTimer timer;
 	private long remainingMilliSeconds;
 	private long originalTimeInMilliSeconds;
-	private int speed;
+	private int speedPercentage;
 	private boolean isPaused;
 	private boolean isFinish;
 	private Vibrator vibrator;
@@ -55,12 +57,12 @@ public class TimerService extends Service {
 	public static Intent getIntent(Context context, long originalTimeInMilliSeconds, int speed) {
 		Intent i = new Intent(context, TimerService.class);
 		i.putExtra(ORIGINAL_TIME_IN_MILLI_SECONDS_TAG, originalTimeInMilliSeconds);
-		i.putExtra(SPEED_TAG, speed);
+		i.putExtra(SPEED_PERCENTAGE_TAG, speed);
 		return i;
 	}
 
 	public static Intent getIntent(Context context) {
-		return TimerService.getIntent(context, DEFAULT_MINUTES_IN_MILLI_SECONDS, DEFAULT_SPEED);
+		return TimerService.getIntent(context, DEFAULT_MINUTES_IN_MILLI_SECONDS, DEFAULT_SPEED_PERCENTAGE);
 	}
 
 
@@ -72,7 +74,7 @@ public class TimerService extends Service {
 
 		originalTimeInMilliSeconds = intent.getLongExtra(ORIGINAL_TIME_IN_MILLI_SECONDS_TAG, DEFAULT_MINUTES_IN_MILLI_SECONDS);
 		remainingMilliSeconds = originalTimeInMilliSeconds;
-		speed = intent.getIntExtra(SPEED_TAG, DEFAULT_SPEED);
+		speedPercentage = intent.getIntExtra(SPEED_PERCENTAGE_TAG, DEFAULT_SPEED_PERCENTAGE);
 
 
 		setUpTimerBroadcast(originalTimeInMilliSeconds);
@@ -81,7 +83,7 @@ public class TimerService extends Service {
 	}
 
 	private long getMilliSecondsAccordingToSpeed(long milliseconds){
-		return (long)(milliseconds / (speed / 100.0));
+		return (long)(milliseconds / (speedPercentage / HUNDRED_PERCENT));
 	}
 
 	@Override
@@ -94,7 +96,7 @@ public class TimerService extends Service {
 		isPaused = false;
 		isFinish = false;
 		long millisecondsAccordingToSpeed = getMilliSecondsAccordingToSpeed(milliSeconds);
-		double intervalFraction = speed / 100.0;
+		double intervalFraction = speedPercentage / HUNDRED_PERCENT;
 		timer = new CountDownTimer(millisecondsAccordingToSpeed, (long)(1000 / intervalFraction)) {
 
 			@Override
@@ -127,7 +129,7 @@ public class TimerService extends Service {
 	}
 
 	public double getProgress(){
-		return (long)(remainingMilliSeconds/ 1000.0);
+		return remainingMilliSeconds * SECONDS_CONVERSION;
 	}
 
 	/**
@@ -138,7 +140,7 @@ public class TimerService extends Service {
 		Intent notificationIntent = TimerActivity.getIntent(this,
 				originalTimeInMilliSeconds,
 				true,
-				speed);
+				speedPercentage);
 
 		PendingIntent pendingIntent = PendingIntent.getActivity(this,
 				0,
@@ -228,13 +230,13 @@ public class TimerService extends Service {
 		isFinish = false;
 	}
 
-	public void changeSpeed(int newSpeed){
-		speed = newSpeed;
+	public void changeSpeedPercentage(int newSpeedPercentage){
+		speedPercentage = newSpeedPercentage;
 		setUpNotification(getTimeString(), CHANNEL_LOW_PRIORITY_ID);
 	}
 
-	public int getSpeed() {
-		return speed;
+	public int getSpeedPercentage() {
+		return speedPercentage;
 	}
 
 	/**

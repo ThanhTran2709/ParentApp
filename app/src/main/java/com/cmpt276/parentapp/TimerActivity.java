@@ -44,9 +44,12 @@ public class TimerActivity extends AppCompatActivity {
     private static final String TIMER_SERVICE_BROADCAST = "timer_service_broadcast";
     private static final String STOP_ALARM_BROADCAST = "stop_alarm_broadcast";
     private static final String SERVICE_RUNNING_FLAG = "service_running_flag";
-    private static final String SPEED_TAG = "speed_tag";
+    private static final String SPEED_PERCENTAGE_TAG = "speed_percentage_tag";
     private static final long DEFAULT_MINUTES_IN_MILLI_SECONDS = 0L;
-    private static final int DEFAULT_SPEED = 100;
+    private static final int DEFAULT_SPEED_PERCENTAGE = 100;
+    private static final double SECONDS_CONVERSION = 1 / 1000.0;
+    private static final int ZERO = 0;
+
 
     TextView remainingTime;
     private Intent serviceIntent;
@@ -54,7 +57,7 @@ public class TimerActivity extends AppCompatActivity {
     private boolean isServiceRunning;
     private Menu menu;
     private Dialog selectSpeedDialog;
-    int speed;
+    int speedPercentage;
 
     private BroadcastReceiver timerReceiver;
     private BroadcastReceiver stopAlarmReceiver;
@@ -64,18 +67,18 @@ public class TimerActivity extends AppCompatActivity {
 
 
     public static Intent getIntent(Context context, long minutesInMilliSeconds) {
-        return TimerActivity.getIntent(context, minutesInMilliSeconds, false, DEFAULT_SPEED);
+        return TimerActivity.getIntent(context, minutesInMilliSeconds, false, DEFAULT_SPEED_PERCENTAGE);
     }
 
     public static Intent getIntent(Context context,
                                    long originalTimeInMilliSeconds,
                                    boolean isServiceRunning,
-                                   int speed) {
+                                   int speedPercentage) {
 
         Intent intent = new Intent(context, TimerActivity.class);
         intent.putExtra(ORIGINAL_TIME_IN_MILLI_SECONDS_TAG, originalTimeInMilliSeconds);
         intent.putExtra(SERVICE_RUNNING_FLAG, isServiceRunning);
-        intent.putExtra(SPEED_TAG, speed);
+        intent.putExtra(SPEED_PERCENTAGE_TAG, speedPercentage);
 
         return intent;
 
@@ -89,7 +92,7 @@ public class TimerActivity extends AppCompatActivity {
 
         originalTimeInMilliSeconds = this.getIntent().getLongExtra(ORIGINAL_TIME_IN_MILLI_SECONDS_TAG, DEFAULT_MINUTES_IN_MILLI_SECONDS);
         isServiceRunning = this.getIntent().getBooleanExtra(SERVICE_RUNNING_FLAG, false);
-        speed = this.getIntent().getIntExtra(SPEED_TAG, DEFAULT_SPEED);
+        speedPercentage = this.getIntent().getIntExtra(SPEED_PERCENTAGE_TAG, DEFAULT_SPEED_PERCENTAGE);
         setUpToolBar();
         setUpPieChart();
         setUpPausePlayButton();
@@ -99,9 +102,10 @@ public class TimerActivity extends AppCompatActivity {
     }
 
 
+    @SuppressLint("StringFormatInvalid")
     private void setUpSpeedText() {
         TextView speedText = findViewById(R.id.speed_text);
-        speedText.setText(String.format(getString(R.string.speed_text), speed));
+        speedText.setText(String.format(getString(R.string.speed_text), speedPercentage));
     }
 
     private void setUpToolBar() {
@@ -112,7 +116,7 @@ public class TimerActivity extends AppCompatActivity {
 
     private void setUpPieChart() {
         ProgressBar progressBar = findViewById(R.id.progressBar);
-        progressBar.setMax((int) (originalTimeInMilliSeconds / 1000.0));
+        progressBar.setMax((int) (originalTimeInMilliSeconds * SECONDS_CONVERSION));
     }
 
     @Override
@@ -135,15 +139,15 @@ public class TimerActivity extends AppCompatActivity {
         }
     }
 
-    private void updateSpeed() {
+    private void updateSpeedPercentage() {
         if (!timerServiceBound) {
             setUpStartService();
         } else {
             if (timerService.isPaused()) {
-                timerService.changeSpeed(speed);
+                timerService.changeSpeedPercentage(speedPercentage);
             } else {
                 timerService.pauseTimer();
-                timerService.changeSpeed(speed);
+                timerService.changeSpeedPercentage(speedPercentage);
                 timerService.playTimer();
             }
         }
@@ -170,7 +174,7 @@ public class TimerActivity extends AppCompatActivity {
     }
 
     private void setUpStartService() {
-        serviceIntent = TimerService.getIntent(this, originalTimeInMilliSeconds, speed);
+        serviceIntent = TimerService.getIntent(this, originalTimeInMilliSeconds, speedPercentage);
 
         if (!isServiceRunning) {
             startService(serviceIntent);
@@ -203,17 +207,17 @@ public class TimerActivity extends AppCompatActivity {
         selectSpeedDialog.setContentView(R.layout.change_speed_dialog);
         selectSpeedDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
-        AtomicInteger selected = new AtomicInteger(speed);
+        AtomicInteger selected = new AtomicInteger(speedPercentage);
 
         RadioGroup speedGroup = selectSpeedDialog.findViewById(R.id.change_speed_radio_group);
         int[] speeds = getResources().getIntArray(R.array.timer_speeds_array);
 
         for (int speed_option : speeds) {
             RadioButton speedButton = new RadioButton(speedGroup.getContext());
-            setButtonGraphics(speedButton, speed_option + "%");
+            setButtonGraphics(speedButton, speed_option + getString(R.string.percent_symbol));
             speedGroup.addView(speedButton);
 
-            if (speed_option == speed) {
+            if (speed_option == speedPercentage) {
                 speedButton.setChecked(true);
             }
 
@@ -222,8 +226,8 @@ public class TimerActivity extends AppCompatActivity {
 
         FloatingActionButton selectFab = selectSpeedDialog.findViewById(R.id.select_speed_fab);
         selectFab.setOnClickListener(view -> {
-            speed = selected.get();
-            updateSpeed();
+            speedPercentage = selected.get();
+            updateSpeedPercentage();
             setUpSpeedText();
             selectSpeedDialog.dismiss();
         });
@@ -263,7 +267,7 @@ public class TimerActivity extends AppCompatActivity {
         timeText.setText(originalTime);
 
         ProgressBar progressBar = findViewById(R.id.progressBar);
-        progressBar.setProgress((int) (originalTimeInMilliSeconds / 1000.0));
+        progressBar.setProgress((int)(originalTimeInMilliSeconds * SECONDS_CONVERSION));
     }
 
     private void setUpNewTimerButton() {
@@ -347,7 +351,7 @@ public class TimerActivity extends AppCompatActivity {
 
         if (timerService.isFinish()) {
             ProgressBar progressBar = findViewById(R.id.progressBar);
-            progressBar.setProgress(0);
+            progressBar.setProgress(ZERO);
 
             Button stopAlarmButton = findViewById(R.id.stop_alarm_button);
             Button pausePlayButton = findViewById(R.id.pause_play);
