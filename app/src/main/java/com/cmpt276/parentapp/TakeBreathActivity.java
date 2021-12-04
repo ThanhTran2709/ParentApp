@@ -8,6 +8,8 @@ import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -52,7 +54,9 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 	public void setState(State newState) {
 		currentState.handleExit();
+		System.out.println("Exiting state: " + currentState);
 		currentState = newState;
+		System.out.println("Entering state: " + currentState);
 		currentState.handleEnter();
 	}
 
@@ -225,6 +229,9 @@ public class TakeBreathActivity extends AppCompatActivity {
 			textViewHelp.setVisibility(View.VISIBLE);
 			textViewHelp.setText(R.string.breathe_in_help);
 
+			circleLight.clearAnimation();
+			circleDark.clearAnimation();
+
 			musicPlayer.start();
 		}
 
@@ -252,13 +259,13 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 		@Override
 		void handleEnter() {
-			startTime = System.currentTimeMillis();
 			//start animation and sound
 			breatheInPlayer = MediaPlayer.create(TakeBreathActivity.this, R.raw.breathe_in);
 			breatheInPlayer.setVolume(BREATHING_VOLUME, BREATHING_VOLUME);
 			breatheInPlayer.start();
 
 			Animation inflateCircleAnimationLight = new InflateAnimation(INFLATE_SCALE, ORIGINAL_SCALE);
+			inflateCircleAnimationLight.setInterpolator(new LinearInterpolator());
 			inflateCircleAnimationLight.setDuration(TIME_BREATHE_IN_HELP);
 			inflateCircleAnimationLight.setFillAfter(true);
 			inflateCircleAnimationLight.setAnimationListener(new Animation.AnimationListener() {
@@ -279,6 +286,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 			});
 
 			Animation inflateCircleAnimationDark = new InflateAnimation(INFLATE_SCALE, ORIGINAL_SCALE);
+			inflateCircleAnimationDark.setInterpolator(new LinearInterpolator());
 			inflateCircleAnimationDark.setDuration(TIME_BREATHE_IN_HELP);
 			inflateCircleAnimationDark.setFillAfter(true);
 			inflateCircleAnimationDark.setAnimationListener(new Animation.AnimationListener() {
@@ -297,6 +305,8 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 				}
 			});
+
+			startTime = AnimationUtils.currentAnimationTimeMillis();;
 
 			circleLight.startAnimation(inflateCircleAnimationLight);
 			circleDark.startAnimation(inflateCircleAnimationDark);
@@ -326,7 +336,6 @@ public class TakeBreathActivity extends AppCompatActivity {
 		@Override
 		void onReleaseButton() {
 			State inhaleState = new InhaleState();
-			circleLight.clearAnimation();
 			setState(inhaleState);
 		}
 	}
@@ -410,23 +419,24 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 	private class InhaleDoneState extends State {
 
+		long currentTime;
 		long startTime;
 
 		InhaleDoneState(long startTime) {
 			this.startTime = startTime;
+			this.currentTime = AnimationUtils.currentAnimationTimeMillis();
 		}
 
 		@Override
 		void handleEnter() {
 
+			long deltaTime = currentTime - startTime;
+
 			//stop animation and sound
 			breatheInPlayer.stop();
 
-			long currentTime = System.currentTimeMillis();
-			long deltaTime = currentTime - startTime;
-
-			float currentScale = ORIGINAL_SCALE + ((INFLATE_SCALE - ORIGINAL_SCALE) / TIME_BREATHE_IN_HELP) * deltaTime;
-			float currentAlpha = 1.0f / TIME_BREATHE_IN_HELP * deltaTime;
+			float currentScale = ORIGINAL_SCALE + ((INFLATE_SCALE - ORIGINAL_SCALE) * deltaTime / TIME_BREATHE_IN_HELP);
+			float currentAlpha = (float) deltaTime / TIME_BREATHE_IN_HELP;
 
 			Animation stopAnimation = new StopAnimation(currentScale);
 			stopAnimation.setDuration(TIME_BREATHING_DELAY);
