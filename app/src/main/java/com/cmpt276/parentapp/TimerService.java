@@ -24,20 +24,26 @@ import java.util.concurrent.TimeUnit;
 public class TimerService extends Service {
 
 	private static final String ORIGINAL_TIME_IN_MILLI_SECONDS_TAG = "original_time_in_milli_seconds_tag";
-	private static final long DEFAULT_MINUTES_IN_MILLI_SECONDS = 0L;
+	private static final String SPEED_PERCENTAGE_TAG = "speed_percentage_tag";
 	private static final String TIMER_SERVICE_BROADCAST = "timer_service_broadcast";
 	private static final String CHANNEL_LOW_NAME = "channel_low";
 	private static final String CHANNEL_HIGH_NAME = "channel_high";
-
 	private static final String CHANNEL_LOW_PRIORITY_ID = "low_priority_channel";
 	private static final String CHANNEL_HIGH_PRIORITY_ID = "high_priority_channel";
+	private static final String STOP_ALARM_BROADCAST = "stop_alarm_broadcast";
+
 	private static final int NOTIFICATION_ID = 1;
 	private static final int REPEAT_ONCE = 1;
-	private static final String STOP_ALARM_BROADCAST = "stop_alarm_broadcast";
+	private static final long DEFAULT_MINUTES_IN_MILLI_SECONDS = 0L;
+	private static final int DEFAULT_SPEED_PERCENTAGE = 100;
+	private static final double HUNDRED_PERCENT = 100.0;
+	private static final double SECONDS_CONVERSION = 1 / 1000.0;
+
 
 	private CountDownTimer timer;
 	private long remainingMilliSeconds;
 	private long originalTimeInMilliSeconds;
+	private int speedPercentage;
 	private boolean isPaused;
 	private boolean isFinish;
 	private Vibrator vibrator;
@@ -48,14 +54,15 @@ public class TimerService extends Service {
 	 */
 	private final IBinder binder = new LocalBinder();
 
-	public static Intent getIntent(Context context, long originalTimeInMilliSeconds) {
+	public static Intent getIntent(Context context, long originalTimeInMilliSeconds, int speed) {
 		Intent i = new Intent(context, TimerService.class);
 		i.putExtra(ORIGINAL_TIME_IN_MILLI_SECONDS_TAG, originalTimeInMilliSeconds);
+		i.putExtra(SPEED_PERCENTAGE_TAG, speed);
 		return i;
 	}
 
 	public static Intent getIntent(Context context) {
-		return new Intent(context, TimerService.class);
+		return TimerService.getIntent(context, DEFAULT_MINUTES_IN_MILLI_SECONDS, DEFAULT_SPEED_PERCENTAGE);
 	}
 
 
@@ -67,12 +74,17 @@ public class TimerService extends Service {
 
 		originalTimeInMilliSeconds = intent.getLongExtra(ORIGINAL_TIME_IN_MILLI_SECONDS_TAG, DEFAULT_MINUTES_IN_MILLI_SECONDS);
 		remainingMilliSeconds = originalTimeInMilliSeconds;
+		speedPercentage = intent.getIntExtra(SPEED_PERCENTAGE_TAG, DEFAULT_SPEED_PERCENTAGE);
+
 
 		setUpTimerBroadcast(originalTimeInMilliSeconds);
 
 		return START_STICKY;
 	}
 
+	private long getMilliSecondsAccordingToSpeed(long milliseconds){
+		return (long)(milliseconds / (speedPercentage / HUNDRED_PERCENT));
+	}
 
 	@Override
 	public void onDestroy() {
@@ -83,19 +95,19 @@ public class TimerService extends Service {
 	private void setUpTimerBroadcast(long milliSeconds) {
 		isPaused = false;
 		isFinish = false;
-		timer = new CountDownTimer(milliSeconds, 1000) {
+		long millisecondsAccordingToSpeed = getMilliSecondsAccordingToSpeed(milliSeconds);
+		double intervalFraction = speedPercentage / HUNDRED_PERCENT;
+		timer = new CountDownTimer(millisecondsAccordingToSpeed, (long)(1000 / intervalFraction)) {
 
 			@Override
-			public void onTick(long l) {
-
-				remainingMilliSeconds = l;
+			public void onTick(long l ) {
+				remainingMilliSeconds = (long)(l * intervalFraction);
 
 				setUpNotification(getTimeString(), CHANNEL_LOW_PRIORITY_ID);
 
 				Intent broadcastIntent = new Intent();
 				broadcastIntent.setAction(TIMER_SERVICE_BROADCAST);
 				sendBroadcast(broadcastIntent);
-
 			}
 
 			@Override
@@ -103,7 +115,6 @@ public class TimerService extends Service {
 				isFinish = true;
 				isPaused = true;
 				setUpAlarmNotification();
-
 			}
 		};
 		timer.start();
@@ -117,12 +128,20 @@ public class TimerService extends Service {
 		return String.format(getString(R.string.time_label_format), remainingMinutes, remainingSeconds);
 	}
 
+	public double getProgress(){
+		return remainingMilliSeconds * SECONDS_CONVERSION;
+	}
+
 	/**
 	 * https://developer.android.com/training/notify-user/build-notification
 	 */
 	private void setUpNotification(String timeString, String channelId) {
 
-		Intent notificationIntent = TimerActivity.getIntent(this, originalTimeInMilliSeconds, true);
+		Intent notificationIntent = TimerActivity.getIntent(this,
+				originalTimeInMilliSeconds,
+				true,
+				speedPercentage);
+
 		PendingIntent pendingIntent = PendingIntent.getActivity(this,
 				0,
 				notificationIntent,
@@ -205,6 +224,19 @@ public class TimerService extends Service {
 
 	public long getOriginalMilliSeconds() {
 		return originalTimeInMilliSeconds;
+	}
+
+	public void resetFinish(){
+		isFinish = false;
+	}
+
+	public void changeSpeedPercentage(int newSpeedPercentage){
+		speedPercentage = newSpeedPercentage;
+		setUpNotification(getTimeString(), CHANNEL_LOW_PRIORITY_ID);
+	}
+
+	public int getSpeedPercentage() {
+		return speedPercentage;
 	}
 
 	/**

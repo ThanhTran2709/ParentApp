@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import com.cmpt276.model.Child;
 import com.cmpt276.model.Coin;
 import com.cmpt276.model.Task;
+import com.cmpt276.model.TaskHistory;
 import com.cmpt276.parentapp.serializer.LocalDateTimeAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -29,6 +30,8 @@ public class Options {
 	private static final String CHILD_TAG = "Child";
 	private static final String TASK_TAG = "Task";
 	private static final int NO_CHILD = -1;
+	private static final int DELETED_CHILD = -2;
+
 
 	private static final String FLIP_LIST_TAG = "FlipList";
 	private static final String FLIP_QUEUE_TAG = "FlipQueue";
@@ -152,13 +155,13 @@ public class Options {
 
 		for (Task task : tasks) {
 			task.updateIndexOnChildDelete(deletedChildIndex, children.size());
+			task.updateHistoryIndexOnChildDelete(deletedChildIndex);
 		}
 
 		String newJsonString = gson.toJson(tasks);
 		editor.putString(TASK_TAG, newJsonString);
 		editor.apply();
 	}
-
 
 	public void editChildName(Context context, int index, String name) {
 		SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
@@ -401,6 +404,7 @@ public class Options {
 		editor.apply();
 	}
 
+
 	private static long generateID(ArrayList<Child> children) {
 		boolean isValidId = false;
 		long newId = 0;
@@ -526,6 +530,9 @@ public class Options {
 		if (childIndex == NO_CHILD) {
 			return context.getString(R.string.no_child_added_yet);
 		}
+		else if (childIndex == DELETED_CHILD){
+			return "Deleted Child";
+		}
 		else {
 			return getChildList(context).get(childIndex).getName();
 		}
@@ -546,7 +553,9 @@ public class Options {
 			tasks = gson.fromJson(jsonString, TYPE_TASK_LIST);
 		}
 
-		tasks.get(taskIndex).incrementNextChildIndex(getChildList(context).size());
+		Task task = tasks.get(taskIndex);
+		task.addTaskHistory(task.getCurrentChildIndex());
+		task.incrementNextChildIndex(getChildList(context).size());
 
 		String newJsonString = gson.toJson(tasks);
 		editor.putString(TASK_TAG, newJsonString);
@@ -557,7 +566,7 @@ public class Options {
 	//Get Task List to Shared Prefs
 	public ArrayList<Task> getTaskList(Context context) {
 		SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
-		String jsonString = pref.getString(TASK_TAG, "");
+		String jsonString = pref.getString(TASK_TAG, null);
 
 		Gson gson = new Gson();
 		ArrayList<Task> list;
@@ -572,6 +581,44 @@ public class Options {
 		return list;
 	}
 
+	public ArrayList<TaskHistory> getTaskHistoryList(Context context, int taskIndex){
+		SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
+		String jsonString = pref.getString(TASK_TAG, null);
+
+		Gson gson = new Gson();
+		ArrayList<Task> list;
+		ArrayList<TaskHistory> historyList;
+
+		if (jsonString == null) {
+			historyList = new ArrayList<>();
+		}
+		else {
+			list = gson.fromJson(jsonString, TYPE_TASK_LIST);
+			historyList = list.get(taskIndex).getTaskHistory();
+		}
+
+		return historyList;
+	}
+
+	public void clearTaskHistory(Context context, int taskIndex) {
+		SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = pref.edit();
+		String jsonString = pref.getString(TASK_TAG, null);
+
+		Gson gson = new Gson();
+
+		ArrayList<Task> tasks;
+		if (jsonString == null) {
+			tasks = new ArrayList<>();
+		} else {
+			tasks = gson.fromJson(jsonString, TYPE_TASK_LIST);
+			tasks.get(taskIndex).clearHistory();
+		}
+
+		String newJsonString = gson.toJson(tasks);
+		editor.putString(TASK_TAG, newJsonString);
+		editor.apply();
+	}
 	public int getNumberOfBreaths(Context context) {
 		SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
 		int numberOfBreaths = pref.getInt(NUMBER_OF_BREATHS_TAG, 0);

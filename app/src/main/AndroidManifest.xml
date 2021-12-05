@@ -17,6 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ParentApp.NoActionBar">
         <activity
+            android:name=".TaskHistoryActivity"
+            android:exported="false" />
+        <activity
             android:name=".TakeBreathActivity"
             android:exported="true" />
         <activity
