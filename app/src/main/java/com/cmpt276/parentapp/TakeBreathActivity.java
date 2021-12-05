@@ -23,7 +23,6 @@ import com.cmpt276.parentapp.animations.StopAnimation;
  * Activity for the deep breathing exercise as described in User Stories.
  * */
 public class TakeBreathActivity extends AppCompatActivity {
-	//TODO: after implementation is finished, replace println() debugging statements with exceptions
 
 	//units are in milliseconds
 	private static final long TIME_BREATHE_IN = 3000L;
@@ -54,9 +53,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 	public void setState(State newState) {
 		currentState.handleExit();
-		System.out.println("Exiting state: " + currentState);
 		currentState = newState;
-		System.out.println("Entering state: " + currentState);
 		currentState.handleEnter();
 	}
 
@@ -77,7 +74,6 @@ public class TakeBreathActivity extends AppCompatActivity {
 		setUpBreatheNumBtn();
 		setUpBackButton();
 		setUpBreatheButton();
-		//TODO: label seekbar with numbers 1 to 10
 		setUpSeekBar();
 		setUpHeading();
 
@@ -92,22 +88,19 @@ public class TakeBreathActivity extends AppCompatActivity {
 		breatheNumBtn = (Button) findViewById(R.id.breathNumBtn);
 		seekBarNumBreaths = findViewById(R.id.seekbar_num_breaths);
 		seekBarNumBreaths.setVisibility(View.GONE);
-		breatheNumBtn.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				if (seekBarNumBreaths.getVisibility() == View.VISIBLE) {
-					seekBarNumBreaths.setVisibility(View.GONE);
-				}
-				else {
-					seekBarNumBreaths.setVisibility(View.VISIBLE);
-				}
+		breatheNumBtn.setOnClickListener(view -> {
+			if (seekBarNumBreaths.getVisibility() == View.VISIBLE) {
+				seekBarNumBreaths.setVisibility(View.GONE);
+			}
+			else {
+				seekBarNumBreaths.setVisibility(View.VISIBLE);
 			}
 		});
 	}
 
 	private void setUpHeading() {
-		TextView heading = (TextView) findViewById(R.id.heading);
-		heading.setText(getString(R.string.heading, breathsRemaining));
+		TextView heading = (TextView) findViewById(R.id.textViewTakeBreath);
+		heading.setText(getString(R.string.heading_take_breath, breathsRemaining));
 	}
 
 	public static Intent getIntent(Context context) {
@@ -126,7 +119,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 		BreatheButton breatheButton = findViewById(R.id.button_breathe);
 
 		breatheButton.setOnClickListener((view) -> {
-			if (currentState.getClass().equals(ReadyState.class)) {
+			if (currentState instanceof ReadyState) {
 				State inhaleState = new InhaleState();
 				setState(inhaleState);
 			}
@@ -206,16 +199,6 @@ public class TakeBreathActivity extends AppCompatActivity {
 			breatheNumBtn.setVisibility(View.INVISIBLE);
 			seekBarNumBreaths.setVisibility(View.GONE);
 		}
-
-		@Override
-		void onHoldButton() {
-			//do nothing
-		}
-
-		@Override
-		void onReleaseButton() {
-			//do nothing
-		}
 	}
 
 	private class InhaleState extends State {
@@ -245,11 +228,6 @@ public class TakeBreathActivity extends AppCompatActivity {
 		void onHoldButton() {
 			State inhalingState = new InhalingState();
 			setState(inhalingState);
-		}
-
-		@Override
-		void onReleaseButton() {
-			//do nothing
 		}
 	}
 
@@ -306,7 +284,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 				}
 			});
 
-			startTime = AnimationUtils.currentAnimationTimeMillis();;
+			startTime = AnimationUtils.currentAnimationTimeMillis();
 
 			circleLight.startAnimation(inflateCircleAnimationLight);
 			circleDark.startAnimation(inflateCircleAnimationDark);
@@ -321,16 +299,6 @@ public class TakeBreathActivity extends AppCompatActivity {
 					setState(inhaleReleaseState);
 				}
 			}, TIME_BREATHE_IN);
-		}
-
-		@Override
-		void handleExit() {
-			//do nothing
-		}
-
-		@Override
-		void onHoldButton() {
-			//do nothing
 		}
 
 		@Override
@@ -366,17 +334,6 @@ public class TakeBreathActivity extends AppCompatActivity {
 		}
 
 		@Override
-		void handleExit() {
-
-		}
-
-		@Override
-		void onHoldButton() {
-			//do nothing
-			System.out.println("INVALID ACTION IN INHALE RELEASE STATE");
-		}
-
-		@Override
 		void onReleaseButton() {
 			State inhaleDoneState = new InhaleDoneState(startTime);
 			setState(inhaleDoneState);
@@ -407,7 +364,6 @@ public class TakeBreathActivity extends AppCompatActivity {
 		@Override
 		void onHoldButton() {
 			//do nothing
-			System.out.println("INVALID ACTION IN INHALE RELEASE HELP STATE");
 		}
 
 		@Override
@@ -453,21 +409,6 @@ public class TakeBreathActivity extends AppCompatActivity {
 				State exhaleState = new ExhaleState(deltaTime);
 				setState(exhaleState);
 			}, TIME_BREATHING_DELAY);
-		}
-
-		@Override
-		void handleExit() {
-			//do nothing
-		}
-
-		@Override
-		void onHoldButton() {
-			//TODO: ask Brian what should be done if the user presses the button between now and the next inhale
-		}
-
-		@Override
-		void onReleaseButton() {
-			//do nothing
 		}
 	}
 
@@ -535,21 +476,6 @@ public class TakeBreathActivity extends AppCompatActivity {
 				setState(exhaleReleaseState);
 			}, TIME_BREATHE_OUT);
 		}
-
-		@Override
-		void handleExit() {
-			//do nothing
-		}
-
-		@Override
-		void onHoldButton() {
-			//do nothing
-		}
-
-		@Override
-		void onReleaseButton() {
-			//do nothing
-		}
 	}
 
 	private class ExhaleReleaseState extends State {
@@ -560,7 +486,6 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 			TextView textViewBreathsRemaining = findViewById(R.id.textViewBreathsRemaining);
 			textViewBreathsRemaining.setText(getString(R.string.breaths_remaining, breathsRemaining));
-			setUpHeading();
 
 			Button breatheButton = findViewById(R.id.button_breathe);
 			if (breathsRemaining > 0){
@@ -593,7 +518,6 @@ public class TakeBreathActivity extends AppCompatActivity {
 		@Override
 		void onReleaseButton() {
 			//do nothing
-			System.out.println("INVALID ACTION IN EXHALE RELEASE STATE");
 		}
 	}
 
@@ -611,7 +535,6 @@ public class TakeBreathActivity extends AppCompatActivity {
 		@Override
 		void handleEnter() {
 			breatheOutPlayer.stop();
-			setUpHeading();
 
 			if (breathsRemaining <= 0){
 				State promptMoreState = new PromptMoreState();
@@ -633,21 +556,6 @@ public class TakeBreathActivity extends AppCompatActivity {
 			}
 			setState(buttonHeldState);
 		}
-
-		@Override
-		void handleExit() {
-			//stop exhale animation/sound
-		}
-
-		@Override
-		void onHoldButton() {
-			//do nothing
-		}
-
-		@Override
-		void onReleaseButton() {
-			//do nothing
-		}
 	}
 
 	private class PromptMoreState extends State {
@@ -656,10 +564,17 @@ public class TakeBreathActivity extends AppCompatActivity {
 		void handleEnter() {
 			breatheNumBtn.setVisibility(View.VISIBLE);
 
+			Button breatheButton = findViewById(R.id.button_breathe);
+			breatheButton.setText(R.string.begin);
+
+			TextView heading = findViewById(R.id.textViewTakeBreath);
+			heading.setText(getString(R.string.heading_take_breath, numberBreathSetting + 1));
+
 			TextView breathCount = findViewById(R.id.textViewBreathsRemaining);
 			breathCount.setText(getString(R.string.breaths_remaining, numberBreathSetting + 1));
 
 			TextView textViewHelp = findViewById(R.id.textViewBreatheHelp);
+			textViewHelp.setVisibility(View.VISIBLE);
 			textViewHelp.setText(R.string.set_more_breaths);
 
 			musicPlayer.stop();
@@ -673,35 +588,14 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 		@Override
 		void onHoldButton() {
-
+			breathsRemaining = numberBreathSetting + 1;
+			State inhaleState = new InhaleState();
+			setState(inhaleState);
 		}
 
 		@Override
 		void onReleaseButton() {
 
-		}
-	}
-
-	private class FinishState extends State {
-
-		@Override
-		void handleEnter() {
-			TakeBreathActivity.this.finish();
-		}
-
-		@Override
-		void handleExit() {
-			//do nothing
-		}
-
-		@Override
-		void onHoldButton() {
-			//do nothing
-		}
-
-		@Override
-		void onReleaseButton() {
-			//do nothing
 		}
 	}
 

@@ -123,7 +123,7 @@
     <string name="breaths_remaining">Breaths remaining: %1$d</string>
     <string name="begin">Begin</string>
     <string name="breathe_in_help">Hold the button to breathe in</string>
-    <string name="show_breath_number_settings">Show breath number settings</string>
-    <string name="heading">\Let\'s take %1$d breaths together\</string>
+    <string name="show_breath_number_settings">Set Breaths</string>
+    <string name="heading_take_breath">Let\'s take %1$d breaths together</string>
 
 </resources>

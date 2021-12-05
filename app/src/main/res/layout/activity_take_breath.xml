@@ -18,7 +18,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/heading" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewTakeBreath" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonBackTakeBreath"
@@ -54,13 +54,14 @@
         android:id="@+id/textViewBreatheHelp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:fontFamily="@font/moon_bold_font"
         android:text="@string/release_breath_help"
+        android:textColor="@color/black"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/button_breathe"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/seekbar_num_breaths"
-        app:layout_constraintVertical_bias="0.4" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewTakeBreath" />
 
 
     <TextView
@@ -103,13 +104,13 @@
         app:layout_constraintVertical_bias="0.5" />
 
     <TextView
-        android:id="@+id/heading"
+        android:id="@+id/textViewTakeBreath"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:fontFamily="@font/moon_bold_font"
-        android:text="TextView"
+        android:text="@string/heading_take_breath"
         android:textColor="@color/black"
         android:textSize="30dp"
         android:textStyle="bold"
@@ -120,18 +121,16 @@
         android:id="@+id/breathNumBtn"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/rounded_corner_gold"
-        android:fontFamily="@font/moon_light_font"
+        android:fontFamily="@font/moon_bold_font"
+        android:padding="2dp"
         android:text="@string/show_breath_number_settings"
         android:textColor="@color/black"
-        android:padding="2dp"
-        android:textStyle="bold"
         android:textSize="16dp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/heading"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
