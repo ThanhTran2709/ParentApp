@@ -53,6 +53,7 @@
     <string name="confirm_reset">Are you sure  you want to clear the flip history?</string>
     <string name="reset">Reset</string>
     <string name="error_no_history">There is no coin flip history to clear.</string>
+    <string name="no_history_of_coin_flip">No history of\ncoin flip</string>
 
     <!-- Timer strings -->
     <string name="new_timer">New Timer</string>

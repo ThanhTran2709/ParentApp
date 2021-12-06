@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -44,6 +45,7 @@ public class CoinFlipHistoryActivity extends AppCompatActivity {
 
 		setUpBackBtn();
 		setUpClearBtn();
+		setUpEmptyMessage();
 	}
 
 	private void setUpBackBtn() {
@@ -63,6 +65,15 @@ public class CoinFlipHistoryActivity extends AppCompatActivity {
 				alert.showDialog(CoinFlipHistoryActivity.this);
 			}
 		});
+	}
+	public void setUpEmptyMessage(){
+		TextView emptyMessage = findViewById(R.id.empty_coin_flip_history_message);
+		if (options.getFlipHistory(this).isEmpty()){
+			emptyMessage.setVisibility(View.VISIBLE);
+		}
+		else {
+			emptyMessage.setVisibility(View.INVISIBLE);
+		}
 	}
 
 	/**
