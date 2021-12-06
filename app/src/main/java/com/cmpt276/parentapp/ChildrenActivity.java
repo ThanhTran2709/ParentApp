@@ -45,6 +45,7 @@ public class ChildrenActivity extends AppCompatActivity {
 		options = Options.getInstance();
 		imageHandler = new ImageHandler();
 
+		setUpEmptyMessage();
 		setUpAddBtn();
 		populateList();
 		setUpBackBtn();
@@ -113,6 +114,16 @@ public class ChildrenActivity extends AppCompatActivity {
 							output.setImageBitmap(ImageOperations.decodeBitmap(encodedResult));
 						}
 					});
+		}
+	}
+
+	private void setUpEmptyMessage() {
+		TextView emptyChildMessage = findViewById(R.id.empty_child_message);
+		if (options.getChildList(this).size() == 0) {
+			emptyChildMessage.setVisibility(View.VISIBLE);
+		}
+		else {
+			emptyChildMessage.setVisibility(View.GONE);
 		}
 	}
 
@@ -260,6 +271,7 @@ public class ChildrenActivity extends AppCompatActivity {
 
 					populateList();
 					listItemClick();
+					setUpEmptyMessage();
 					dialog.cancel();
 				}
 			};
@@ -360,6 +372,7 @@ public class ChildrenActivity extends AppCompatActivity {
 
 					populateList();
 					listItemClick();
+					setUpEmptyMessage();
 					dialog.cancel();
 				}
 			};
@@ -370,6 +383,7 @@ public class ChildrenActivity extends AppCompatActivity {
 				options.removeChild(ChildrenActivity.this, index);
 				populateList();
 				listItemClick();
+				setUpEmptyMessage();
 				dialog.cancel();
 			};
 		}

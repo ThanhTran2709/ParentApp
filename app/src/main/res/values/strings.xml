@@ -28,6 +28,7 @@
     <string name="start_button_text">Start!</string>
     <string name="image_hint">Tap image to edit</string>
     <string name="add_image_hint">Tap to add new image</string>
+    <string name="no_child_created_yet">No Child\n Created Yet</string>
 
     <!-- Main menu strings -->
     <string name="good_morning">Good Morning!</string>
