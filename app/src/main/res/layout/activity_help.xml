@@ -133,7 +133,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView10">
 
         <TextView
-            android:id="@+id/textView16"
+            android:id="@+id/link_4"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/moon_light_font"
@@ -142,10 +142,10 @@
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView15" />
+            app:layout_constraintTop_toBottomOf="@+id/link_3" />
 
         <TextView
-            android:id="@+id/textView15"
+            android:id="@+id/link_3"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/moon_light_font"
@@ -154,10 +154,10 @@
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView14" />
+            app:layout_constraintTop_toBottomOf="@+id/link_2" />
 
         <TextView
-            android:id="@+id/textView14"
+            android:id="@+id/link_2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/moon_light_font"
@@ -166,10 +166,10 @@
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView13" />
+            app:layout_constraintTop_toBottomOf="@+id/link_1" />
 
         <TextView
-            android:id="@+id/textView13"
+            android:id="@+id/link_1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
