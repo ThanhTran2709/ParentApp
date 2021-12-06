@@ -28,7 +28,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 	private static final long TIME_BREATHE_IN = 3000L;
 	private static final long TIME_BREATHE_IN_HELP = 10000L;
 	private static final long TIME_BREATHE_OUT = 3000L;
-	private static final long TIME_BREATHE_OUT_STOP_ANIMATION = 10000L;
+	private static final long TIME_BREATHE_OUT_ANIMATION = 10000L;
 	private static final long TIME_BREATHING_DELAY = 1000L; //subject to change depending on needs
 
 	private static final float BREATHING_VOLUME = 200.0f;
@@ -44,6 +44,9 @@ public class TakeBreathActivity extends AppCompatActivity {
 	//the slider must be zero indexed for it to look normal.
 	private int breathsRemaining;
 	private int numberBreathSetting;
+
+	private float breatheStartScale;
+	private float exhaleStartScale;
 
 	private View circleLight;
 	private View circleDark;
@@ -70,6 +73,9 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 		circleLight = findViewById(R.id.circleViewLight);
 		circleDark = findViewById(R.id.circleViewDark);
+
+		breatheStartScale = ORIGINAL_SCALE;
+		exhaleStartScale = INFLATE_SCALE;
 
 		setUpBreatheNumBtn();
 		setUpBackButton();
@@ -111,6 +117,8 @@ public class TakeBreathActivity extends AppCompatActivity {
 		Button backButton = findViewById(R.id.buttonBackTakeBreath);
 		backButton.setOnClickListener(view -> {
 			musicPlayer.stop();
+			breatheInPlayer.stop();
+			breatheOutPlayer.stop();
 			TakeBreathActivity.this.finish();
 		});
 	}
@@ -198,6 +206,8 @@ public class TakeBreathActivity extends AppCompatActivity {
 		void handleExit() {
 			breatheNumBtn.setVisibility(View.INVISIBLE);
 			seekBarNumBreaths.setVisibility(View.GONE);
+
+			musicPlayer.start();
 		}
 	}
 
@@ -215,7 +225,8 @@ public class TakeBreathActivity extends AppCompatActivity {
 			circleLight.clearAnimation();
 			circleDark.clearAnimation();
 
-			musicPlayer.start();
+			circleLight.animate().alpha(1.0f).setDuration(1).start();
+			circleDark.animate().alpha(0.0f).setDuration(1).start();
 		}
 
 		@Override
@@ -242,7 +253,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 			breatheInPlayer.setVolume(BREATHING_VOLUME, BREATHING_VOLUME);
 			breatheInPlayer.start();
 
-			Animation inflateCircleAnimationLight = new InflateAnimation(INFLATE_SCALE, ORIGINAL_SCALE);
+			Animation inflateCircleAnimationLight = new InflateAnimation(INFLATE_SCALE, breatheStartScale);
 			inflateCircleAnimationLight.setInterpolator(new LinearInterpolator());
 			inflateCircleAnimationLight.setDuration(TIME_BREATHE_IN_HELP);
 			inflateCircleAnimationLight.setFillAfter(true);
@@ -263,7 +274,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 				}
 			});
 
-			Animation inflateCircleAnimationDark = new InflateAnimation(INFLATE_SCALE, ORIGINAL_SCALE);
+			Animation inflateCircleAnimationDark = new InflateAnimation(INFLATE_SCALE, breatheStartScale);
 			inflateCircleAnimationDark.setInterpolator(new LinearInterpolator());
 			inflateCircleAnimationDark.setDuration(TIME_BREATHE_IN_HELP);
 			inflateCircleAnimationDark.setFillAfter(true);
@@ -387,12 +398,17 @@ public class TakeBreathActivity extends AppCompatActivity {
 		void handleEnter() {
 
 			long deltaTime = currentTime - startTime;
+			if (deltaTime > TIME_BREATHE_IN_HELP) {
+				deltaTime = TIME_BREATHE_IN_HELP;
+			}
 
 			//stop animation and sound
 			breatheInPlayer.stop();
 
-			float currentScale = ORIGINAL_SCALE + ((INFLATE_SCALE - ORIGINAL_SCALE) * deltaTime / TIME_BREATHE_IN_HELP);
+			float currentScale = breatheStartScale + ((INFLATE_SCALE - breatheStartScale) * deltaTime / TIME_BREATHE_IN_HELP);
 			float currentAlpha = (float) deltaTime / TIME_BREATHE_IN_HELP;
+
+			exhaleStartScale = currentScale;
 
 			Animation stopAnimation = new StopAnimation(currentScale);
 			stopAnimation.setDuration(TIME_BREATHING_DELAY);
@@ -404,9 +420,10 @@ public class TakeBreathActivity extends AppCompatActivity {
 			circleDark.setAlpha(currentAlpha);
 			circleDark.startAnimation(stopAnimation);
 
+			final long time = deltaTime;
 			Handler handler = new Handler();
 			handler.postDelayed(() -> {
-				State exhaleState = new ExhaleState(deltaTime);
+				State exhaleState = new ExhaleState(time);
 				setState(exhaleState);
 			}, TIME_BREATHING_DELAY);
 		}
@@ -415,27 +432,30 @@ public class TakeBreathActivity extends AppCompatActivity {
 	private class ExhaleState extends State {
 
 		long deltaTime;
+		long startExhaleTime;
 
 		ExhaleState(long deltaTime) {
 			this.deltaTime = deltaTime;
+			startExhaleTime = AnimationUtils.currentAnimationTimeMillis();
 		}
 
 		@Override
 		void handleEnter() {
 			//play exhaling animation/sound
+
 			breatheOutPlayer = MediaPlayer.create(TakeBreathActivity.this, R.raw.breathe_out);
 			breatheOutPlayer.setVolume(BREATHING_VOLUME, BREATHING_VOLUME);
 			breatheOutPlayer.start();
 
-			float currentScale = ORIGINAL_SCALE + ((INFLATE_SCALE - ORIGINAL_SCALE) / TIME_BREATHE_IN_HELP) * deltaTime;
+			float exhaleScale = breatheStartScale + ((INFLATE_SCALE - breatheStartScale) / TIME_BREATHE_IN_HELP) * deltaTime;
 
-			Animation deflateCircleAnimationLight = new InflateAnimation(ORIGINAL_SCALE, currentScale);
-			deflateCircleAnimationLight.setDuration(TIME_BREATHE_OUT);
+			Animation deflateCircleAnimationLight = new InflateAnimation(ORIGINAL_SCALE, exhaleScale);
+			deflateCircleAnimationLight.setDuration(TIME_BREATHE_OUT_ANIMATION);
 			deflateCircleAnimationLight.setFillAfter(true);
 			deflateCircleAnimationLight.setAnimationListener(new Animation.AnimationListener() {
 				@Override
 				public void onAnimationStart(Animation animation) {
-					circleLight.animate().alpha(1.0f).setDuration(TIME_BREATHE_OUT);
+					circleLight.animate().alpha(1.0f).setDuration(TIME_BREATHE_OUT_ANIMATION);
 				}
 
 				@Override
@@ -447,13 +467,13 @@ public class TakeBreathActivity extends AppCompatActivity {
 				}
 			});
 
-			Animation deflateCircleAnimationDark = new InflateAnimation(ORIGINAL_SCALE, currentScale);
-			deflateCircleAnimationDark.setDuration(TIME_BREATHE_OUT);
+			Animation deflateCircleAnimationDark = new InflateAnimation(ORIGINAL_SCALE, exhaleScale);
+			deflateCircleAnimationDark.setDuration(TIME_BREATHE_OUT_ANIMATION);
 			deflateCircleAnimationDark.setFillAfter(true);
 			deflateCircleAnimationDark.setAnimationListener(new Animation.AnimationListener() {
 				@Override
 				public void onAnimationStart(Animation animation) {
-					circleDark.animate().alpha(0.0f).setDuration(TIME_BREATHE_OUT);
+					circleDark.animate().alpha(0.0f).setDuration(TIME_BREATHE_OUT_ANIMATION);
 				}
 
 				@Override
@@ -472,13 +492,19 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 			Handler handler = new Handler();
 			handler.postDelayed(() -> {
-				State exhaleReleaseState = new ExhaleReleaseState();
+				State exhaleReleaseState = new ExhaleReleaseState(startExhaleTime);
 				setState(exhaleReleaseState);
 			}, TIME_BREATHE_OUT);
 		}
 	}
 
 	private class ExhaleReleaseState extends State {
+
+		long startExhaleTime;
+
+		ExhaleReleaseState(long startExhaleTime) {
+			this.startExhaleTime = startExhaleTime;
+		}
 
 		@Override
 		void handleEnter() {
@@ -498,10 +524,10 @@ public class TakeBreathActivity extends AppCompatActivity {
 			Handler handler = new Handler();
 			handler.postDelayed(() -> {
 				if (currentState == ExhaleReleaseState.this){
-					State exhaleDoneState = new ExhaleDoneState(ExhaleDoneState.WAITED);
+					State exhaleDoneState = new ExhaleDoneState(ExhaleDoneState.WAITED, startExhaleTime);
 					setState(exhaleDoneState);
 				}
-			}, TIME_BREATHE_OUT_STOP_ANIMATION - TIME_BREATHE_OUT);
+			}, TIME_BREATHE_OUT_ANIMATION - TIME_BREATHE_OUT);
 		}
 
 		@Override
@@ -511,7 +537,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 		@Override
 		void onHoldButton() {
-			State exhaleDoneState = new ExhaleDoneState(ExhaleDoneState.BUTTON_PRESSED);
+			State exhaleDoneState = new ExhaleDoneState(ExhaleDoneState.BUTTON_PRESSED, startExhaleTime);
 			setState(exhaleDoneState);
 		}
 
@@ -527,14 +553,24 @@ public class TakeBreathActivity extends AppCompatActivity {
 		public static final int BUTTON_PRESSED = 1;
 
 		private final int transition;
+		long startExhaleTime;
 
-		public ExhaleDoneState(int transition) {
+		public ExhaleDoneState(int transition, long startExhaleTime) {
 			this.transition = transition;
+			this.startExhaleTime = startExhaleTime;
 		}
 
 		@Override
 		void handleEnter() {
 			breatheOutPlayer.stop();
+
+			circleLight.clearAnimation();
+			circleDark.clearAnimation();
+
+			long currentTime = AnimationUtils.currentAnimationTimeMillis();
+			long deltaTime = currentTime - startExhaleTime;
+
+			breatheStartScale = exhaleStartScale + ((ORIGINAL_SCALE - exhaleStartScale) / TIME_BREATHE_OUT_ANIMATION) * deltaTime;
 
 			if (breathsRemaining <= 0){
 				State promptMoreState = new PromptMoreState();
@@ -584,6 +620,10 @@ public class TakeBreathActivity extends AppCompatActivity {
 		void handleExit() {
 			breatheNumBtn.setVisibility(View.INVISIBLE);
 			seekBarNumBreaths.setVisibility(View.GONE);
+
+			musicPlayer = MediaPlayer.create(TakeBreathActivity.this, R.raw.just_relax_11157);
+			musicPlayer.setLooping(true);
+			musicPlayer.start();
 		}
 
 		@Override
