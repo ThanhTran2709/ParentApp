@@ -84,6 +84,9 @@ public class TakeBreathActivity extends AppCompatActivity {
 		musicPlayer = MediaPlayer.create(TakeBreathActivity.this, R.raw.just_relax_11157);
 		musicPlayer.setLooping(true);
 
+		breatheInPlayer = MediaPlayer.create(TakeBreathActivity.this, R.raw.breathe_in);
+		breatheOutPlayer = MediaPlayer.create(TakeBreathActivity.this, R.raw.breathe_out);
+
 		circleLight = findViewById(R.id.circleViewLight);
 		circleLight.clearAnimation();
 		circleLight.animate().alpha(1.0f).setDuration(1).start();
@@ -205,7 +208,6 @@ public class TakeBreathActivity extends AppCompatActivity {
 	public void onResume() {
 		super.onResume();
 		setState(new ReadyState());
-		System.out.println("RESUMED");
 	}
 
 	//////////////////////////////////
