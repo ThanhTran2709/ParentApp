@@ -29,7 +29,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 	private static final long TIME_BREATHE_IN_HELP = 10000L;
 	private static final long TIME_BREATHE_OUT = 3000L;
 	private static final long TIME_BREATHE_OUT_ANIMATION = 10000L;
-	private static final long TIME_BREATHING_DELAY = 1000L; //subject to change depending on needs
+	private static final long TIME_BREATHING_DELAY = 500L; //subject to change depending on needs
 
 	private static final float BREATHING_VOLUME = 200.0f;
 
@@ -51,9 +51,6 @@ public class TakeBreathActivity extends AppCompatActivity {
 	private View circleLight;
 	private View circleDark;
 
-	private Button breatheNumBtn;
-	private SeekBar seekBarNumBreaths;
-
 	public void setState(State newState) {
 		currentState.handleExit();
 		currentState = newState;
@@ -65,14 +62,35 @@ public class TakeBreathActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_take_breath);
 
-		numberBreathSetting = options.getNumberOfBreaths(this);
+		setup();
+	}
+
+	private void setup() {
+		Button breatheNumBtn = findViewById(R.id.breathNumBtn);
+		breatheNumBtn.setVisibility(View.VISIBLE);
+
+		SeekBar seekBarNumBreaths = findViewById(R.id.seekbar_num_breaths);
+		seekBarNumBreaths.setVisibility(View.GONE);
+
+		TextView textViewHelp = findViewById(R.id.textViewBreatheHelp);
+		textViewHelp.setVisibility(View.GONE);
+
+		Button breatheButton = findViewById(R.id.button_breathe);
+		breatheButton.setText(R.string.begin);
+
+		numberBreathSetting = options.getNumberOfBreaths(TakeBreathActivity.this);
 		breathsRemaining = numberBreathSetting + 1;
 
-		musicPlayer = MediaPlayer.create(this, R.raw.just_relax_11157);
+		musicPlayer = MediaPlayer.create(TakeBreathActivity.this, R.raw.just_relax_11157);
 		musicPlayer.setLooping(true);
 
 		circleLight = findViewById(R.id.circleViewLight);
+		circleLight.clearAnimation();
+		circleLight.animate().alpha(1.0f).setDuration(1).start();
+
 		circleDark = findViewById(R.id.circleViewDark);
+		circleDark.clearAnimation();
+		circleDark.animate().alpha(0.0f).setDuration(1).start();
 
 		breatheStartScale = ORIGINAL_SCALE;
 		exhaleStartScale = INFLATE_SCALE;
@@ -83,16 +101,14 @@ public class TakeBreathActivity extends AppCompatActivity {
 		setUpSeekBar();
 		setUpHeading();
 
-
 		TextView textViewBreathsRemaining = findViewById(R.id.textViewBreathsRemaining);
 		textViewBreathsRemaining.setText(getString(R.string.breaths_remaining, breathsRemaining));
-
-		setState(new ReadyState());
 	}
 
 	private void setUpBreatheNumBtn() {
-		breatheNumBtn = (Button) findViewById(R.id.breathNumBtn);
-		seekBarNumBreaths = findViewById(R.id.seekbar_num_breaths);
+		Button breatheNumBtn = findViewById(R.id.breathNumBtn);
+		SeekBar seekBarNumBreaths = findViewById(R.id.seekbar_num_breaths);
+
 		seekBarNumBreaths.setVisibility(View.GONE);
 		breatheNumBtn.setOnClickListener(view -> {
 			if (seekBarNumBreaths.getVisibility() == View.VISIBLE) {
@@ -105,7 +121,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 	}
 
 	private void setUpHeading() {
-		TextView heading = (TextView) findViewById(R.id.textViewTakeBreath);
+		TextView heading = findViewById(R.id.textViewTakeBreath);
 		heading.setText(getString(R.string.heading_take_breath, breathsRemaining));
 	}
 
@@ -133,7 +149,6 @@ public class TakeBreathActivity extends AppCompatActivity {
 			}
 		});
 
-
 		breatheButton.setOnTouchListener((view, motionEvent) -> {
 			//OnTouchListener's onTouch method returns true if the event was handled and false if not.
 			//ACTION_DOWN is when the user initially presses on the view, and ACTION_UP is when the user
@@ -153,7 +168,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 	}
 
 	private void setUpSeekBar() {
-		seekBarNumBreaths = findViewById(R.id.seekbar_num_breaths);
+		SeekBar seekBarNumBreaths = findViewById(R.id.seekbar_num_breaths);
 		seekBarNumBreaths.setProgress(numberBreathSetting);
 		seekBarNumBreaths.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 			@Override
@@ -178,6 +193,21 @@ public class TakeBreathActivity extends AppCompatActivity {
 		});
 	}
 
+	@Override
+	public void onPause() {
+		super.onPause();
+		if (musicPlayer.isPlaying()){
+			musicPlayer.stop();
+		}
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		setState(new ReadyState());
+		System.out.println("RESUMED");
+	}
+
 	//////////////////////////////////
 	//            STATES            //
 	//////////////////////////////////
@@ -199,14 +229,17 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 		@Override
 		void handleEnter() {
+			Button breatheNumBtn = findViewById(R.id.breathNumBtn);
 			breatheNumBtn.setVisibility(View.VISIBLE);
+
+			SeekBar seekBarNumBreaths = findViewById(R.id.seekbar_num_breaths);
+			seekBarNumBreaths.setVisibility(View.GONE);
+
+			setup();
 		}
 
 		@Override
 		void handleExit() {
-			breatheNumBtn.setVisibility(View.INVISIBLE);
-			seekBarNumBreaths.setVisibility(View.GONE);
-
 			musicPlayer.start();
 		}
 	}
@@ -598,6 +631,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 		@Override
 		void handleEnter() {
+			Button breatheNumBtn = findViewById(R.id.breathNumBtn);
 			breatheNumBtn.setVisibility(View.VISIBLE);
 
 			Button breatheButton = findViewById(R.id.button_breathe);
@@ -618,7 +652,10 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 		@Override
 		void handleExit() {
+			Button breatheNumBtn = findViewById(R.id.breathNumBtn);
 			breatheNumBtn.setVisibility(View.INVISIBLE);
+
+			SeekBar seekBarNumBreaths = findViewById(R.id.seekbar_num_breaths);
 			seekBarNumBreaths.setVisibility(View.GONE);
 
 			musicPlayer = MediaPlayer.create(TakeBreathActivity.this, R.raw.just_relax_11157);
