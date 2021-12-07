@@ -76,6 +76,7 @@
     <string name="error_time_negative">Cannot start! Please enter a number greater than 0</string>
     <string name="minute">minute</string>
     <string name="minutes">minutes</string>
+    <string name="timer_options_title">Pick a Time!</string>
 
     <!-- Help/About us strings -->
     <string name="about">ABOUT</string>
@@ -91,7 +92,7 @@
     <a href="https://www.flaticon.com/free-icon/image_1500349?term=circle%20image&amp;related_id=1500349">https://www.flaticon.com/free-icon/image_1500349?term=circle%20image&amp;related_id=1500349</a></string>
     <string name="source4">
     <a href="https://www.pngrepo.com/svg/230284/nitrogen">https://www.pngrepo.com/svg/230284/nitrogen</a></string>
-    <string name="timer_options_title">Pick a Time!</string>
+    <string name="source_breathing_music">Breathing music: \'Just Relax\' by Lesfm, found at <a href="https://pixabay.com/music/search/mood/relaxing/">https://pixabay.com/music/search/mood/relaxing/</a></string>
 
     <!-- Task strings -->
     <string name="edit_child_txt">Edit child info</string>
@@ -122,5 +123,18 @@
     <string name="empty_task_history_message">no task history created</string>
     <string name="no_history_to_delete">No history to delete</string>
     <string name="percent_symbol">%</string>
+
+    <!-- Take Breath strings -->
+    <string name="take_breath">Take a breath</string>
+    <string name="breathe_in">In</string>
+    <string name="breathe_out">Out</string>
+    <string name="good_job">Good Job!</string>
+    <string name="set_more_breaths">Set the number of breaths needed to continue</string>
+    <string name="release_breath_help">Release button and breathe out</string>
+    <string name="breaths_remaining">Breaths remaining: %1$d</string>
+    <string name="begin">Begin</string>
+    <string name="breathe_in_help">Hold the button to breathe in</string>
+    <string name="show_breath_number_settings">Set Breaths</string>
+    <string name="heading_take_breath">Let\'s take %1$d breaths together</string>
 
 </resources>

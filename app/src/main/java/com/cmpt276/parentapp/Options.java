@@ -37,6 +37,8 @@ public class Options {
 	private static final String FLIP_QUEUE_TAG = "FlipQueue";
 	private static final String NO_CHILD_FLIPPING = "NoChildFlipping";
 
+	private static final String NUMBER_OF_BREATHS_TAG = "NumberOfBreaths";
+
 	private static final Type TYPE_CHILD_LIST = new TypeToken<ArrayList<Child>>() {
 	}.getType();
 	private static final Type TYPE_TASK_LIST = new TypeToken<ArrayList<Task>>() {
@@ -615,6 +617,20 @@ public class Options {
 
 		String newJsonString = gson.toJson(tasks);
 		editor.putString(TASK_TAG, newJsonString);
+		editor.apply();
+	}
+	public int getNumberOfBreaths(Context context) {
+		SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
+		int numberOfBreaths = pref.getInt(NUMBER_OF_BREATHS_TAG, 0);
+		return numberOfBreaths;
+	}
+
+	public void setNumberOfBreaths(Context context, int numberOfBreaths) {
+		SharedPreferences pref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = pref.edit();
+
+		editor.putInt(NUMBER_OF_BREATHS_TAG, numberOfBreaths);
+
 		editor.apply();
 	}
 }
