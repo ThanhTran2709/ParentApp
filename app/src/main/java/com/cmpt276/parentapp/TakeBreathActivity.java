@@ -286,7 +286,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 			//start animation and sound
 			breatheInPlayer = MediaPlayer.create(TakeBreathActivity.this, R.raw.breathe_in);
 			breatheInPlayer.setVolume(BREATHING_VOLUME, BREATHING_VOLUME);
-			breatheInPlayer.start();
+
 
 			Animation inflateCircleAnimationLight = new InflateAnimation(INFLATE_SCALE, breatheStartScale);
 			inflateCircleAnimationLight.setInterpolator(new LinearInterpolator());
@@ -341,6 +341,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 				//This prevents situations such as the user pressing the button, releasing after one
 				//second, then holding it, which results in the state changing too early.
 				if (currentState == InhalingState.this){
+					breatheInPlayer.start();
 					State inhaleReleaseState = new InhaleReleaseState(startTime);
 					setState(inhaleReleaseState);
 				}
