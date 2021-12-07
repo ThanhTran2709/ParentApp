@@ -307,9 +307,8 @@ public class TakeBreathActivity extends AppCompatActivity {
 			textViewHelp.setVisibility(View.VISIBLE);
 			textViewHelp.setText(R.string.breathe_in_help);
 
-			if (breatheInPlayer.isPlaying()) {
-				breatheInPlayer.stop();
-			}
+			musicPlayer.stop();
+			breatheInPlayer.stop();
 
 			circleLight.clearAnimation();
 			circleDark.clearAnimation();
