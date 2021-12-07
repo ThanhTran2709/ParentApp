@@ -126,8 +126,8 @@
 
     <!-- Take Breath strings -->
     <string name="take_breath">Take a breath</string>
-    <string name="breathe_in">Breathe In</string>
-    <string name="breathe_out">Breathe Out</string>
+    <string name="breathe_in">In</string>
+    <string name="breathe_out">Out</string>
     <string name="good_job">Good Job!</string>
     <string name="set_more_breaths">Set the number of breaths needed to continue</string>
     <string name="release_breath_help">Release button and breathe out</string>

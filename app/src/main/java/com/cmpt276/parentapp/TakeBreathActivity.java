@@ -19,6 +19,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.cmpt276.parentapp.animations.InflateAnimation;
 import com.cmpt276.parentapp.animations.StopAnimation;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 /**
  * Activity for the deep breathing exercise as described in User Stories.
  * */
@@ -50,6 +53,8 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 	private View circleLight;
 	private View circleDark;
+
+	private float musicVolume = 1.0f;
 
 	public void setState(State newState) {
 		currentState.handleExit();
@@ -210,6 +215,56 @@ public class TakeBreathActivity extends AppCompatActivity {
 		setState(new ReadyState());
 	}
 
+	@Override
+	public void onStop() {
+		super.onStop();
+		if (musicPlayer != null){
+			musicPlayer.release();
+		}
+	}
+
+	private void playMusic() {
+		musicVolume = 1.0f;
+
+		if (musicPlayer != null){
+			musicPlayer.stop();
+		}
+
+		musicPlayer = MediaPlayer.create(TakeBreathActivity.this, R.raw.just_relax_11157);
+		musicPlayer.setLooping(true);
+		musicPlayer.start();
+	}
+
+	//https://stackoverflow.com/questions/38380495/android-studio-mediaplayer-how-to-fade-in-and-out
+	private void startFadeOutMusic(){
+		final long FADE_DURATION = 1500;
+		final long FADE_INTERVAL = 50;
+		final float START_VOLUME = 1.0f;
+		final float TARGET_VOLUME = 0.0f;
+		long numberOfSteps = FADE_DURATION / FADE_INTERVAL;
+		final float deltaVolume = (TARGET_VOLUME - START_VOLUME) / (float) numberOfSteps;
+
+		final Timer timer = new Timer(true);
+		TimerTask timerTask = new TimerTask() {
+			@Override
+			public void run() {
+				fadeInStep(deltaVolume);
+				if (musicVolume <= TARGET_VOLUME) {
+					timer.cancel();
+					timer.purge();
+					musicPlayer.stop();
+				}
+			}
+		};
+
+		timer.schedule(timerTask,FADE_INTERVAL,FADE_INTERVAL);
+	}
+
+	private void fadeInStep(float deltaVolume){
+		musicPlayer.setVolume(musicVolume, musicVolume);
+		musicVolume += deltaVolume;
+	}
+
 	//////////////////////////////////
 	//            STATES            //
 	//////////////////////////////////
@@ -239,11 +294,6 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 			setup();
 		}
-
-		@Override
-		void handleExit() {
-			musicPlayer.start();
-		}
 	}
 
 	private class InhaleState extends State {
@@ -256,6 +306,12 @@ public class TakeBreathActivity extends AppCompatActivity {
 			TextView textViewHelp = findViewById(R.id.textViewBreatheHelp);
 			textViewHelp.setVisibility(View.VISIBLE);
 			textViewHelp.setText(R.string.breathe_in_help);
+
+			playMusic();
+
+			if (breatheInPlayer.isPlaying()) {
+				breatheInPlayer.stop();
+			}
 
 			circleLight.clearAnimation();
 			circleDark.clearAnimation();
@@ -287,6 +343,10 @@ public class TakeBreathActivity extends AppCompatActivity {
 			breatheInPlayer = MediaPlayer.create(TakeBreathActivity.this, R.raw.breathe_in);
 			breatheInPlayer.setVolume(BREATHING_VOLUME, BREATHING_VOLUME);
 			breatheInPlayer.start();
+
+			if (!musicPlayer.isPlaying()) {
+				playMusic();
+			}
 
 			Animation inflateCircleAnimationLight = new InflateAnimation(INFLATE_SCALE, breatheStartScale);
 			inflateCircleAnimationLight.setInterpolator(new LinearInterpolator());
@@ -439,6 +499,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 			//stop animation and sound
 			breatheInPlayer.stop();
+			startFadeOutMusic();
 
 			float currentScale = breatheStartScale + ((INFLATE_SCALE - breatheStartScale) * deltaTime / TIME_BREATHE_IN_HELP);
 			float currentAlpha = (float) deltaTime / TIME_BREATHE_IN_HELP;
@@ -604,6 +665,9 @@ public class TakeBreathActivity extends AppCompatActivity {
 
 			long currentTime = AnimationUtils.currentAnimationTimeMillis();
 			long deltaTime = currentTime - startExhaleTime;
+			if (deltaTime > TIME_BREATHE_OUT_ANIMATION) {
+				deltaTime = TIME_BREATHE_OUT_ANIMATION;
+			}
 
 			breatheStartScale = exhaleStartScale + ((ORIGINAL_SCALE - exhaleStartScale) / TIME_BREATHE_OUT_ANIMATION) * deltaTime;
 
