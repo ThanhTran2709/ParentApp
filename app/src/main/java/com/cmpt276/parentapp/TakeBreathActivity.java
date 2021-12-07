@@ -307,8 +307,6 @@ public class TakeBreathActivity extends AppCompatActivity {
 			textViewHelp.setVisibility(View.VISIBLE);
 			textViewHelp.setText(R.string.breathe_in_help);
 
-			playMusic();
-
 			if (breatheInPlayer.isPlaying()) {
 				breatheInPlayer.stop();
 			}
@@ -342,7 +340,7 @@ public class TakeBreathActivity extends AppCompatActivity {
 			//start animation and sound
 			breatheInPlayer = MediaPlayer.create(TakeBreathActivity.this, R.raw.breathe_in);
 			breatheInPlayer.setVolume(BREATHING_VOLUME, BREATHING_VOLUME);
-
+			breatheInPlayer.start();
 
 			if (!musicPlayer.isPlaying()) {
 				playMusic();

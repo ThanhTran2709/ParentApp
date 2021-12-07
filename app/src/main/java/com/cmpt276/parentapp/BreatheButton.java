@@ -7,6 +7,9 @@ import android.view.MotionEvent;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+/**
+ * Button specifically for breathing in
+ * */
 public class BreatheButton extends androidx.appcompat.widget.AppCompatButton {
 
 	public BreatheButton(@NonNull Context context) {
