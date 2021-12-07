@@ -28,6 +28,7 @@
     <string name="start_button_text">Start!</string>
     <string name="image_hint">Tap image to edit</string>
     <string name="add_image_hint">Tap to add new image</string>
+    <string name="no_child_created_yet">No Child\n Created Yet</string>
 
     <!-- Main menu strings -->
     <string name="good_morning">Good Morning!</string>
@@ -52,6 +53,7 @@
     <string name="confirm_reset">Are you sure  you want to clear the flip history?</string>
     <string name="reset">Reset</string>
     <string name="error_no_history">There is no coin flip history to clear.</string>
+    <string name="no_history_of_coin_flip">No history of\ncoin flip</string>
 
     <!-- Timer strings -->
     <string name="new_timer">New Timer</string>
